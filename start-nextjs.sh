@@ -7,6 +7,6 @@ if [ ! -d "web/node_modules" ]; then
   cd ..
 fi
 
-# Start Next.js on port 3000
+# Start Next.js on port 3000 (binds to 0.0.0.0 by default in Next.js)
 echo "🚀 Starting Next.js app on port 3000..."
-cd web && PORT=3000 npm run dev
+cd web && PORT=3000 HOSTNAME=0.0.0.0 npm run dev
