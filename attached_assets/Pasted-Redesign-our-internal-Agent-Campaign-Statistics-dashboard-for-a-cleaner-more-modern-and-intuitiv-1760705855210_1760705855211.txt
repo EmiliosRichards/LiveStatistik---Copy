@@ -1,0 +1,184 @@
+Redesign our internal Agent & Campaign Statistics dashboard for a cleaner, more modern, and intuitive UI.
+The goal is to replicate the look and layout structure of a travel booking interface (like a flight search form), while preserving the functionality of our agent statistics system.
+
+🧭 Overall Layout
+
+Split the experience into two pages:
+
+Search Panel (Form Page) — visually inspired by a flight booking UI.
+
+Replaces the old left-side panel.
+
+Users select agents, date ranges, and projects before fetching stats.
+
+Results Dashboard — appears after clicking “Search Statistics”, showing KPI summaries and tables.
+
+Use a white background, generous spacing, and card-based layouts with shadows and rounded corners (6–8px).
+
+Font: modern sans-serif (e.g., Inter, IBM Plex Sans, or system default).
+
+Use blue and gray accents with soft highlights for selected or active states.
+
+Layout centered (max-width: 960–1100px), responsive down to tablets.
+
+🧩 Page 1 – Search Form (Booking-Style Layout)
+
+Use a layout visually similar to an airline booking form (as in the reference travel app), but functionally tuned for statistics filtering:
+
+Header Area
+
+Simple header with app title: “Agent & Campaign Statistics”.
+
+Right corner:
+
+Language switcher (DE / EN)
+
+Account pill (profile initials → dropdown with “Sign Out”)
+
+Refresh button (rounded, light-blue background)
+
+Search Form Area
+
+Design the form as a horizontal card with the following grouped inputs:
+
+Selection Type Tabs: “Agent Data” | “Project Data” (tab-style at top of card)
+
+Date Range: “From” / “To” inputs using inline calendar pickers (react-day-picker style).
+
+Time Selector: optional input (time range).
+
+Agent Selector: searchable multi-select dropdown with checkboxes and scrollable list (supports 100+ entries).
+
+Project Selector: optional dropdown (auto-detected projects for selected agents).
+
+Action Button: “Search Statistics” (primary, large, blue). Disabled until both agent(s) and date range are selected.
+
+Interaction behavior:
+
+When users choose agents + date range → button becomes active.
+
+Selection states are clearly visible (like chosen airports in flight UI).
+
+Optional shortcuts for common ranges (“Today”, “This Week”, “This Month”) as small clickable chips under the date range inputs.
+
+Visual Style
+
+Recreate the feel of a flight search card, with:
+
+Section dividers, subtle shadows, and rounded edges.
+
+Icons: calendar, user, headset, and project.
+
+Hover and focus states with soft blue highlights.
+
+Subtle animation when expanding calendar or dropdown lists.
+
+📊 Page 2 – Results Dashboard (Statistics View)
+
+After search, the results area should progressively reveal:
+
+Summary KPIs
+
+Display key metrics in cards (Calls Made, Reach Rate, Positive Outcomes, etc.).
+
+Each KPI card shows:
+
+Metric title
+
+Large numeric value
+
+Subtext (e.g., “vs. last week +4%”)
+
+Color-coded highlights (green for improvement, gray for neutral).
+
+Use a 3–4 column responsive grid.
+
+Agent Table
+
+Main table listing agents with columns:
+
+Agent Name
+
+Total Calls
+
+Reach %
+
+Positive Outcomes
+
+Average Call Duration
+
+Rows should be expandable to show:
+
+Project-level breakdowns per agent
+
+Detailed call outcomes or notes (fetched via /api/call-details/:agentId/:projectId).
+
+Include sorting and filtering controls.
+
+Project Grouping (optional)
+
+Allow toggling between grouping by Agent or Project.
+
+Smooth transition animations when switching views.
+
+Footer Area (Status + Connectivity)
+
+Keep and enhance the existing footer design.
+
+Show live connection indicators:
+
+🟢 Database: Connected
+
+⚡ Dialfire API: Connected
+
+Add hover tooltips for connection health info.
+
+Show version info (e.g., “v1.2 • Internal Preview”).
+
+🧠 Functional & UX Requirements
+
+Button and control states must reflect logic:
+
+“Search Statistics” inactive until form valid.
+
+Auto-refresh indicators when new data loads.
+
+Accessibility: keyboard navigable, clear focus outlines.
+
+Support light/dark mode toggle (optional).
+
+Built in Next.js + Tailwind CSS + Shadcn/UI style, cleanly structured components.
+
+Use cards and modals rather than cluttered sidebars.
+
+Inline date picker replaces old popover-style picker for clarity.
+
+⚙️ Technical Integration Notes
+
+Frontend will call backend endpoints under /api:
+
+/api/agents (agent list with pagination)
+
+/api/projects-for-agents (dependent projects)
+
+/api/statistics (aggregated stats)
+
+/api/call-details/:agentId/:projectId (drill-down)
+
+The form submits selected agents + date range to /api/statistics.
+
+The result grid and tables should load progressively (show skeleton placeholders while fetching).
+
+Output expected:
+Generate responsive, production-ready React + Tailwind (or Shadcn/UI) code for both pages (/stats/search and /stats/results).
+Focus on visual polish and clear structure, following the travel app’s design logic but reflecting our agent/campaign workflow.
+
+Optional enhancement ideas:
+
+Preset buttons for “Today”, “This Week”, etc.
+
+“Export CSV” button in results toolbar.
+
+Smooth animations between form → results view.
+
+Toast notifications when new results are fetched.
