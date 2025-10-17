@@ -1,0 +1,5 @@
+Agent;		Datum;		Projekt;		Anzahl;		abgeschlossen;	erfolgreich;	WZ;	GZ;	NBZ;	VBZ;	Erfolg;		AZ;
+Matthias;	12.12.2025;	Projekt ABC;		5;		5;		3;		5;	6;	7;	9;	5;		7;
+Matthias;	01.09.2025;	Projekt K;		9;		5;		3;		5;	2;	1;	1;	1;		28;
+Hansi;		12.12.2025;	Projekt ABC;		5;		5;		3;		5;	6;	7;	9;	5;		7;
+Hansi;		01.09.2025;	Projekt Pommes;		9;		5;		3;		5;	2;	1;	1;	1;		28;

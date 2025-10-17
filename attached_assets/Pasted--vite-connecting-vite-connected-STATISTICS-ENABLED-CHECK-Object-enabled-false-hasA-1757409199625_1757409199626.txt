@@ -1,0 +1,43 @@
+[vite] connecting...
+[vite] connected.
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+[vite] hot updated: /src/pages/dashboard.tsx
+[vite] hot updated: /src/index.css?v=45VHMxU9XSq-OsyfoSZvQ
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+agentIdsCount: 0
+enabled: false
+hasAgentIds: false
+hasDateFrom: false
+hasProjectIds: false
+projectIdsCount: 0
+timeFrom: undefined
+timeTo: undefined
+[[Prototype]]: Object
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: false, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 0, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: true, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 1, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: false, hasAgentIds: true, hasDateFrom: false, hasProjectIds: false, agentIdsCount: 1, …}

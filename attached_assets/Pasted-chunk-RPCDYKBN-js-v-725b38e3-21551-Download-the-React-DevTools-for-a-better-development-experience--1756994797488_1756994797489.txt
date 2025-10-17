@@ -1,0 +1,57 @@
+chunk-RPCDYKBN.js?v=725b38e3:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+agent-statistics-table.tsx:1213 🔄 TRIGGERING loadCallDetails for: 54312eda-a323-440c-bd10-d918955ccd96-KI Ansprechpartner
+agent-statistics-table.tsx:223 🎯 LoadCallDetails: agentId=54312eda-a323-440c-bd10-d918955ccd96, projectId=ea794e0c-6828-496f-8bfc-dcbe5da5c547, outcome=KI Ansprechpartner
+agent-statistics-table.tsx:230 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx:1221 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1480 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx:1221 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1480 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:241 🔍 API returned 241 total call details
+agent-statistics-table.tsx:242 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx:243 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx:244 🔍 FINAL: Searching directly for outcome "KI Ansprechpartner"
+agent-statistics-table.tsx:246 🎯 FINAL RESULT: Found 8 records matching "KI Ansprechpartner"
+agent-statistics-table.tsx:1221 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1480 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx?t=1756994682082:1242 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756994682082:1501 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx?t=1756994682082:1242 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756994682082:1501 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994682082:39 Audio metadata loaded: Infinity
+agent-statistics-table.tsx?t=1756994759027:1253 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756994759027:1512 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx?t=1756994759027:1253 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756994759027:1512 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx:964 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1063 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx:964 ✅ Cache system data: 8 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1063 🔍 callDetailsLoading: false callDetails length: 8
+agent-statistics-table.tsx:20 🎵 Loading audio from: https://vault.24dial.com/vr/PR_9d26f716-702c-cf53-036f-abd78e3d6b17.mp3
+agent-statistics-table.tsx:20 🎵 Loading audio from: https://vault.24dial.com/vr/PR_9d26f716-702c-cf53-036f-abd78e3d6b17.mp3
+agent-statistics-table.tsx:26 ✅ Audio metadata loaded! Duration: Infinity
+agent-statistics-table.tsx:30 ⚠️ Invalid duration: Infinity
+handleLoadedMetadata @ agent-statistics-table.tsx:30
+agent-statistics-table.tsx:35 ✅ Audio can play! Duration: Infinity
+agent-statistics-table.tsx:26 ✅ Audio metadata loaded! Duration: Infinity
+agent-statistics-table.tsx:30 ⚠️ Invalid duration: Infinity
+handleLoadedMetadata @ agent-statistics-table.tsx:30
+agent-statistics-table.tsx:35 ✅ Audio can play! Duration: Infinity
+agent-statistics-table.tsx:20 🎵 Loading audio from: https://vault.24dial.com/vr/PR_21a736fb-d539-6220-32af-33c1ca8b5919.mp3
+agent-statistics-table.tsx:20 🎵 Loading audio from: https://vault.24dial.com/vr/PR_21a736fb-d539-6220-32af-33c1ca8b5919.mp3
+agent-statistics-table.tsx:26 ✅ Audio metadata loaded! Duration: Infinity
+agent-statistics-table.tsx:30 ⚠️ Invalid duration: Infinity
+handleLoadedMetadata @ agent-statistics-table.tsx:30
+agent-statistics-table.tsx:35 ✅ Audio can play! Duration: Infinity
+agent-statistics-table.tsx:26 ✅ Audio metadata loaded! Duration: Infinity
+agent-statistics-table.tsx:30 ⚠️ Invalid duration: Infinity
+handleLoadedMetadata @ agent-statistics-table.tsx:30
+agent-statistics-table.tsx:35 ✅ Audio can play! Duration: Infinity

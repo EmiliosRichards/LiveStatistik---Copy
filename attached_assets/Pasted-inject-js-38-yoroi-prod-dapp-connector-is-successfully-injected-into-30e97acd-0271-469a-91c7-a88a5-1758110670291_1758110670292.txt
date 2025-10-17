@@ -1,0 +1,112 @@
+inject.js:38 [yoroi/prod] dapp-connector is successfully injected into 30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev
+chunk-RPCDYKBN.js?v=271d27bb:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:198 🚀 FRONTEND: FILTERED Statistics API called with filters: {"agentIds":["2751d0cd-c540-4cdb-83ca-d7362e6f7f04"],"projectIds":["73188ffa-7ff7-4824-ab50-87041c8bbf35"],"dateFrom":"2025-09-05"}
+dashboard.tsx:199 🚀 FRONTEND: TIME FILTERS CHECK: {}
+dashboard.tsx:221 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:223 🚀 FRONTEND: First statistic outcomes: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+dashboard.tsx:242 🔍 Notification check: today=2025-09-17, isTodayIncluded=true, resultLength=1, isInitialLoad=true
+dashboard.tsx:249 🔇 Skipping notifications on initial load after filter change
+agent-statistics-table.tsx:2511 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2512 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2511 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2512 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2727 ✅ Cache system data: 0 records for "$none", loading: true
+agent-statistics-table.tsx:1328 🎯 LoadCallDetails: agentId=2751d0cd-c540-4cdb-83ca-d7362e6f7f04, projectIds=[73188ffa-7ff7-4824-ab50-87041c8bbf35], outcome=$none
+agent-statistics-table.tsx:1340 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:1341 🔍 Original filters: Object
+agent-statistics-table.tsx:1346 🗂️ Using cache key: 2751d0cd-c540-4cdb-83ca-d7362e6f7f04-$none-2025-09-05
+agent-statistics-table.tsx:1374 🔄 Fetching call details from 1 projects for agent
+agent-statistics-table.tsx:2511 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2512 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2727 ✅ Cache system data: 0 records for "$none", loading: true
+dashboard.tsx:198 🚀 FRONTEND: FILTERED Statistics API called with filters: {"agentIds":["2751d0cd-c540-4cdb-83ca-d7362e6f7f04"],"projectIds":["73188ffa-7ff7-4824-ab50-87041c8bbf35"],"dateFrom":"2025-09-05"}
+dashboard.tsx:199 🚀 FRONTEND: TIME FILTERS CHECK: {}
+agent-statistics-table.tsx:1383 🔍 API returned 148 total call details
+agent-statistics-table.tsx:1384 🔍 Looking for outcome: "$none"
+agent-statistics-table.tsx:1385 🔍 Available outcomes: Array(8)
+agent-statistics-table.tsx:1389 🔍 Sample call details: Array(3)
+agent-statistics-table.tsx:1395 🔍 FINAL: Searching directly for outcome "$none"
+agent-statistics-table.tsx:1400 🎯 FINAL RESULT: Found 12 records matching "$none"
+agent-statistics-table.tsx:1460 📦 Storing cache with metadata: Object
+agent-statistics-table.tsx:1461 📦 Cache key: 2751d0cd-c540-4cdb-83ca-d7362e6f7f04-$none-2025-09-05
+agent-statistics-table.tsx:1462 📦 Stored 12 call details with 12 IDs
+agent-statistics-table.tsx:2511 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2512 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2522 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2727 ✅ Cache system data: 12 records for "$none", loading: false

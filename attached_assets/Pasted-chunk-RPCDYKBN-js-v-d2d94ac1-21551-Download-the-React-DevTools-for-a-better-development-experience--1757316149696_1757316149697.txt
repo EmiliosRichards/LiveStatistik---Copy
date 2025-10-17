@@ -1,0 +1,58 @@
+chunk-RPCDYKBN.js?v=d2d94ac1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:626 🚀 Starting Dialfire API test...
+dashboard.tsx:628 📡 Making fetch request to /api/dialfire-campaigns-test
+dashboard.tsx:629  GET https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/api/dialfire-campaigns-test 500 (Internal Server Error)
+onClick @ dashboard.tsx:629
+callCallback2 @ chunk-RPCDYKBN.js?v=d2d94ac1:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d2d94ac1:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d2d94ac1:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d2d94ac1:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d2d94ac1:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d2d94ac1:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d2d94ac1:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d2d94ac1:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d2d94ac1:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d2d94ac1:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d2d94ac1:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d2d94ac1:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d2d94ac1:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5449
+dashboard.tsx:631 📊 Response status: 500 Internal Server Error
+dashboard.tsx:632 📋 Response headers: {content-length: '112', content-type: 'application/json; charset=utf-8', date: 'Mon, 08 Sep 2025 07:22:23 GMT', etag: 'W/"70-TvT7+8bIAcjvtxrCZO9wNJJC5ZI"', replit-cluster: 'picard', …}
+dashboard.tsx:636 ❌ HTTP Error: 500 Internal Server Error
+onClick @ dashboard.tsx:636
+await in onClick
+callCallback2 @ chunk-RPCDYKBN.js?v=d2d94ac1:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d2d94ac1:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d2d94ac1:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d2d94ac1:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d2d94ac1:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d2d94ac1:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d2d94ac1:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d2d94ac1:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d2d94ac1:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d2d94ac1:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d2d94ac1:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d2d94ac1:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d2d94ac1:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5449
+dashboard.tsx:637 ❌ Error body: {"error":"Dialfire API Error: 403 Forbidden","details":"403 - Forbidden","timestamp":"2025-09-08T07:22:23.862Z"}
+onClick @ dashboard.tsx:637
+await in onClick
+callCallback2 @ chunk-RPCDYKBN.js?v=d2d94ac1:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d2d94ac1:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d2d94ac1:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d2d94ac1:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d2d94ac1:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d2d94ac1:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d2d94ac1:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d2d94ac1:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d2d94ac1:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d2d94ac1:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d2d94ac1:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d2d94ac1:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d2d94ac1:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d2d94ac1:5449

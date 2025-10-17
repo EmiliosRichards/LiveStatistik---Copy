@@ -1,0 +1,124 @@
+# Node / monorepo general
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.esbuild/
+*.tsbuildinfo
+
+# Vite (client app)
+client/dist/
+client/.vite/
+client/coverage/
+
+# Next.js (web app)
+web/.next/
+web/out/
+web/.vercel/
+.vercel/
+.turbo/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Environment files (keep example)
+.env
+.env.*
+!/.env.example
+client/.env
+client/.env.*
+server/.env
+server/.env.*
+web/.env
+web/.env.*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.template.json
+*.code-workspace
+
+# Secrets / keys
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+*.der
+*.keystore
+*.jks
+*.kdbx
+
+# Test outputs (if used)
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+test-results/
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+server/public
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files and Replit runtime
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.local
+.upm
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bin
+vite.config.ts.*
+*.tar.gz
+
+# Testing
+coverage
+.nyc_output
+
+# Cache
+.cache
+.turbo
+.next

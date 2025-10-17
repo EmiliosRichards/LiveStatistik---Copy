@@ -1,0 +1,186 @@
+
+Datum
+Do., 04.09.25
+17:02
+Agentendaten
+Projektdaten
+Von
+
+04.09.2025
+Bis
+
+04.09.2025
+Zeit
+
+--:--
+
+--:--
+
+1 Agent(en)
+a784e41e06a8eecaf45a2c875905f264
+Ahmet.Eren
+Alena.Acar
+Ali.Cam
+Alisha.Rzepka
+Arzu.Bayoglu
+atilla yoenel
+Aylin.Pusatli
+Ayse.Bueyuekcayli
+Aysun.Kaya
+Baris.Aktan
+Bayram.Guenel
+behiye.arslan
+Buket.Beken
+Claudia.Meier
+Danilo.Faber
+Derya.Davut
+Duygu.Oeksuez
+Efsane.Karaman
+Emine.Gueler
+Emrah.Akgoez
+Erik Wewetzer
+Esra.Findik
+Fabian.Rutschmann
+Fadime Demirdogen
+Funda.Gencel
+Goekcen.Sirin
+Gonca.Sapan
+Hakan.Gungor1
+Hannah.Jahn
+Huelya.Goektas
+Huelya.Palali
+Ihsan Simseker2
+Ihsan.Simseker
+Ilayda.Oezen
+Ismail.Bereketoglu
+Jasmine.Sommer
+Jeannette.Milde
+Kamile.Esiyok
+Kim.Hennig
+Koecher.Mirijam
+Luis.Chaveco
+Maik.Ladewig
+Mark.Authried
+Matthias.Kroeger
+Meltem.Zeren
+Muenevver.Tolu
+Murat.Demirdögen
+Mustafa.Aytas
+Niclas.Sawazki
+Nicole Seifert1
+Niklas.Langer
+Nurhan.Sakar
+Nurten.Akpinar
+Oezkan.Kaplan
+Rabia.Usta
+Ramazan.Akdag
+Rene.Müller
+Rico.Schwarz
+Robert.Koch
+Sabrina.Asrav
+Sara.Stahnke
+Sebnem.Klink
+Sedat.Oeruek
+Sedat.Oezcelik
+Sedef.Battal
+Selim.Toklu
+Sevda.Esen
+Sinem.Kapci
+Songuel.Yurtseven
+Temurcin.Tuerer
+Tim Langer
+Tom.Weber
+Tugce.Karaca
+Turgay.Simseker
+Vanessa.Petermeier
+Vasilios.Kalaitzis
+Yadikar.Canverdi
+Yaren.Hamusal
+zueleyha.demirdoegen
+Zueleyha.Demirdoegen
+Zuhal.Kaya
+
+1 Projekt(e)
+04.09.2025
+
+Alles einklappen
+
+1 Agent(en)
+Aktualisieren
+
+1 Agent
+Name A-Z
+
+Ihsan.Simseker
+Datum	Anzahl	abgeschlossen	erfolgreich	WZ/h	GZ/h	NBZ/h	VBZ/h	Erfolg/h	AZ/h	
+04.09.2025	240	11	1	0	2.411905833333333	0	0	0.4146098849215714	2.411905833333333	
+Negativ abgeschlossen (10)
+KI Ansprechpartner:
+7
+
+KI Gatekeeper:
+1
+
+Partner vorhanden:
+0
+
+falsche Zielgruppe:
+2
+
+falsche Nummer:
+0
+
+nicht mehr anrufen:
+0
+
+Hotline:
+0
+
+existiert nicht:
+0
+
+Duplikat:
+0
+
+Positiv abgeschlossen (1)
+Termin:
+1
+
+Termin | Infomail:
+0
+
+selbst gebucht:
+0
+
+Offen (229)
+offen:
+226
+
+Nachfassen automatisch:
+3
+
+Nachfassen persönlich:
+0
+
+zugewiesen:
+0
+
+Call-Details für "Termin"
+Alle Anrufe
+
+Nr	Datum	Zeit	Dauer	Standort	ID	Telefon	Abschrift	Audio	Transcription
+01	Do. 04.09.25	15:54 h	05:29	Unbekannt	ID 8c05f78b	43732665533			
+This is a temporary development preview, and these links are not for public use. Deploy your app for secure sharing or use an invite link.
+
+[plugin:runtime-error-plugin] Failed to set the 'currentTime' property on 'HTMLMediaElement': The provided double value is non-finite.
+/home/runner/workspace/client/src/components/agent-statistics-table.tsx:54:13
+52 |      if (audio) {
+53 |        const newTime = value[0];
+54 |        audio.currentTime = newTime;
+   |              ^
+55 |        setCurrentTime(newTime);
+56 |      }
+    at handleSliderChange /home/runner/workspace/client/src/components/agent-statistics-table.tsx:54:13
+    at Object.onChange [as current] (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-slider.js?v=725b38e3:87:9
+Click outside, press Esc key, or fix the code to dismiss.
+You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.

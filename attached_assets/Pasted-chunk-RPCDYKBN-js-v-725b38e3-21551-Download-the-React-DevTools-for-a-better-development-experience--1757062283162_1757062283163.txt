@@ -1,0 +1,37 @@
+chunk-RPCDYKBN.js?v=725b38e3:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+agent-statistics-table.tsx:1253 🔄 TRIGGERING loadCallDetails for: cdaf8bdd-59e8-4f19-ab65-3788f879cdc3-offen
+agent-statistics-table.tsx:435 🎯 LoadCallDetails: agentId=cdaf8bdd-59e8-4f19-ab65-3788f879cdc3, projectId=c841e400-7e8e-47c9-bd19-c2dd4de0953d, outcome=offen
+agent-statistics-table.tsx:446 🗓️ Using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:1263 ✅ Cache system data: 0 records for "offen", loading: false
+agent-statistics-table.tsx:1263 ✅ Cache system data: 0 records for "offen", loading: true
+agent-statistics-table.tsx:462 🔍 API returned 76 total call details
+agent-statistics-table.tsx:463 🔍 Looking for outcome: "offen"
+agent-statistics-table.tsx:464 🔍 Available outcomes: Array(5)
+agent-statistics-table.tsx:466 🔍 FINAL: Searching directly for outcome "offen"
+agent-statistics-table.tsx:471 🎯 FINAL RESULT: Found 66 records matching "offen"
+agent-statistics-table.tsx:1263 ✅ Cache system data: 20 records for "offen", loading: false
+agent-statistics-table.tsx:1263 ✅ Cache system data: 20 records for "offen", loading: false
+agent-statistics-table.tsx:1253 🔄 TRIGGERING loadCallDetails for: cdaf8bdd-59e8-4f19-ab65-3788f879cdc3-KI Ansprechpartner
+agent-statistics-table.tsx:435 🎯 LoadCallDetails: agentId=cdaf8bdd-59e8-4f19-ab65-3788f879cdc3, projectId=c841e400-7e8e-47c9-bd19-c2dd4de0953d, outcome=KI Ansprechpartner
+agent-statistics-table.tsx:446 🗓️ Using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:1263 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1263 ✅ Cache system data: 20 records for "offen", loading: false
+agent-statistics-table.tsx:1263 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1263 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:462 🔍 API returned 76 total call details
+agent-statistics-table.tsx:463 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx:464 🔍 Available outcomes: Array(5)
+agent-statistics-table.tsx:466 🔍 FINAL: Searching directly for outcome "KI Ansprechpartner"
+agent-statistics-table.tsx:471 🎯 FINAL RESULT: Found 3 records matching "KI Ansprechpartner"
+agent-statistics-table.tsx:1263 ✅ Cache system data: 3 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:25 🎵 Loading audio from: https://vault.24dial.com/vr/PR_e707c6da-60df-91c0-1aa1-d8f6342ecd9b.mp3
+agent-statistics-table.tsx:34 ⏳ No call duration available, trying audio metadata...
+agent-statistics-table.tsx:35 🔍 CallDuration received: undefined (type: undefined)
+agent-statistics-table.tsx:146 🔄 Audio seems longer than expected (0s), extending duration
+agent-statistics-table.tsx:54 ✅ Audio metadata loaded! Duration: Infinity
+agent-statistics-table.tsx:71 📻 Audio has infinite duration (likely streaming)
+agent-statistics-table.tsx:95 ✅ Audio can play! Duration: Infinity
+agent-statistics-table.tsx:109 📻 Streaming audio detected
+agent-statistics-table.tsx:123 🎛️ Seekable ranges: 1
+agent-statistics-table.tsx:125   Range 0: 0 - Infinity
+agent-statistics-table.tsx:46 ⏰ Loading timeout - no call duration, using minimal fallback

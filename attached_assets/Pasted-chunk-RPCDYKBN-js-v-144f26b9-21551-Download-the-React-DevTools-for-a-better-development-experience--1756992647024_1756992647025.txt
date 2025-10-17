@@ -1,0 +1,100 @@
+chunk-RPCDYKBN.js?v=144f26b9:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+agent-statistics-table.tsx:1023 🎯 Using existing cache system for outcome: KI Ansprechpartner
+agent-statistics-table.tsx:1028 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1287 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:1023 🎯 Using existing cache system for outcome: KI Ansprechpartner
+agent-statistics-table.tsx:1028 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1287 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:1023 🎯 Using existing cache system for outcome: KI Ansprechpartner
+agent-statistics-table.tsx:1028 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1287 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:1023 🎯 Using existing cache system for outcome: KI Ansprechpartner
+agent-statistics-table.tsx:1028 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:1287 🔍 callDetailsLoading: true callDetails length: 0
+ 🔥 FORCING immediate API call for outcome: KI Ansprechpartner
+chunk-RPCDYKBN.js?v=144f26b9:521 Warning: React has detected a change in the order of Hooks called by AgentStatisticsTable. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useState                   useState
+2. useState                   useState
+3. useState                   useState
+4. useEffect                  useEffect
+5. undefined                  useState
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at AgentStatisticsTable (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/src/components/agent-statistics-table.tsx?t=1756992583423:26:3)
+    at div
+    at div
+    at div
+    at Dashboard (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/src/pages/dashboard.tsx:37:33)
+    at Route (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=144f26b9:323:16)
+    at Switch (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=144f26b9:379:17)
+    at Router
+    at Provider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=144f26b9:38:15)
+    at TooltipProvider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=144f26b9:59:5)
+    at QueryClientProvider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=144f26b9:2805:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=144f26b9:521
+ 🔥 FORCING immediate API call for outcome: KI Ansprechpartner
+chunk-RPCDYKBN.js?v=144f26b9:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at updateWorkInProgressHook (chunk-RPCDYKBN.js?v=144f26b9:11678:21)
+    at updateReducer (chunk-RPCDYKBN.js?v=144f26b9:11727:22)
+    at updateState (chunk-RPCDYKBN.js?v=144f26b9:12021:18)
+    at Object.useState (chunk-RPCDYKBN.js?v=144f26b9:12753:24)
+    at useState (chunk-QCHXOAYK.js?v=144f26b9:1066:29)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1027:61
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1473:49
+    at Array.map (<anonymous>)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1009:125
+    at Array.map (<anonymous>)
+ 🔥 FORCING immediate API call for outcome: KI Ansprechpartner
+ 🔥 FORCING immediate API call for outcome: KI Ansprechpartner
+chunk-RPCDYKBN.js?v=144f26b9:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at updateWorkInProgressHook (chunk-RPCDYKBN.js?v=144f26b9:11678:21)
+    at updateReducer (chunk-RPCDYKBN.js?v=144f26b9:11727:22)
+    at updateState (chunk-RPCDYKBN.js?v=144f26b9:12021:18)
+    at Object.useState (chunk-RPCDYKBN.js?v=144f26b9:12753:24)
+    at useState (chunk-QCHXOAYK.js?v=144f26b9:1066:29)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1027:61
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1473:49
+    at Array.map (<anonymous>)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1009:125
+    at Array.map (<anonymous>)
+chunk-RPCDYKBN.js?v=144f26b9:14032 The above error occurred in the <AgentStatisticsTable> component:
+
+    at AgentStatisticsTable (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/src/components/agent-statistics-table.tsx?t=1756992583423:26:3)
+    at div
+    at div
+    at div
+    at Dashboard (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/src/pages/dashboard.tsx:37:33)
+    at Route (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=144f26b9:323:16)
+    at Switch (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=144f26b9:379:17)
+    at Router
+    at Provider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=144f26b9:38:15)
+    at TooltipProvider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=144f26b9:59:5)
+    at QueryClientProvider (https://30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=144f26b9:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=144f26b9:14032
+chunk-RPCDYKBN.js?v=144f26b9:11678 Uncaught (in promise) Error: Rendered more hooks than during the previous render.
+    at updateWorkInProgressHook (chunk-RPCDYKBN.js?v=144f26b9:11678:21)
+    at updateReducer (chunk-RPCDYKBN.js?v=144f26b9:11727:22)
+    at updateState (chunk-RPCDYKBN.js?v=144f26b9:12021:18)
+    at Object.useState (chunk-RPCDYKBN.js?v=144f26b9:12753:24)
+    at useState (chunk-QCHXOAYK.js?v=144f26b9:1066:29)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1027:61
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1473:49
+    at Array.map (<anonymous>)
+    at /src/components/agent-statistics-table.tsx?t=1756992583423:1009:125
+    at Array.map (<anonymous>)
+agent-statistics-table.tsx:768 🔥 DEBUGGING cache system for outcome: KI Ansprechpartner
+agent-statistics-table.tsx:771 🔍 Cache key: e864fb8f-483a-4668-a8bb-bee266ad78a5-KI Ansprechpartner
+agent-statistics-table.tsx:772 🔍 Cache data: undefined
+agent-statistics-table.tsx:773 🔍 Expanded call details: Array(1)
+agent-statistics-table.tsx:777 🔍 Is expanded? true
+agent-statistics-table.tsx:781 🚀 Triggering loadCallDetails for key: e864fb8f-483a-4668-a8bb-bee266ad78a5-KI Ansprechpartner
+agent-statistics-table.tsx:789 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:888 🔍 callDetailsLoading: true callDetails length: 0

@@ -1,0 +1,85 @@
+chunk-RPCDYKBN.js?v=d2d94ac1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:132 🔥 FRONTEND: UNFILTERED Statistics API called
+dashboard.tsx:144 🔥 FRONTEND: UNFILTERED Statistics received: 0 statistics
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: {"agentIds":["c628a950-83ce-49a3-9e1f-b45e7faecabc"],"projectIds":["b15d6032-3552-4c25-87b6-6cf8a6561883","d89a63d5-53ea-42ee-b1bf-22f0841628bb","5c5c958f-9cac-4c40-9804-ea524ce06a3f","d49856c1-23aa-4d3b-a453-acb27470737b","fb3444f7-c0a3-4611-8997-4d38c869ba8e","78b20675-da58-470e-b4a3-c13cbe6c0ace","5463bba2-fe3d-4bb9-ac13-469d34b6f9ad","05ebc59d-e98c-4a61-ac79-a0a4763b70ae","ea379b7a-0931-44c5-a604-3686ac5ffeef","23db5a74-aed8-450e-8b4b-c5e42d762879","b3f834c1-fa2c-4339-a694-69b3fbef5f1b","38268aeb-8fe1-4a11-ae76-5d6e8f6c39ea","431dfce4-0fed-43b6-9e17-4297b8823b75"],"dateFrom":"2025-09-01","dateTo":"2025-09-10"}
+dashboard.tsx:168 🚀 FRONTEND: TIME FILTERS CHECK: {}
+dashboard.tsx:188 🚀 FRONTEND: FILTERED Statistics received: 8 statistics
+dashboard.tsx:190 🚀 FRONTEND: First statistic outcomes: {
+  "falsche Zielgruppe": 1
+}
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1534 🔍 RIGHT PANEL DEBUG: Agent Ali.Cam has 8 statistics
+agent-statistics-table.tsx:1535 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "falsche Zielgruppe": 11,
+  "Termin": 37,
+  "Nachfassen persönlich": 148,
+  "offen": 140,
+  "zugewiesen": 5,
+  "KI Gatekeeper": 16,
+  "KI Ansprechpartner": 20,
+  "Unternehmen_existiert_nicht": 10,
+  "Nachfassen automatisch": 2
+}
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1534 🔍 RIGHT PANEL DEBUG: Agent Ali.Cam has 8 statistics
+agent-statistics-table.tsx:1535 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "falsche Zielgruppe": 11,
+  "Termin": 37,
+  "Nachfassen persönlich": 148,
+  "offen": 140,
+  "zugewiesen": 5,
+  "KI Gatekeeper": 16,
+  "KI Ansprechpartner": 20,
+  "Unternehmen_existiert_nicht": 10,
+  "Nachfassen automatisch": 2
+}
+agent-statistics-table.tsx:1680 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:717 🎯 LoadCallDetails: agentId=c628a950-83ce-49a3-9e1f-b45e7faecabc, projectId=5463bba2-fe3d-4bb9-ac13-469d34b6f9ad, outcome=KI Gatekeeper
+agent-statistics-table.tsx:729 🗓️ Call Details using date range: 2025-09-01 to 2025-09-10
+agent-statistics-table.tsx:730 🔍 Original filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', timeFrom: undefined, timeTo: undefined}
+agent-statistics-table.tsx:738 🗂️ Using cache key: c628a950-83ce-49a3-9e1f-b45e7faecabc-KI Gatekeeper
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1534 🔍 RIGHT PANEL DEBUG: Agent Ali.Cam has 8 statistics
+agent-statistics-table.tsx:1535 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "falsche Zielgruppe": 11,
+  "Termin": 37,
+  "Nachfassen persönlich": 148,
+  "offen": 140,
+  "zugewiesen": 5,
+  "KI Gatekeeper": 16,
+  "KI Ansprechpartner": 20,
+  "Unternehmen_existiert_nicht": 10,
+  "Nachfassen automatisch": 2
+}
+agent-statistics-table.tsx:1680 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:764 🔍 API returned 13 total call details
+agent-statistics-table.tsx:765 🔍 Looking for outcome: "KI Gatekeeper"
+agent-statistics-table.tsx:766 🔍 Available outcomes: (4) ['falsche Zielgruppe', 'Termin', 'Nachfassen persönlich', 'offen']
+agent-statistics-table.tsx:769 🔍 Sample call details: (3) [{…}, {…}, {…}]
+agent-statistics-table.tsx:775 🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+agent-statistics-table.tsx:780 🎯 FINAL RESULT: Found 0 records matching "KI Gatekeeper"
+agent-statistics-table.tsx:783 ❌ NO MATCH FOUND! Checking for similar outcomes...
+agent-statistics-table.tsx:1288 AgentStatisticsTable filters: {dateFrom: '2025-09-01', dateTo: '2025-09-10', dateFromType: 'string', dateToType: 'string', dateFromLength: 10, …}
+agent-statistics-table.tsx:1301 Date check: {hasNoDateFrom: false, hasNoDateTo: false, shouldShowMessage: false}
+agent-statistics-table.tsx:1534 🔍 RIGHT PANEL DEBUG: Agent Ali.Cam has 8 statistics
+agent-statistics-table.tsx:1535 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "falsche Zielgruppe": 11,
+  "Termin": 37,
+  "Nachfassen persönlich": 148,
+  "offen": 140,
+  "zugewiesen": 5,
+  "KI Gatekeeper": 16,
+  "KI Ansprechpartner": 20,
+  "Unternehmen_existiert_nicht": 10,
+  "Nachfassen automatisch": 2
+}
+agent-statistics-table.tsx:1680 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: false

@@ -1,0 +1,52 @@
+chunk-RPCDYKBN.js?v=d2d94ac1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:665 🎯 LoadCallDetails: agentId=778f5528-f31d-402c-b138-adb0c03379de, projectId=6442f94f-4516-43f3-bfcf-4f23cff5fd49, outcome=KI Ansprechpartner
+agent-statistics-table.tsx:677 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:678 🔍 Original filters: {dateFrom: '2025-09-05', dateTo: undefined, timeFrom: '14:00', timeTo: '15:00'}
+agent-statistics-table.tsx:686 🗂️ Using cache key: 778f5528-f31d-402c-b138-adb0c03379de-KI Ansprechpartner-14:00-15:00
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:712 🔍 API returned 3 total call details
+agent-statistics-table.tsx:713 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx:714 🔍 Available outcomes: (2) ['offen', 'KI Gatekeeper']
+agent-statistics-table.tsx:716 🔍 FINAL: Searching directly for outcome "KI Ansprechpartner"
+agent-statistics-table.tsx:721 🎯 FINAL RESULT: Found 0 records matching "KI Ansprechpartner"
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:665 🎯 LoadCallDetails: agentId=778f5528-f31d-402c-b138-adb0c03379de, projectId=6442f94f-4516-43f3-bfcf-4f23cff5fd49, outcome=KI Gatekeeper
+agent-statistics-table.tsx:677 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:678 🔍 Original filters: {dateFrom: '2025-09-05', dateTo: undefined, timeFrom: '14:00', timeTo: '15:00'}
+agent-statistics-table.tsx:686 🗂️ Using cache key: 778f5528-f31d-402c-b138-adb0c03379de-KI Gatekeeper-14:00-15:00
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:712 🔍 API returned 3 total call details
+agent-statistics-table.tsx:713 🔍 Looking for outcome: "KI Gatekeeper"
+agent-statistics-table.tsx:714 🔍 Available outcomes: (2) ['offen', 'KI Gatekeeper']
+agent-statistics-table.tsx:716 🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+agent-statistics-table.tsx:721 🎯 FINAL RESULT: Found 1 records matching "KI Gatekeeper"
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 1 records for "KI Gatekeeper", loading: false
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1608 ✅ Cache system data: 1 records for "KI Gatekeeper", loading: false

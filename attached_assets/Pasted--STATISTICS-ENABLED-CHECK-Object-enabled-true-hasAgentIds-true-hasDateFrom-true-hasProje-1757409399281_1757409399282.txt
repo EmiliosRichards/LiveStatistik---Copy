@@ -1,0 +1,45 @@
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+📊 STATISTICS QUERY EXECUTING! Filters: 
+Object {agentIds: Array(1), projectIds: Array(1), dateFrom: "2025-09-05", timeFrom: "14:00"}
+🌐 MAKING API CALL: POST /api/statistics with body: 
+Object {agentIds: Array(1), projectIds: Array(1), dateFrom: "2025-09-05", timeFrom: "14:00"}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+📊 STATISTICS QUERY EXECUTING! Filters: 
+Object {agentIds: Array(1), projectIds: Array(1), dateFrom: "2025-09-05", timeFrom: "14:00", timeTo: "15:00"}
+🌐 MAKING API CALL: POST /api/statistics with body: 
+Object {agentIds: Array(1), projectIds: Array(1), dateFrom: "2025-09-05", timeFrom: "14:00", timeTo: "15:00"}
+🌐 API RESPONSE DATA: 1 statistics received
+🌐 API RESPONSE DATA: 1 statistics received
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+dateFrom: "2025-09-05"
+dateFromLength: 10
+dateFromType: "string"
+dateTo: undefined
+dateToLength: undefined
+dateToType: "undefined"
+[[Prototype]]: Object
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}

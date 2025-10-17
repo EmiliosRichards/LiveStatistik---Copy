@@ -1,0 +1,176 @@
+Teamleiter Life-Statistik 
+Ziel dieses Projekts ist es, eine Live-Statistik-Plattform zu entwickeln, die es unseren 
+Teamleitern ermöglicht, den aktuellen Verlauf eines Projekts und die Leistung der 
+einzelnen Agenten in Echtzeit zu verfolgen. Diese Übersicht soll einfach zugänglich, 
+f
+ ilterbar und interaktiv sein. 
+Die wichtigsten Anforderungen im Überblick: 
+Agentenübersicht mit Dropdown-Auswahl 
+Jeder Agent muss in der Statistik sichtbar sein. Über ein Dropdown-Menü sollen gezielt 
+einzelne Agenten ausgewählt werden können, sodass Teamleiter „ihre“ Agenten live am 
+Monitor überwachen können. 
+Flexible Zeit- und Datumsfilter 
+Die Statistik muss zu jedem beliebigen Zeitpunkt abgerufen und nach Datum, Uhrzeit 
+(Stunden & Minuten) gefiltert werden können. Ziel ist eine präzise Auswertung auch 
+innerhalb eines einzelnen Tages. 
+Detailansicht bei Klick auf Werte 
+Bei Klick auf z. B. die Kategorie „Abgeschlossen“ soll sich die Ansicht erweitern und 
+Details zu den dazugehörigen Kontakten anzeigen. 
+Diese Kontakte müssen in „Erfolgreich“ und „Nicht erfolgreich“ unterteilt werden und es 
+soll ein direkter Zugang zu den zugehörigen Gesprächsaufzeichnungen möglich sein. 
+Anrufdauer-Filter 
+Es muss möglich sein, die Gespräche anhand ihrer Dauer zu filtern: 
+0–30 Sekunden 
+30–60 Sekunden 
+Über 60 Sekunden 
+Live-Ticker / Echtzeit-Statusanzeige 
+Eine der wichtigsten Funktionen ist ein Live-Ticker, der anzeigt, was jeder Agent aktuell 
+macht: 
+Im Gespräch 
+In der Nachbearbeitungszeit 
+In der VorbereitungszeitWartet auf AnrufstartDiese Live-Übersicht ist essenziell, um eine 
+direkte und effektive Steuerung der Projekte im Tagesverlauf zu ermöglichen. 
+1 
+1. Agenten Anrufen Statistik: 
+Damit wir mit dem Projekt starten können, möchten wir an dieser Stelle eine 
+kurze Einführung geben, wie die geplante Statistik aussehen soll und auf welche 
+Werte wir uns im Detail beziehen. Ziel ist es, die Anforderungen praxisnah zu 
+beschreiben, damit die Entwicklung effizient und zielgerichtet erfolgen kann. 
+Grundlage: Bestehende Agentenstatistik in Dialfire 
+Die Agentenstatistik, auf der wir unsere Anforderungen aufbauen, findet sich in 
+Dialfire unter dem Reiter „Statistiken“. 
+Wählt man dort eine aktive Kampagne aus, erscheint ein weiterer Reiter mit der 
+Bezeichnung Agenten Monatlicher Bericht, mit der entsprechenden 
+Agentenstatistik. 
+Abbildung 1 – Übersicht der bestehenden Agentenstatistik in Dialfire 
+Abbildung 1 
+In Abbildung 1 ist die Standard-Ansicht der Agentenstatistik dargestellt, wie sie 
+aktuell in Dialfire bereitgestellt wird. Diese Ansicht dient als Grundlage für unsere 
+geplante Weiterentwicklung. 
+Die farblich markierten Bereiche in der Abbildung zeigen die wichtigsten 
+Komponenten, die wir im weiteren Verlauf einzeln analysieren und funktional 
+erweitern möchten: 
+2 
+Oranges Rechteck – Datumsanzeige 
+Hier wird das Datum angezeigt, zu dem die Statistik abgerufen wird. Diese 
+Funktion soll erweitert werden, sodass ein flexibler Zeitraumfilter (z. B. Datum + 
+Uhrzeit) möglich ist. 
+Grünes Rechteck – Agentenübersicht 
+In diesem Bereich sind alle Agenten aufgelistet, die zum gewählten Zeitpunkt in 
+der jeweiligen Kampagne aktiv waren. Diese Liste muss filterbar und selektierbar 
+sein, z. B. über ein Dropdown-Menü, um gezielt einzelne Agenten zu überwachen. 
+Blaues Rechteck – Relevante Kennzahlen 
+Hier sehen wir alle Leistungswerte, die für uns relevant sind. Diese Daten sind 
+bereits bekannt, da sie auch für die täglichen Reports verwendet werden. Sie 
+sollen im neuen System interaktiv klickbar und filterbar sein (z. B. 
+Gesprächsdauer, Erfolgsquote etc.). 
+Pinkes Rechteck – Einzelwerte pro Agent 
+Dieser Bereich zeigt die Detailwerte aus dem blauen Rechteck, jedoch 
+aufgeschlüsselt pro Agent. Diese Daten sind entscheidend für die 
+Einzelbewertung und müssen ebenfalls filterbar und klickbar gestaltet sein. 
+Nächster Schritt: Detaillierte Betrachtung der Funktionen 
+Im weiteren Verlauf der Dokumentation werden wir jede dieser Komponenten 
+(Rechtecke) einzeln betrachten und die spezifischen funktionalen Anforderungen 
+definieren. Ziel ist es, die bestehenden Informationen so zu erweitern, dass sie: 
+Live abrufbar 
+interaktiv filterbar 
+individuell auswertbar 
+und detailreich nachvollziehbar sind. 
+Diese Aufschlüsselung bildet die Grundlage für die Umsetzung in der 
+Programmierung. 
+3 
+2. Funktionale Anforderung – Oranges Feld (Datum & Agentenfilter) 
+Das orange markierte Feld in Abbildung 1 stellt einen der wichtigsten 
+Bestandteile der geplanten Statistik dar. Es bildet die Basis für alle weiteren 
+Filterfunktionen und Auswertungen und muss daher folgende Anforderungen 
+erfüllen: 
+Flexible Datums- und Zeitraumauswahl 
+• Es muss möglich sein, die Statistik nach jedem beliebigen Datum zu filtern. 
+• Zusätzlich sollen auch Filter für ganze Zeiträume verfügbar sein: 
+o Einzelne Tage 
+o Wochen 
+o Monate 
+o Benutzerdefinierte Zeiträume (z. B. vom 01.07. bis 15.07.) 
+Agentenfilter über Checkbox-System 
+• Alle Agenten müssen in einer übersichtlichen Checkbox-Liste angezeigt 
+werden. 
+• Der Teamleiter soll einzeln auswählen können, welche Agenten er in der Ansicht 
+sehen möchte. 
+• Die Auswahl soll mehrere Agenten gleichzeitig ermöglichen (Multi-Select). 
+Automatische Projektzuordnung bei Agentenauswahl 
+• Sobald ein Agent ausgewählt wird, muss automatisch auch dessen aktuelles 
+Projekt angezeigt werden. 
+• Die Darstellung soll klar strukturiert sein, zum Beispiel wie folgt: 
+Projekt 1 
+Agentname 1    Projektdaten    Projektdaten    Projektdaten 
+Projekt 2 
+Agentname 2    Projektdaten    Projektdaten    Projektdaten 
+Projekt 3 
+Agentname 3    Projektdaten    Projektdaten    Projektdaten 
+• Agenten sollen dabei immer projektweise gruppiert dargestellt werden. 
+• Die Projektbezeichnung (z. B. „Projekt 1“) soll deutlich sichtbar sein und als 
+Gruppierungsüberschrift dienen. 
+Hinweis: 
+Diese Funktionalität ist Voraussetzung für alle weiteren Filter- und Detailansichten. 
+Sie bildet die Grundlage für eine gezielte und projektbezogene Auswertung der 
+Agentenaktivitäten durch die Teamleiter. Die grüne Box wurde hier einbezogen. 
+4 
+3. Funktionale Anforderung – Blaues Feld (Leistungswerte je Agent) 
+Das blaue Feld in der bestehenden Dialfire-Ansicht enthält die wichtigsten 
+Agenten-Kennzahlen. Diese Werte bilden die Grundlage für die tägliche 
+Bewertung und Steuerung der Agentenleistung. In der neuen Version sollen diese 
+Leistungswerte interaktiv und tiefer analysierbar sein. 
+1. Relevante Kategorien 
+Folgende Kategorien sollen angezeigt und filterbar sein: 
+• Anzahl (Anwahlen) 
+• Abgeschlossen 
+• Erfolgreich 
+• Wartezeit 
+• Gesprächszeit 
+• Nachbearbeitungszeit 
+• Vorbereitungszeit 
+• Erfolge pro Stunde 
+• Arbeitszeit (h) 
+2. Erweiterbare Detailansicht pro Wert 
+Jede Kennzahl soll durch ein „Plus“-Symbol oder einen Klick auf die Zelle 
+erweiterbar sein. Dabei sollen kontextbezogene Zusatzdaten angezeigt werden, 
+z. B.: 
+Beispiel: Kategorie „Anzahl (Anwahlen)“ 
+Auflistung aller angewählten Kontakte des Tages 
+Kommentar zum Gespräch (sofern vorhanden) 
+Link zur Gesprächsaufzeichnung 
+Zeitpunkt der Anwahl 
+5 
+Beispiel: Kategorie „Abgeschlossen“ 
+Aufschlüsselung nach: 
+Erfolgreich (z. B. Termin vereinbart) 
+Nicht erfolgreich (z. B. Kein Interesse, falscher Ansprechpartner, etc.) 
+Direkte Anzeige folgender Daten: 
+Gesprächsaufzeichnung  
+Kontaktinformationen des Kunden 
+Abschlusskommentar / Notizen des Agenten 
+Projektzugehörigkeit 
+Wichtig: 
+Jeder Abschluss-Eintrag soll anklickbar sein, sodass ein vollständiger Datensatz 
+erscheint, inklusive: 
+• Kontaktname und -nummer 
+• Projektname 
+• Zeitpunkt des Gesprächs 
+• Gesprächsdauer 
+• Gesprächsaufzeichnung 
+• Interne Notizen / Kommentare 
+3. Anforderungen an die Usability 
+Die Detailansicht soll sich intuitiv öffnen lassen (z. B. per Dropdown, Modal oder 
+ausklappbare Zeile). 
+Es muss möglich sein, die Detailansicht auch wieder zu schließen, ohne die 
+Ansicht zu verlieren. 
+6 
+Filtermöglichkeiten innerhalb der Detailansicht sollten möglich sein (z. B. nur 
+erfolgreiche Abschlüsse anzeigen, nur Kontakte mit Aufzeichnung anzeigen etc.). 
+Diese Funktionalität ist entscheidend, um die Agentenleistung nicht nur 
+quantitativ, sondern auch qualitativ nachvollziehen und beurteilen zu können. 
+Fazit: 
+Das pinke Feld ist die logische Darstellungsebene der bereits vorhandenen 
+Daten. Eine saubere Datenstrukturierung (Agent → Projekt → Kennzahlen) sorgt, 
+dass sich diese Ansicht automatisch und übersichtlich ergibt. 
+7 

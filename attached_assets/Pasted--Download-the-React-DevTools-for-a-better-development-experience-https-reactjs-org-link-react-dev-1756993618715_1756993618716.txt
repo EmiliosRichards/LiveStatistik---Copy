@@ -1,0 +1,241 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 🔄 TRIGGERING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+ 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+ 🗓️ Using date range: 2025-09-04 to 2025-09-04
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+ 🔍 callDetailsLoading: false callDetails length: 0
+ ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+ 🔍 callDetailsLoading: true callDetails length: 0
+ 🔍 API returned 235 total call details
+ 🔍 Looking for outcome: "KI Ansprechpartner"
+ 🔍 Available outcomes: Array(6)
+ 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+ 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:50 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:57 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:68 🔍 API returned 235 total call details
+agent-statistics-table.tsx?t=1756993506758:69 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:70 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx?t=1756993506758:80 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:1049 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:50 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:57 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:68 🔍 API returned 235 total call details
+agent-statistics-table.tsx?t=1756993506758:69 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:70 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx?t=1756993506758:80 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:1049 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:50 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:57 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:68 🔍 API returned 235 total call details
+agent-statistics-table.tsx?t=1756993506758:69 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:70 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx?t=1756993506758:80 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:1049 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:50 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+agent-statistics-table.tsx?t=1756993506758:57 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:1054 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx?t=1756993506758:1313 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx?t=1756993506758:68 🔍 API returned 235 total call details
+agent-statistics-table.tsx?t=1756993506758:69 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx?t=1756993506758:70 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx?t=1756993506758:80 🔍 Mapped "KI Ansprechpartner" to backend "KI_Ansprechpartner"
+agent-statistics-table.tsx:795 🔄 RETRYING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Ansprechpartner
+agent-statistics-table.tsx:56 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Ansprechpartner
+agent-statistics-table.tsx:67 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Ansprechpartner", loading: true
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:83 🔍 API returned 235 total call details
+agent-statistics-table.tsx:84 🔍 Looking for outcome: "KI Ansprechpartner"
+agent-statistics-table.tsx:85 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx:87 🔍 Mapped "KI Ansprechpartner" - searching in API response outcomes
+agent-statistics-table.tsx:92 🎯 Found 7 records matching outcome "KI Ansprechpartner"
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:792 🔄 TRIGGERING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-falsche Zielgruppe
+agent-statistics-table.tsx:56 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=falsche Zielgruppe
+agent-statistics-table.tsx:67 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "falsche Zielgruppe", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "falsche Zielgruppe", loading: true
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:83 🔍 API returned 235 total call details
+agent-statistics-table.tsx:84 🔍 Looking for outcome: "falsche Zielgruppe"
+agent-statistics-table.tsx:85 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx:87 🔍 Mapped "falsche Zielgruppe" - searching in API response outcomes
+agent-statistics-table.tsx:92 🎯 Found 2 records matching outcome "falsche Zielgruppe"
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 2 records for "falsche Zielgruppe", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 2
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 2 records for "falsche Zielgruppe", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 2
+agent-statistics-table.tsx:792 🔄 TRIGGERING loadCallDetails for: 3e175ed3-7770-4006-8764-2a8f29014641-KI Gatekeeper
+agent-statistics-table.tsx:56 🎯 LoadCallDetails: agentId=3e175ed3-7770-4006-8764-2a8f29014641, projectId=7ec99994-f787-4049-a0a4-73cb5abff4ee, outcome=KI Gatekeeper
+agent-statistics-table.tsx:67 🗓️ Using date range: 2025-09-04 to 2025-09-04
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 0
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 2 records for "falsche Zielgruppe", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 2
+agent-statistics-table.tsx:802 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: true callDetails length: 0
+agent-statistics-table.tsx:83 🔍 API returned 235 total call details
+agent-statistics-table.tsx:84 🔍 Looking for outcome: "KI Gatekeeper"
+agent-statistics-table.tsx:85 🔍 Available outcomes: Array(6)
+agent-statistics-table.tsx:87 🔍 Mapped "KI Gatekeeper" - searching in API response outcomes
+agent-statistics-table.tsx:92 🎯 Found 1 records matching outcome "KI Gatekeeper"
+agent-statistics-table.tsx:802 ✅ Cache system data: 7 records for "KI Ansprechpartner", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 7
+agent-statistics-table.tsx:802 ✅ Cache system data: 2 records for "falsche Zielgruppe", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 2
+agent-statistics-table.tsx:802 ✅ Cache system data: 1 records for "KI Gatekeeper", loading: false
+agent-statistics-table.tsx:901 🔍 callDetailsLoading: false callDetails length: 1

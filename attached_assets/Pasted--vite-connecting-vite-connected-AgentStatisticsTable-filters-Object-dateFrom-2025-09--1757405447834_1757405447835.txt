@@ -1,0 +1,58 @@
+[vite] connecting...
+[vite] connected.
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+🎯 getCallDetailsForKey called for: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Cache key with time filters: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Current filters in getCallDetailsForKey: 
+Object {timeFrom: undefined, timeTo: undefined}
+🔄 Cache miss - calling loadCallDetails with filters: 
+Object {agentIds: Array(1), projectIds: Array(1), dateFrom: "2025-09-05"}
+✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+🎯 LoadCallDetails: agentId=3b406844-502f-4e37-8931-941d60fd4115, projectId=d801b566-fd64-4888-8387-7b667d405004, outcome=KI Gatekeeper
+🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+🔍 Original filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, timeFrom: undefined, timeTo: undefined}
+🗂️ Using cache key: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+🎯 getCallDetailsForKey called for: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Cache key with time filters: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Current filters in getCallDetailsForKey: 
+Object {timeFrom: undefined, timeTo: undefined}
+✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+🔍 API returned 172 total call details
+🔍 Looking for outcome: "KI Gatekeeper"
+🔍 Available outcomes: 
+(5) ["offen", "Nachfassen automatisch", "Nachfassen persönlich", "KI Ansprechpartner", "KI Gatekeeper"]
+🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+🎯 FINAL RESULT: Found 3 records matching "KI Gatekeeper"
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+🎯 getCallDetailsForKey called for: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Cache key with time filters: 3b406844-502f-4e37-8931-941d60fd4115-KI Gatekeeper
+🎯 Current filters in getCallDetailsForKey: 
+Object {timeFrom: undefined, timeTo: undefined}
+✅ Cache system data: 3 records for "KI Gatekeeper", loading: false
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}

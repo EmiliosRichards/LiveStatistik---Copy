@@ -1,0 +1,40 @@
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+🔍 STATISTICS ENABLED CHECK: 
+Object {enabled: true, hasAgentIds: true, hasDateFrom: true, hasProjectIds: true, agentIdsCount: 1, …}
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+🎯 LoadCallDetails: agentId=e6383340-d2a0-471e-99bc-319e154681a8, projectId=97787cb1-dc1b-42a8-a9cc-15926aaba494, outcome=KI Gatekeeper
+🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+🔍 Original filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, timeFrom: "14:00", timeTo: "15:00"}
+🗂️ Using cache key: e6383340-d2a0-471e-99bc-319e154681a8-KI Gatekeeper-14:00-15:00
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+🔍 API returned 3 total call details
+🔍 Looking for outcome: "KI Gatekeeper"
+🔍 Available outcomes: 
+(2) ["offen", "KI Gatekeeper"]
+🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+🎯 FINAL RESULT: Found 1 records matching "KI Gatekeeper"
+AgentStatisticsTable filters: 
+Object {dateFrom: "2025-09-05", dateTo: undefined, dateFromType: "string", dateToType: undefined, dateFromLength: 10, …}
+Date check: 
+Object {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+✅ Cache system data: 1 records for "KI Gatekeeper", loading: false

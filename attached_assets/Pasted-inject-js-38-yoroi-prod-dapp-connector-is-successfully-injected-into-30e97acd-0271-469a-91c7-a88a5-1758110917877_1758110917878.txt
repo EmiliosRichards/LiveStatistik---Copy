@@ -1,0 +1,124 @@
+inject.js:38 [yoroi/prod] dapp-connector is successfully injected into 30e97acd-0271-469a-91c7-a88a5bef9dcd-00-3203b7atsxxpg.picard.replit.dev
+chunk-RPCDYKBN.js?v=271d27bb:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:198 🚀 FRONTEND: FILTERED Statistics API called with filters: {"agentIds":["b414eca5-8cb1-4de2-af76-66eecb3fdb92"],"projectIds":["8584a668-b5a8-40be-8b62-fb9071a34f28"],"dateFrom":"2025-09-05"}
+dashboard.tsx:199 🚀 FRONTEND: TIME FILTERS CHECK: {}
+dashboard.tsx:221 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:223 🚀 FRONTEND: First statistic outcomes: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+dashboard.tsx:242 🔍 Notification check: today=2025-09-17, isTodayIncluded=true, resultLength=1, isInitialLoad=true
+dashboard.tsx:249 🔇 Skipping notifications on initial load after filter change
+agent-statistics-table.tsx:2513 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2514 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2513 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2514 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2729 ✅ Cache system data: 0 records for "$none", loading: true
+agent-statistics-table.tsx:1330 🎯 LoadCallDetails: agentId=b414eca5-8cb1-4de2-af76-66eecb3fdb92, projectIds=[8584a668-b5a8-40be-8b62-fb9071a34f28], outcome=$none
+agent-statistics-table.tsx:1342 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:1343 🔍 Original filters: Object
+agent-statistics-table.tsx:1348 🗂️ Using cache key: b414eca5-8cb1-4de2-af76-66eecb3fdb92-$none-2025-09-05
+agent-statistics-table.tsx:1376 🔄 Fetching call details from 1 projects for agent
+agent-statistics-table.tsx:2513 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2514 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2729 ✅ Cache system data: 0 records for "$none", loading: true
+dashboard.tsx:198 🚀 FRONTEND: FILTERED Statistics API called with filters: {"agentIds":["b414eca5-8cb1-4de2-af76-66eecb3fdb92"],"projectIds":["8584a668-b5a8-40be-8b62-fb9071a34f28"],"dateFrom":"2025-09-05"}
+dashboard.tsx:199 🚀 FRONTEND: TIME FILTERS CHECK: {}
+agent-statistics-table.tsx:1385 🔍 API returned 148 total call details
+agent-statistics-table.tsx:1386 🔍 Looking for outcome: "$none"
+agent-statistics-table.tsx:1387 🔍 Available outcomes: Array(8)
+agent-statistics-table.tsx:1391 🔍 Sample call details: Array(3)
+agent-statistics-table.tsx:1397 🔍 FINAL: Searching directly for outcome "$none"
+agent-statistics-table.tsx:1402 🎯 FINAL RESULT: Found 12 records matching "$none"
+agent-statistics-table.tsx:1462 📦 Storing cache with metadata: Object
+agent-statistics-table.tsx:1463 📦 Cache key: b414eca5-8cb1-4de2-af76-66eecb3fdb92-$none-2025-09-05
+agent-statistics-table.tsx:1464 📦 Stored 12 call details with 12 IDs
+agent-statistics-table.tsx:2513 🔍 RIGHT PANEL DEBUG: Agent Efsane.Karaman has 1 statistics
+agent-statistics-table.tsx:2514 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "Termin": 8,
+  "$follow_up_auto": 94,
+  "falsche_Zielgruppe": 7,
+  "KI_Gatekeeper": 6,
+  "KI_Ansprechpartner": 17,
+  "$none": 12,
+  "$follow_up_personal": 2,
+  "Messe": 2
+}
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Termin" (8) -> positive
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_auto" (94) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "falsche_Zielgruppe" (7) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Gatekeeper" (6) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "KI_Ansprechpartner" (17) -> negative
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$none" (12) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "$follow_up_personal" (2) -> offen
+agent-statistics-table.tsx:2524 📊 TABLE CLASSIFY: "Messe" (2) -> positive
+agent-statistics-table.tsx:2729 ✅ Cache system data: 12 records for "$none", loading: false
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)
+agent-statistics-table.tsx:85 🎛️ RENDER: TranscriptionButton for callId: Platzhalter... currentState: idle allStatesKeys: Array(0)

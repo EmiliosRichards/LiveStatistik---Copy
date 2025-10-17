@@ -1,0 +1,50 @@
+chunk-RPCDYKBN.js?v=d2d94ac1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:132 🔥 FRONTEND: UNFILTERED Statistics API called
+dashboard.tsx:144 🔥 FRONTEND: UNFILTERED Statistics received: 0 statistics
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: Object
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: Object
+agent-statistics-table.tsx:1611 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:665 🎯 LoadCallDetails: agentId=5b1f089a-cf3f-4c4a-8b2c-0a01961e687e, projectId=eaa589f2-d1fd-4571-97fc-195930918de4, outcome=KI Gatekeeper
+agent-statistics-table.tsx:677 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:678 🔍 Original filters: Object
+agent-statistics-table.tsx:686 🗂️ Using cache key: 5b1f089a-cf3f-4c4a-8b2c-0a01961e687e-KI Gatekeeper-14:00-15:00
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: Object
+agent-statistics-table.tsx:1611 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:712 🔍 API returned 3 total call details
+agent-statistics-table.tsx:713 🔍 Looking for outcome: "KI Gatekeeper"
+agent-statistics-table.tsx:714 🔍 Available outcomes: Array(2)
+agent-statistics-table.tsx:716 🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+agent-statistics-table.tsx:721 🎯 FINAL RESULT: Found 1 records matching "KI Gatekeeper"
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: Object
+agent-statistics-table.tsx:1611 ✅ Cache system data: 1 records for "KI Gatekeeper", loading: false

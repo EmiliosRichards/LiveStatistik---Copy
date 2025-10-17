@@ -1,0 +1,90 @@
+chunk-RPCDYKBN.js?v=d2d94ac1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard.tsx:132 🔥 FRONTEND: UNFILTERED Statistics API called
+dashboard.tsx:144 🔥 FRONTEND: UNFILTERED Statistics received: 0 statistics
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:167 🚀 FRONTEND: FILTERED Statistics API called with filters: Object
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+dashboard.tsx:179 🚀 FRONTEND: FILTERED Statistics received: 1 statistics
+dashboard.tsx:181 🚀 FRONTEND: First statistic outcomes: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: Object
+agent-statistics-table.tsx:1232 Date check: Object
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1611 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:665 🎯 LoadCallDetails: agentId=ed614eb3-40f9-454c-8c6b-1d5d7023c137, projectId=1f3135eb-d9ae-4d87-a116-5ab2e1ef2ed1, outcome=KI Gatekeeper
+agent-statistics-table.tsx:677 🗓️ Call Details using date range: 2025-09-05 to 2025-09-05
+agent-statistics-table.tsx:678 🔍 Original filters: {dateFrom: '2025-09-05', dateTo: undefined, timeFrom: '13:00', timeTo: '14:00'}
+agent-statistics-table.tsx:686 🗂️ Using cache key: ed614eb3-40f9-454c-8c6b-1d5d7023c137-KI Gatekeeper-13:00-14:00
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1611 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: true
+agent-statistics-table.tsx:712 🔍 API returned 0 total call details
+agent-statistics-table.tsx:713 🔍 Looking for outcome: "KI Gatekeeper"
+agent-statistics-table.tsx:714 🔍 Available outcomes: []
+agent-statistics-table.tsx:716 🔍 FINAL: Searching directly for outcome "KI Gatekeeper"
+agent-statistics-table.tsx:721 🎯 FINAL RESULT: Found 0 records matching "KI Gatekeeper"
+agent-statistics-table.tsx:1219 AgentStatisticsTable filters: {dateFrom: '2025-09-05', dateTo: undefined, dateFromType: 'string', dateToType: 'undefined', dateFromLength: 10, …}
+agent-statistics-table.tsx:1232 Date check: {hasNoDateFrom: false, hasNoDateTo: true, shouldShowMessage: false}
+agent-statistics-table.tsx:1465 🔍 RIGHT PANEL DEBUG: Agent Ihsan.Simseker has 1 statistics
+agent-statistics-table.tsx:1466 🔍 RIGHT PANEL DEBUG: allOutcomes for agent: {
+  "offen": 153,
+  "Nachfassen automatisch": 5,
+  "Nachfassen persönlich": 6,
+  "KI Ansprechpartner": 5,
+  "KI Gatekeeper": 3
+}
+agent-statistics-table.tsx:1611 ✅ Cache system data: 0 records for "KI Gatekeeper", loading: false
