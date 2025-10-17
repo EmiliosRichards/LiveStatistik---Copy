@@ -103,7 +103,7 @@ export default function Page() {
             <a className="flex items-center justify-between rounded px-3 py-2 hover:bg-neutral-100" href="/">
               <span>Overview</span>
             </a>
-            <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="/dashboard">Dashboard</a>
+            <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="/dashboard/search">Dashboard</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Projects</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Agents</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Settings</a>
