@@ -3,6 +3,7 @@ import { useLocation } from 'wouter'
 import { Calendar, Users, Briefcase, ChevronDown, Search } from 'lucide-react'
 import { format } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 
 interface Agent {
   id: string
@@ -18,6 +19,7 @@ interface Project {
 
 export default function SearchPage() {
   const [, setLocation] = useLocation()
+  const { i18n } = useTranslation()
   const [searchType, setSearchType] = useState<'agent' | 'project'>('agent')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -115,9 +117,21 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-slate-900">Agent & Campaign Statistics</h1>
           <div className="flex items-center gap-4">
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-de">DE</button>
+            <button 
+              onClick={() => i18n.changeLanguage('de')}
+              className={`text-sm transition-colors ${i18n.language === 'de' ? 'text-blue-600 font-semibold' : 'text-slate-600 hover:text-slate-900'}`}
+              data-testid="button-language-de"
+            >
+              DE
+            </button>
             <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-en">EN</button>
+            <button 
+              onClick={() => i18n.changeLanguage('en')}
+              className={`text-sm transition-colors ${i18n.language === 'en' ? 'text-blue-600 font-semibold' : 'text-slate-600 hover:text-slate-900'}`}
+              data-testid="button-language-en"
+            >
+              EN
+            </button>
           </div>
         </div>
       </header>

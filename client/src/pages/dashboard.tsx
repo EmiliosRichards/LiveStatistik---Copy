@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'wouter'
 import { useQuery } from '@tanstack/react-query'
 import { Phone, TrendingUp, CheckCircle, Clock, ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface Statistics {
   id: string
@@ -39,6 +40,7 @@ interface KPIData {
 
 export default function Dashboard() {
   const [location, setLocation] = useLocation()
+  const { i18n } = useTranslation()
   const [kpiData, setKpiData] = useState<KPIData | null>(null)
   const [statistics, setStatistics] = useState<Statistics[]>([])
   const [agents, setAgents] = useState<Record<string, string>>({})
@@ -194,9 +196,21 @@ export default function Dashboard() {
             <h1 className="text-2xl font-semibold text-slate-900">Statistics Results</h1>
           </div>
           <div className="flex items-center gap-4">
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-de">DE</button>
+            <button 
+              onClick={() => i18n.changeLanguage('de')}
+              className={`text-sm transition-colors ${i18n.language === 'de' ? 'text-blue-600 font-semibold' : 'text-slate-600 hover:text-slate-900'}`}
+              data-testid="button-language-de"
+            >
+              DE
+            </button>
             <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-en">EN</button>
+            <button 
+              onClick={() => i18n.changeLanguage('en')}
+              className={`text-sm transition-colors ${i18n.language === 'en' ? 'text-blue-600 font-semibold' : 'text-slate-600 hover:text-slate-900'}`}
+              data-testid="button-language-en"
+            >
+              EN
+            </button>
           </div>
         </div>
       </header>
