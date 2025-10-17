@@ -1254,11 +1254,13 @@ export default function Dashboard() {
       </div>
       
       {/* Footer */}
-      <AppFooter 
-        lastUpdateTime={lastUpdateTime}
-        refetchIntervalMs={refetchIntervalMs}
-        isEnabled={canAutoRefresh}
-      />
+      {!isEmbedded && (
+        <AppFooter 
+          lastUpdateTime={lastUpdateTime}
+          refetchIntervalMs={refetchIntervalMs}
+          isEnabled={canAutoRefresh}
+        />
+      )}
       
       {/* Database Warning */}
       <DatabaseWarning 

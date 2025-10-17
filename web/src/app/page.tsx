@@ -100,10 +100,10 @@ export default function Page() {
         <aside className="w-64 shrink-0 hidden lg:block border-r border-black/10 bg-white">
           <div className="px-4 py-3 font-medium text-neutral-700">Navigation</div>
           <nav className="px-2 pb-4 space-y-1 text-sm">
-            <a className="flex items-center justify-between rounded px-3 py-2 hover:bg-neutral-100" href="#">
+            <a className="flex items-center justify-between rounded px-3 py-2 hover:bg-neutral-100" href="/">
               <span>Overview</span>
-              <span className="text-[10px] rounded bg-neutral-900 text-white px-1.5 py-0.5">New</span>
             </a>
+            <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="/dashboard">Dashboard</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Projects</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Agents</a>
             <a className="block rounded px-3 py-2 hover:bg-neutral-100" href="#">Settings</a>
