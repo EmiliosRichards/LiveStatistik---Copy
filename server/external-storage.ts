@@ -262,6 +262,96 @@ export class ExternalStorage implements IStorage {
   }
 
 
+  // Convert optimized external data (multiple agents/projects) to statistics
+  private convertOptimizedDataToStatistics(
+    externalData: AgentData[],
+    filter: StatisticsFilter
+  ): AgentStatistics[] {
+    const statsMap = new Map<string, AgentStatistics>();
+    
+    // Process all records and group by agent + project + date
+    externalData.forEach(record => {
+      // Find agent and project IDs from names
+      const agent = Array.from(this.agents.values()).find(a => a.name === record.transactions_user_login);
+      const project = Array.from(this.projects.values()).find(p => p.name === record.contacts_campaign_id);
+      
+      if (!agent || !project) {
+        return; // Skip if we can't find the agent or project
+      }
+      
+      const dateKey = `${agent.id}-${project.id}-${record.transactions_fired_date}`;
+      
+      if (!statsMap.has(dateKey)) {
+        statsMap.set(dateKey, {
+          id: randomUUID(),
+          agentId: agent.id,
+          projectId: project.id,
+          date: new Date(record.transactions_fired_date),
+          anzahl: 0,
+          abgeschlossen: 0,
+          erfolgreich: 0,
+          gespraechszeit: 0,
+          wartezeit: 0,
+          nachbearbeitungszeit: 0,
+          vorbereitungszeit: 0,
+          arbeitszeit: 0,
+          erfolgProStunde: 0,
+          outcomes: {},
+          createdAt: new Date(),
+          updatedAt: null,
+        });
+      }
+      
+      const stat = statsMap.get(dateKey)!;
+      stat.anzahl += 1;
+      
+      // Add time metrics
+      const durationHours = record.connections_duration / 3600;
+      stat.gespraechszeit += durationHours;
+      
+      if (record.transactions_wait_time_sec) {
+        stat.wartezeit += record.transactions_wait_time_sec / 3600;
+      }
+      if (record.transactions_edit_time_sec) {
+        stat.nachbearbeitungszeit += record.transactions_edit_time_sec / 3600;
+      }
+      if (record.transactions_pause_time_sec) {
+        stat.vorbereitungszeit += record.transactions_pause_time_sec / 3600;
+      }
+      
+      const recordWorkTimeHours = 
+        (record.transactions_wait_time_sec || 0) / 3600 + 
+        durationHours + 
+        (record.transactions_edit_time_sec || 0) / 3600 + 
+        (record.transactions_pause_time_sec || 0) / 3600;
+      stat.arbeitszeit += recordWorkTimeHours;
+      
+      // Count outcomes
+      const status = record.transactions_status || '';
+      const detail = record.transactions_status_detail || '';
+      
+      if (!stat.outcomes) stat.outcomes = {};
+      
+      if (status === 'success') {
+        stat.erfolgreich += 1;
+        stat.abgeschlossen += 1;
+        const outcomeKey = detail || 'Unknown';
+        stat.outcomes[outcomeKey] = (stat.outcomes[outcomeKey] || 0) + 1;
+      } else if (status === 'declined') {
+        stat.abgeschlossen += 1;
+        const outcomeKey = detail || 'Unknown';
+        stat.outcomes[outcomeKey] = (stat.outcomes[outcomeKey] || 0) + 1;
+      } else if (status === 'open') {
+        const outcomeKey = detail || 'Unknown';
+        stat.outcomes[outcomeKey] = (stat.outcomes[outcomeKey] || 0) + 1;
+      }
+      
+      stat.erfolgProStunde = stat.erfolgreich / 7.5;
+    });
+    
+    return Array.from(statsMap.values());
+  }
+
   // Convert external agent data to internal statistics format
   private convertExternalDataToStatistics(
     externalData: AgentData[], 
@@ -598,7 +688,7 @@ export class ExternalStorage implements IStorage {
         console.log(`🚀 OPTIMIZED: Received ${externalData.length} pre-filtered records from single DB query`);
         
         // Convert external data to statistics format efficiently
-        const allStats = await this.convertExternalDataToStatistics(externalData, filter);
+        const allStats = this.convertOptimizedDataToStatistics(externalData, filter);
         
         console.log(`📊 OPTIMIZED: Generated ${allStats.length} statistics from optimized query`);
         return allStats;
@@ -622,6 +712,9 @@ export class ExternalStorage implements IStorage {
     timeFrom?: string,
     timeTo?: string
   ): Promise<AgentData[]> {
+    if (!externalPool) {
+      throw new Error("External database not configured");
+    }
     const client = await externalPool.connect();
     try {
       // Build agent names from IDs
@@ -702,20 +795,6 @@ export class ExternalStorage implements IStorage {
     }
   }
 
-  // Simple helper method to get agent statistics
-  async getAgentStatistics(filter: StatisticsFilter): Promise<AgentStatistics[]> {
-    try {
-      // Initialize data first
-      await this.initializeData();
-      
-      // Use the optimized function from external-storage-simple.ts
-      const { getOptimizedAgentStatistics } = await import('./external-storage-simple');
-      return await getOptimizedAgentStatistics(this.agents, this.projects, filter);
-    } catch (error) {
-      console.error('Error in getAgentStatistics:', error);
-      return [];
-    }
-  }
 
   async createOrUpdateStatistics(insertStats: InsertAgentStatistics): Promise<AgentStatistics> {
     throw new Error('Create operations not allowed on external read-only database');
@@ -1014,6 +1093,9 @@ export class ExternalStorage implements IStorage {
     console.log(`🚀 OPTIMIZED PARAMS:`, queryParams);
     
     try {
+      if (!externalPool) {
+        throw new Error("External database not configured");
+      }
       const client = await externalPool.connect();
       let result;
       try {

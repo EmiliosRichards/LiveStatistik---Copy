@@ -701,6 +701,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/contacts-name", async (req, res) => {
     try {
       const { externalPool } = await import("./external-db");
+      
+      if (!externalPool) {
+        return res.status(503).json({
+          error: "External database not configured"
+        });
+      }
+      
       const client = await externalPool.connect();
       
       console.log('🔍 DEBUG API: Querying contacts_name data from external database...');
