@@ -287,6 +287,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { externalPool } = await import("./external-db");
       
+      if (!externalPool) {
+        return res.json({
+          connected: false,
+          timestamp: new Date().toISOString(),
+          database: 'external',
+          error: 'External database not configured'
+        });
+      }
+      
       // Test actual connection to external database
       const client = await externalPool.connect();
       try {

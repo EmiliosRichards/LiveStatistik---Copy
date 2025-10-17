@@ -16,12 +16,23 @@ const externalDbConfig = {
   query_timeout: 300000 // 5 minute timeout for query execution
 };
 
-if (!process.env.EXTERNAL_DB_HOST || !process.env.EXTERNAL_DB_DATABASE || 
-    !process.env.EXTERNAL_DB_USER || !process.env.EXTERNAL_DB_PASSWORD) {
-  throw new Error("External database environment variables not set");
+const hasExternalDbConfig = process.env.EXTERNAL_DB_HOST && 
+  process.env.EXTERNAL_DB_DATABASE && 
+  process.env.EXTERNAL_DB_USER && 
+  process.env.EXTERNAL_DB_PASSWORD;
+
+if (!hasExternalDbConfig) {
+  console.warn("⚠️ External database environment variables not set. External database features will be disabled.");
 }
 
-export const externalPool = new Pool(externalDbConfig);
+export const externalPool = hasExternalDbConfig ? new Pool(externalDbConfig) : null;
+
+// Helper function to check if external database is available
+function checkExternalDb() {
+  if (!externalPool) {
+    throw new Error("External database is not configured. Please set EXTERNAL_DB_HOST, EXTERNAL_DB_DATABASE, EXTERNAL_DB_USER, and EXTERNAL_DB_PASSWORD environment variables.");
+  }
+}
 
 // Type definitions for external database views
 export interface AgentData {
@@ -63,7 +74,8 @@ export interface CampaignStateReference {
 
 // Read-only query functions
 export async function getAgentData(limit?: number, offset?: number, dateFrom?: string, dateTo?: string): Promise<AgentData[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     // PERFORMANCE: Add reasonable default limit to prevent huge queries
     const limitClause = limit ? `LIMIT ${limit}` : 'LIMIT 10000';
@@ -113,7 +125,8 @@ export async function getAgentDataForStatistics(
   dateTo?: string,
   limit: number = 5000
 ): Promise<AgentData[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     const conditions = [];
     const params: any[] = [];
@@ -173,7 +186,8 @@ export async function getAgentCallDetails(
   dateTo?: string,
   limit: number = 10000  // ERHÖHT: Von 500 auf 10.000 für vollständige Call Details
 ): Promise<AgentData[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     const conditions = [
       `transactions_user_login = $1`,
@@ -212,7 +226,8 @@ export async function getAgentCallDetails(
 }
 
 export async function getCampaignAgentReference(): Promise<CampaignAgentReference[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     const result = await client.query(`
       SELECT DISTINCT contacts_campaign_id, transactions_user_login 
@@ -229,7 +244,8 @@ export async function getCampaignAgentReference(): Promise<CampaignAgentReferenc
 }
 
 export async function getCampaignStateReference(campaignId?: string): Promise<CampaignStateReference[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     let query = `
       SELECT DISTINCT contacts_campaign_id, transactions_status_detail, transactions_status 
@@ -259,7 +275,8 @@ export async function getCampaignStateReference(campaignId?: string): Promise<Ca
 }
 
 export async function getOutcomeStatus(campaignId: string, outcomeDetail: string): Promise<string | null> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     const query = `
       SELECT transactions_status 
@@ -290,7 +307,8 @@ export async function getAgentStats(
   dateFrom?: string, 
   dateTo?: string
 ): Promise<AgentData[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     // Build WHERE conditions with parameterized queries
     let whereClause = `WHERE transactions_user_login = $1`;
@@ -330,7 +348,8 @@ export async function getCallDetailsDirectly(
   campaignId: string = '3F767KEPW4V73JZS',
   date: string = '2025-09-04'
 ): Promise<AgentData[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     console.log(`🎯 DIRECT SQL: SELECT * FROM agent_data WHERE transactions_user_login = '${agentName}' AND transactions_fired_date = '${date}' AND contacts_campaign_id = '${campaignId}'`);
     
@@ -349,7 +368,8 @@ export async function getCallDetailsDirectly(
 }
 
 export async function getUniqueAgents(): Promise<string[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     console.log('🔍 Loading agents from agent_latest_last_2_months VIEW - only active agents from last 2 months');
     const result = await client.query(`
@@ -404,7 +424,8 @@ function getProperCaseAgent(name: string): string {
 }
 
 export async function getUniqueCampaigns(): Promise<string[]> {
-  const client = await externalPool.connect();
+  checkExternalDb();
+  const client = await externalPool!.connect();
   try {
     console.log('🔍 Loading campaigns for active agents from last 2 months');
     
