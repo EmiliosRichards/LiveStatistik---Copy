@@ -8,6 +8,8 @@ const ALLOW_GUEST_UI = process.env.NEXT_PUBLIC_ALLOW_GUEST === 'true'
 
 export default function SignIn() {
   const [loading, setLoading] = useState<null|'ms'|'guest'>(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
@@ -19,6 +21,7 @@ export default function SignIn() {
               src="/Manuav-web-site-LOGO.png" 
               alt="Manuav" 
               className="h-12 w-auto"
+              style={{ filter: 'invert(0)' }}
             />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
@@ -27,20 +30,38 @@ export default function SignIn() {
 
         {/* Sign-in Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          {/* Decorative Fields (visual only per inspo) */}
+          {/* Email and Password Fields */}
           <div className="space-y-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-              <div className="flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg bg-slate-50">
-                <User className="w-5 h-5 text-slate-400" />
-                <span className="text-slate-400">your@email.com</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="w-5 h-5 text-slate-400" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  data-testid="input-email"
+                />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
-              <div className="flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg bg-slate-50">
-                <Lock className="w-5 h-5 text-slate-400" />
-                <span className="text-slate-400">••••••••</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="w-5 h-5 text-slate-400" />
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  data-testid="input-password"
+                />
               </div>
             </div>
           </div>
@@ -98,11 +119,7 @@ export default function SignIn() {
           {/* Helper Text */}
           <div className="mt-6 pt-6 border-t border-slate-100">
             <p className="text-sm text-slate-500 text-center">
-              {ALLOW_GUEST_UI ? (
-                <>Use your Microsoft account or continue as guest to explore</>
-              ) : (
-                <>Use your Microsoft account to access the dashboard</>
-              )}
+              Use your Microsoft account to access the dashboard
             </p>
           </div>
         </div>
