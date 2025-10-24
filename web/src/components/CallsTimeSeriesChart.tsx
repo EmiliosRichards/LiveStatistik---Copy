@@ -5,10 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { TrendingUp } from 'lucide-react'
 
 interface TimeSeriesData {
-  date: string
+  month: string
   calls: number
-  reached: number
-  positive: number
 }
 
 export function CallsTimeSeriesChart() {
@@ -20,15 +18,22 @@ export function CallsTimeSeriesChart() {
       try {
         setLoading(true)
         // Mock data for now - you can replace with actual API call
-        // const response = await fetch('/api/time-series')
+        // const response = await fetch('/api/monthly-calls')
         // const result = await response.json()
         
         const mockData: TimeSeriesData[] = [
-          { date: 'Mon', calls: 2450, reached: 2180, positive: 52 },
-          { date: 'Tue', calls: 2680, reached: 2390, positive: 61 },
-          { date: 'Wed', calls: 2520, reached: 2250, positive: 58 },
-          { date: 'Thu', calls: 2730, reached: 2440, positive: 64 },
-          { date: 'Fri', calls: 2589, reached: 2308, positive: 61 },
+          { month: 'Jan', calls: 9850 },
+          { month: 'Feb', calls: 10200 },
+          { month: 'Mar', calls: 11500 },
+          { month: 'Apr', calls: 10800 },
+          { month: 'May', calls: 12100 },
+          { month: 'Jun', calls: 11900 },
+          { month: 'Jul', calls: 12500 },
+          { month: 'Aug', calls: 11800 },
+          { month: 'Sep', calls: 12300 },
+          { month: 'Oct', calls: 12569 },
+          { month: 'Nov', calls: 11200 },
+          { month: 'Dec', calls: 10500 },
         ]
         
         setData(mockData)
@@ -53,26 +58,32 @@ export function CallsTimeSeriesChart() {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+    <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-blue-600" />
-            Calls This Week
+            Calls This Year
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Daily call volume and outcomes</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Monthly call volume trends</p>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+          <defs>
+            <linearGradient id="chartBg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f8fafc" stopOpacity={0.8}/>
+              <stop offset="100%" stopColor="#f8fafc" stopOpacity={0.3}/>
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" />
           <XAxis 
-            dataKey="date" 
-            tick={{ fontSize: 12, fill: '#64748b' }} 
+            dataKey="month" 
+            tick={{ fontSize: 12, fill: '#94a3b8' }} 
             stroke="#cbd5e1"
           />
           <YAxis 
-            tick={{ fontSize: 12, fill: '#64748b' }} 
+            tick={{ fontSize: 12, fill: '#94a3b8' }} 
             stroke="#cbd5e1"
           />
           <Tooltip 
@@ -83,33 +94,14 @@ export function CallsTimeSeriesChart() {
               fontSize: '12px'
             }}
           />
-          <Legend 
-            wrapperStyle={{ fontSize: '12px' }}
-            iconType="line"
-          />
           <Line 
             type="monotone" 
             dataKey="calls" 
-            stroke="#3b82f6" 
-            strokeWidth={2}
-            dot={{ fill: '#3b82f6', r: 3 }}
+            stroke="#93c5fd" 
+            strokeWidth={3}
+            dot={{ fill: '#60a5fa', r: 4, strokeWidth: 0 }}
+            activeDot={{ r: 6, fill: '#3b82f6' }}
             name="Total Calls"
-          />
-          <Line 
-            type="monotone" 
-            dataKey="reached" 
-            stroke="#10b981" 
-            strokeWidth={2}
-            dot={{ fill: '#10b981', r: 3 }}
-            name="Reached"
-          />
-          <Line 
-            type="monotone" 
-            dataKey="positive" 
-            stroke="#f59e0b" 
-            strokeWidth={2}
-            dot={{ fill: '#f59e0b', r: 3 }}
-            name="Positive"
           />
         </LineChart>
       </ResponsiveContainer>

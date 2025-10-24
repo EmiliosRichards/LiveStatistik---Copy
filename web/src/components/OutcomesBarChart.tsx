@@ -11,11 +11,11 @@ interface OutcomeData {
 }
 
 const COLORS = [
-  '#10b981', // Success - green
-  '#f59e0b', // Callback - amber
-  '#6366f1', // No Answer - indigo
-  '#ec4899', // Declined - pink
-  '#64748b', // Other - slate
+  '#86efac', // Success - light green
+  '#fcd34d', // Callback - light amber
+  '#a5b4fc', // No Answer - light indigo
+  '#f9a8d4', // Declined - light pink
+  '#cbd5e1', // Other - light slate
 ]
 
 export function OutcomesBarChart() {
@@ -60,7 +60,7 @@ export function OutcomesBarChart() {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+    <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
@@ -75,14 +75,14 @@ export function OutcomesBarChart() {
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" />
           <XAxis 
             dataKey="name" 
-            tick={{ fontSize: 11, fill: '#64748b' }} 
+            tick={{ fontSize: 11, fill: '#94a3b8' }} 
             stroke="#cbd5e1"
             angle={-15}
             textAnchor="end"
             height={60}
           />
           <YAxis 
-            tick={{ fontSize: 12, fill: '#64748b' }} 
+            tick={{ fontSize: 12, fill: '#94a3b8' }} 
             stroke="#cbd5e1"
           />
           <Tooltip 
@@ -97,7 +97,7 @@ export function OutcomesBarChart() {
               name
             ]}
           />
-          <Bar dataKey="count" name="Calls" radius={[4, 4, 0, 0]}>
+          <Bar dataKey="count" name="Calls" radius={[6, 6, 0, 0]}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
