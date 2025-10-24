@@ -41,7 +41,8 @@ export default function DashboardPage() {
   const [campaignSort, setCampaignSort] = useState<'date_desc' | 'date_asc' | 'name_asc' | 'name_desc'>('name_asc')
   const [campaignFilter, setCampaignFilter] = useState<'all' | 'active' | 'new' | 'archived'>('all')
   const [agentSearchQuery, setAgentSearchQuery] = useState('')
-  const [kpiData, setKpiData] = useState<KPIData | null>(null)
+  const [globalKpis, setGlobalKpis] = useState<any | null>(null)
+  const [kpiLoading, setKpiLoading] = useState(true)
   const [statistics, setStatistics] = useState<Statistics[]>([])
   const [agents, setAgents] = useState<Record<string, string>>({})
   const [projects, setProjects] = useState<Record<string, string>>({})
@@ -49,7 +50,23 @@ export default function DashboardPage() {
   const [showMissingModal, setShowMissingModal] = useState(false)
 
   const hasSearchParams = searchParams.get('dateFrom') && (searchParams.get('agents') || searchParams.get('projects'))
-  const kpi = kpiData ?? { totalCalls: 0, reachRate: 0, positiveOutcomes: 0, avgDuration: 0 }
+  
+  // Fetch global company-wide KPIs on mount
+  useEffect(() => {
+    const fetchKPIs = async () => {
+      try {
+        setKpiLoading(true)
+        const response = await fetch('/api/kpis')
+        const data = await response.json()
+        setGlobalKpis(data)
+      } catch (error) {
+        console.error('Failed to fetch KPIs:', error)
+      } finally {
+        setKpiLoading(false)
+      }
+    }
+    fetchKPIs()
+  }, [])
 
   const goToAgent = (agentId: string) => {
     const sp = new URLSearchParams(searchParams.toString())
@@ -181,29 +198,9 @@ export default function DashboardPage() {
         setShowMissingModal(false)
       }
 
-      // Calculate KPIs from statistics
-      const totalCalls = stats.reduce((sum, s) => sum + s.anzahl, 0)
-      const totalSuccess = stats.reduce((sum, s) => sum + s.erfolgreich, 0)
-      const totalCompleted = stats.reduce((sum, s) => sum + s.abgeschlossen, 0)
-      const reachRate = totalCalls > 0 ? (totalCompleted / totalCalls) * 100 : 0
-      const totalTime = stats.reduce((sum, s) => sum + s.gespraechszeit, 0)
-      const avgDuration = totalCompleted > 0 ? totalTime / totalCompleted / 60 : 0
-
-      setKpiData({
-        totalCalls,
-        reachRate: parseFloat(reachRate.toFixed(1)),
-        positiveOutcomes: totalSuccess,
-        avgDuration: parseFloat(avgDuration.toFixed(1))
-      })
+      // Don't calculate KPIs here anymore - we use global KPIs
     } catch (error) {
       console.error('Failed to fetch statistics:', error)
-      // Fall back to mock data
-      setKpiData({
-        totalCalls: 1247,
-        reachRate: 68.5,
-        positiveOutcomes: 156,
-        avgDuration: 4.2
-      })
     } finally {
       setLoading(false)
     }
@@ -334,11 +331,27 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-total-calls">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Total Calls</span>
+                  <span className="text-base font-semibold text-slate-700">Total Calls This Week</span>
                   <Phone className="w-5 h-5 text-blue-500" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">{kpi.totalCalls.toLocaleString()}</div>
-                <div className="text-xs text-green-600">+12% vs. last week</div>
+                {kpiLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-slate-200 rounded w-24 mb-1"></div>
+                    <div className="h-3 bg-slate-200 rounded w-20"></div>
+                  </div>
+                ) : globalKpis ? (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.totalCalls.value.toLocaleString()}</div>
+                    <div className={`text-xs ${globalKpis.totalCalls.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
+                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% vs. last month
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
+                    <div className="text-xs text-slate-500">No data</div>
+                  </>
+                )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-reach-rate">
@@ -346,8 +359,24 @@ export default function DashboardPage() {
                   <span className="text-base font-semibold text-slate-700">Reach Rate</span>
                   <TrendingUp className="w-5 h-5 text-blue-500" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">{kpi.reachRate}%</div>
-                <div className="text-xs text-slate-500">Target: 70%</div>
+                {kpiLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-slate-200 rounded w-24 mb-1"></div>
+                    <div className="h-3 bg-slate-200 rounded w-20"></div>
+                  </div>
+                ) : globalKpis ? (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.reachRate.value}%</div>
+                    <div className={`text-xs ${globalKpis.reachRate.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
+                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% vs. last month
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">0%</div>
+                    <div className="text-xs text-slate-500">No data</div>
+                  </>
+                )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-positive-outcomes">
@@ -355,8 +384,24 @@ export default function DashboardPage() {
                   <span className="text-base font-semibold text-slate-700">Positive Outcomes</span>
                   <CheckCircle className="w-5 h-5 text-green-500" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">{kpi.positiveOutcomes}</div>
-                <div className="text-xs text-green-600">+8% vs. last week</div>
+                {kpiLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-slate-200 rounded w-24 mb-1"></div>
+                    <div className="h-3 bg-slate-200 rounded w-20"></div>
+                  </div>
+                ) : globalKpis ? (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.positiveOutcomes.value}</div>
+                    <div className={`text-xs ${globalKpis.positiveOutcomes.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
+                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% vs. last month
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
+                    <div className="text-xs text-slate-500">No data</div>
+                  </>
+                )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-avg-duration">
@@ -364,8 +409,24 @@ export default function DashboardPage() {
                   <span className="text-base font-semibold text-slate-700">Avg. Call Duration</span>
                   <Clock className="w-5 h-5 text-blue-500" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">{kpi.avgDuration} min</div>
-                <div className="text-xs text-slate-500">Industry avg: 3.8 min</div>
+                {kpiLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-slate-200 rounded w-24 mb-1"></div>
+                    <div className="h-3 bg-slate-200 rounded w-20"></div>
+                  </div>
+                ) : globalKpis ? (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.avgDuration.value} min</div>
+                    <div className={`text-xs ${globalKpis.avgDuration.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
+                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% vs. last month
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-3xl font-bold text-slate-900 mb-1">0 min</div>
+                    <div className="text-xs text-slate-500">No data</div>
+                  </>
+                )}
               </div>
             </div>
 
