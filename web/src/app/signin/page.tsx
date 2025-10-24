@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
+import { User, Lock, ArrowRight } from 'lucide-react'
 
 // Use build-time public env only to avoid SSR/CSR mismatches
 const ALLOW_GUEST_UI = process.env.NEXT_PUBLIC_ALLOW_GUEST === 'true'
@@ -9,59 +10,110 @@ export default function SignIn() {
   const [loading, setLoading] = useState<null|'ms'|'guest'>(null)
 
   return (
-    <main className="min-h-screen grid md:grid-cols-2 bg-neutral-900 text-white">
-      {/* Left: form */}
-      <section className="p-8 md:p-16 flex flex-col gap-8">
-        <div>
-          <h1 className="text-2xl font-semibold">Log in</h1>
-          <p className="text-sm text-white/60">Sign in to continue</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center mb-6">
+            <img 
+              src="/Manuav-web-site-LOGO.png" 
+              alt="Manuav" 
+              className="h-12 w-auto"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+          <p className="text-slate-600">Sign in to access your dashboard</p>
         </div>
 
-        {/* Visual email/password fields (per inspo) */}
-        <div className="space-y-4 max-w-md">
-          <div>
-            <label className="text-xs uppercase tracking-wider text-white/60">Email</label>
-            <div className="mt-1 rounded border border-white/15 bg-white/5 px-3 py-2">your@email.com</div>
+        {/* Sign-in Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Decorative Fields (visual only per inspo) */}
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+              <div className="flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg bg-slate-50">
+                <User className="w-5 h-5 text-slate-400" />
+                <span className="text-slate-400">your@email.com</span>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+              <div className="flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg bg-slate-50">
+                <Lock className="w-5 h-5 text-slate-400" />
+                <span className="text-slate-400">••••••••</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="text-xs uppercase tracking-wider text-white/60">Password</label>
-            <div className="mt-1 rounded border border-white/15 bg-white/5 px-3 py-2">••••••••</div>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => { setLoading('ms'); signIn('azure-ad', { callbackUrl: '/' }) }}
-            className="rounded bg-blue-600 hover:bg-blue-500 px-4 py-2 text-sm font-medium"
-          >
-            {loading==='ms' ? 'Redirecting…' : 'Continue with Microsoft'}
-          </button>
-          {ALLOW_GUEST_UI && (
+          {/* Sign-in Buttons */}
+          <div className="space-y-3">
             <button
-              onClick={() => { setLoading('guest'); signIn('credentials', { username:'guest', password:'guest', callbackUrl: '/' }) }}
-              className="rounded border border-white/20 hover:bg-white/10 px-4 py-2 text-sm"
+              onClick={() => { setLoading('ms'); signIn('azure-ad', { callbackUrl: '/dashboard' }) }}
+              disabled={loading !== null}
+              className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
+              data-testid="button-signin-microsoft"
             >
-              {loading==='guest' ? 'Signing in…' : 'Continue as guest'}
+              {loading === 'ms' ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Connecting...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 0H0V11H11V0Z" fill="currentColor"/>
+                    <path d="M23 0H12V11H23V0Z" fill="currentColor"/>
+                    <path d="M11 12H0V23H11V12Z" fill="currentColor"/>
+                    <path d="M23 12H12V23H23V12Z" fill="currentColor"/>
+                  </svg>
+                  <span>Continue with Microsoft</span>
+                  <ArrowRight className="w-5 h-5 ml-auto" />
+                </>
+              )}
             </button>
-          )}
+
+            {ALLOW_GUEST_UI && (
+              <button
+                onClick={() => { setLoading('guest'); signIn('credentials', { username:'guest', password:'guest', callbackUrl: '/dashboard' }) }}
+                disabled={loading !== null}
+                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 disabled:bg-slate-100 text-slate-700 font-medium px-6 py-3 rounded-lg transition-colors border-2 border-slate-200 hover:border-slate-300"
+                data-testid="button-signin-guest"
+              >
+                {loading === 'guest' ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin"></div>
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <User className="w-5 h-5" />
+                    <span>Continue as Guest</span>
+                    <ArrowRight className="w-5 h-5 ml-auto" />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Helper Text */}
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <p className="text-sm text-slate-500 text-center">
+              {ALLOW_GUEST_UI ? (
+                <>Use your Microsoft account or continue as guest to explore</>
+              ) : (
+                <>Use your Microsoft account to access the dashboard</>
+              )}
+            </p>
+          </div>
         </div>
 
-        {loading && (
-          <div className="mt-6 flex items-center gap-2 text-sm text-white/70">
-            <span className='inline-block h-2 w-2 rounded-full bg-white animate-pulse'></span>
-            <span className='inline-block h-2 w-2 rounded-full bg-white/80 animate-pulse [animation-delay:150ms]'></span>
-            <span className='inline-block h-2 w-2 rounded-full bg-white/60 animate-pulse [animation-delay:300ms]'></span>
-            <span className="ml-2">Please wait…</span>
-          </div>
-        )}
-      </section>
-
-      {/* Right: decorative panel per inspo */}
-      <aside className="hidden md:flex items-center justify-center bg-gradient-to-br from-blue-500/30 to-purple-500/20">
-        <div className="h-24 w-24 rounded-full bg-white/10 animate-pulse"></div>
-      </aside>
-    </main>
+        {/* Footer */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-600">
+            Secure authentication powered by <span className="font-semibold">Azure AD</span>
+          </p>
+        </div>
+      </div>
+    </div>
   )
 }
-
-
