@@ -50,24 +50,24 @@ export function OutcomesBarChart() {
 
   if (loading) {
     return (
-      <div className="h-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center">
+      <div className="h-64 bg-white border border-slate-200 rounded-lg flex items-center justify-center shadow-sm">
         <div className="animate-pulse flex flex-col items-center gap-2">
-          <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-          <div className="h-3 w-24 bg-slate-200 dark:bg-slate-700 rounded"></div>
+          <div className="h-4 w-32 bg-slate-200 rounded"></div>
+          <div className="h-3 w-24 bg-slate-200 rounded"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-sm">
+    <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-100 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-blue-600" />
             Call Outcomes Distribution
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Breakdown by outcome type</p>
+          <p className="text-xs text-slate-500">Breakdown by outcome type</p>
         </div>
       </div>
       <div className="bg-slate-50 rounded-md p-2">
