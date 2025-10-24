@@ -14,6 +14,8 @@ import {
   type StatisticsFilter
 } from "@shared/schema";
 import { randomUUID, createHash } from "crypto";
+import fs from 'fs';
+import path from 'path';
 import { IStorage } from "./storage";
 import { 
   externalPool, 
@@ -29,6 +31,7 @@ import {
   type CampaignAgentReference,
   type AggregatedKpiData
 } from "./external-db";
+import { loadCSVData, getUniqueAgents as getCsvAgents, getUniqueProjects as getCsvProjects } from './csv-parser';
 
 export class ExternalStorage implements IStorage {
   private agents: Map<string, Agent> = new Map();
@@ -58,6 +61,85 @@ export class ExternalStorage implements IStorage {
 
   constructor() {
     // Don't initialize immediately, wait for first request
+  }
+
+  // ---------- Disk cache helpers (last-known-good) ----------
+  private getCacheDir(): string {
+    return path.resolve(import.meta.dirname, '.cache');
+  }
+
+  private ensureCacheDir() {
+    try { fs.mkdirSync(this.getCacheDir(), { recursive: true }); } catch {}
+  }
+
+  private getCachePath(kind: 'agents' | 'projects'): string {
+    return path.resolve(this.getCacheDir(), `${kind}.json`);
+  }
+
+  private async loadAgentsFromCache(): Promise<boolean> {
+    try {
+      const p = this.getCachePath('agents');
+      if (!fs.existsSync(p)) return false;
+      const raw = await fs.promises.readFile(p, 'utf8');
+      const list = JSON.parse(raw) as Array<any>;
+      this.agents.clear();
+      list.forEach((a) => {
+        this.agents.set(a.id, { ...a, createdAt: a.createdAt ? new Date(a.createdAt) : new Date() });
+      });
+      console.log(`📦 Loaded ${this.agents.size} agents from cache`);
+      return this.agents.size > 0;
+    } catch (e) {
+      console.warn('⚠️ Failed to load agents cache:', e);
+      return false;
+    }
+  }
+
+  private async saveAgentsToCache(): Promise<void> {
+    try {
+      this.ensureCacheDir();
+      const p = this.getCachePath('agents');
+      const list = Array.from(this.agents.values()).map((a) => ({
+        ...a,
+        createdAt: (a as any).createdAt instanceof Date ? (a as any).createdAt.toISOString() : (a as any).createdAt,
+      }));
+      await fs.promises.writeFile(p, JSON.stringify(list), 'utf8');
+      console.log(`💾 Saved ${list.length} agents to cache`);
+    } catch (e) {
+      console.warn('⚠️ Failed to write agents cache:', e);
+    }
+  }
+
+  private async loadProjectsFromCache(): Promise<boolean> {
+    try {
+      const p = this.getCachePath('projects');
+      if (!fs.existsSync(p)) return false;
+      const raw = await fs.promises.readFile(p, 'utf8');
+      const list = JSON.parse(raw) as Array<any>;
+      this.projects.clear();
+      list.forEach((proj) => {
+        this.projects.set(proj.id, { ...proj, createdAt: proj.createdAt ? new Date(proj.createdAt) : new Date() });
+      });
+      console.log(`📦 Loaded ${this.projects.size} projects from cache`);
+      return this.projects.size > 0;
+    } catch (e) {
+      console.warn('⚠️ Failed to load projects cache:', e);
+      return false;
+    }
+  }
+
+  private async saveProjectsToCache(): Promise<void> {
+    try {
+      this.ensureCacheDir();
+      const p = this.getCachePath('projects');
+      const list = Array.from(this.projects.values()).map((proj) => ({
+        ...proj,
+        createdAt: (proj as any).createdAt instanceof Date ? (proj as any).createdAt.toISOString() : (proj as any).createdAt,
+      }));
+      await fs.promises.writeFile(p, JSON.stringify(list), 'utf8');
+      console.log(`💾 Saved ${list.length} projects to cache`);
+    } catch (e) {
+      console.warn('⚠️ Failed to write projects cache:', e);
+    }
   }
 
   private makeStableId(input: string): string {
@@ -90,6 +172,9 @@ export class ExternalStorage implements IStorage {
       agentsLoaded = true;
     } catch (error) {
       console.error('❌ Error loading agents from external DB:', error);
+      // Fallback: load last-known-good cache
+      const ok = await this.loadAgentsFromCache();
+      if (ok) agentsLoaded = true;
     }
     
     // Try to load projects with error handling
@@ -98,16 +183,31 @@ export class ExternalStorage implements IStorage {
       projectsLoaded = true;
     } catch (error) {
       console.error('❌ Error loading projects from external DB:', error);
+      // Fallback: load last-known-good cache
+      const ok = await this.loadProjectsFromCache();
+      if (ok) projectsLoaded = true;
     }
     
+    // If both DB and cache failed, try seeding from CSV to keep UI usable
+    if ((!agentsLoaded || !projectsLoaded) && this.agents.size === 0 && this.projects.size === 0) {
+      const seeded = await this.seedFromCSV();
+      if (seeded) {
+        agentsLoaded = true;
+        projectsLoaded = true;
+      }
+    }
+
     // Always load call outcomes (these are static)
     this.initializeCallOutcomes();
-    
-    // If either failed, don't show any data - only real data or nothing
+
+    // If either failed and no cache/seed, keep empty; otherwise continue
     if (!agentsLoaded || !projectsLoaded) {
-      console.error('❌ Database connection failed - no data will be displayed');
-      console.log('ℹ️ System will show empty state until database connection is restored');
-      // Keep maps empty - no fallback data
+      if (this.agents.size > 0 || this.projects.size > 0) {
+        console.warn('⚠️ Using cached/seeded agents/projects due to DB connection issues');
+      } else {
+        console.error('❌ Database connection failed - no data will be displayed');
+        console.log('ℹ️ System will show empty state until database connection is restored');
+      }
     }
     
     // REMOVED: Test-System entfernt auf Benutzeranfrage
@@ -226,6 +326,8 @@ export class ExternalStorage implements IStorage {
     });
     
     console.log(`✅ Loaded ${this.agents.size} unique agents (removed duplicates)`);
+    // Persist to disk cache
+    await this.saveAgentsToCache();
   }
 
   private async loadProjectsFromExternal() {
@@ -249,6 +351,56 @@ export class ExternalStorage implements IStorage {
     });
     
     console.log(`✅ Loaded ${this.projects.size} unique projects (removed duplicates)`);
+    // Persist to disk cache
+    await this.saveProjectsToCache();
+  }
+
+  // Seed from CSV when DB/cache are unavailable
+  private async seedFromCSV(): Promise<boolean> {
+    try {
+      const data = loadCSVData();
+      if (!data || data.length === 0) {
+        console.warn('⚠️ CSV seed: no rows found in server/data.csv');
+        return false;
+      }
+
+      // Seed agents
+      this.agents.clear();
+      const agentLogins = getCsvAgents(data);
+      agentLogins.forEach((login) => {
+        const name = String(login || '').trim();
+        const id = this.makeStableId(`agent:${name}`);
+        this.agents.set(id, {
+          id,
+          name,
+          isActive: true,
+          currentStatus: 'wartet' as any,
+          createdAt: new Date(),
+        });
+      });
+
+      // Seed projects
+      this.projects.clear();
+      const projectNames = getCsvProjects(data);
+      projectNames.forEach((proj) => {
+        const name = String(proj || '').trim();
+        const id = this.makeStableId(`project:${name}`);
+        this.projects.set(id, {
+          id,
+          name,
+          isActive: true,
+          createdAt: new Date(),
+        });
+      });
+
+      await this.saveAgentsToCache();
+      await this.saveProjectsToCache();
+      console.log(`🌱 Seeded from CSV: ${this.agents.size} agents, ${this.projects.size} projects`);
+      return this.agents.size > 0 || this.projects.size > 0;
+    } catch (e) {
+      console.warn('⚠️ Failed to seed from CSV:', e);
+      return false;
+    }
   }
 
   private initializeCallOutcomes() {

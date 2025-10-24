@@ -36,10 +36,79 @@ async function fetchCampaignMapping(): Promise<Record<string, string>> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health/status endpoints for overview page
+  app.get("/api/database-status", async (_req, res) => {
+    try {
+      if (!storage) {
+        return res.json({ connected: false, error: "Storage not available" });
+      }
+      // Prefer externalPool if available
+      try {
+        const { externalPool } = await import("./external-db");
+        if (!externalPool) {
+          return res.json({ connected: false, error: "External DB not configured" });
+        }
+        const client = await externalPool.connect();
+        try {
+          await client.query("SELECT 1");
+          return res.json({ connected: true });
+        } finally {
+          client.release();
+        }
+      } catch (e: any) {
+        return res.json({ connected: false, error: e?.message || "DB connection failed" });
+      }
+    } catch (error: any) {
+      res.json({ connected: false, error: error?.message || "Unknown error" });
+    }
+  });
+
+  app.get("/api/dialfire-status", async (_req, res) => {
+    try {
+      const token = process.env.DIALFIRE_API_TOKEN;
+      if (!token) {
+        return res.json({ connected: false, error: "DIALFIRE_API_TOKEN not set" });
+      }
+      const mapping = await fetchCampaignMapping();
+      const count = Object.keys(mapping).length;
+      if (count > 0) {
+        return res.json({ connected: true, campaigns: count });
+      } else {
+        return res.json({ connected: false, error: "No campaigns fetched (403 or empty)" });
+      }
+    } catch (e: any) {
+      res.json({ connected: false, error: e?.message || "Dialfire status error" });
+    }
+  });
+
+  app.get("/api/campaign-mapping", async (_req, res) => {
+    try {
+      // Prefer Dialfire mapping; fall back to Google Sheets if available
+      const dialfire = await fetchCampaignMapping();
+      let sheets: Record<string, string> = {};
+      if (process.env.GOOGLE_SHEETS_ID) {
+        try {
+          const { getSheetCampaignMapping } = await import('./google-sheets');
+          sheets = await getSheetCampaignMapping();
+        } catch (e) {
+          console.warn('⚠️ Failed to load sheet campaign mapping:', e);
+        }
+      }
+
+      // Combine: sheets provides fallback, Dialfire overrides if present
+      const mapping: Record<string, string> = { ...sheets, ...dialfire };
+      const rows = Object.entries(mapping).map(([campaign_id, campaign]) => ({ campaign_id, campaign }));
+      const status = rows.length > 0 ? "success" : "empty";
+      res.json({ status, rows });
+    } catch (e: any) {
+      res.json({ status: "error", error: e?.message || "Failed to load mapping" });
+    }
+  });
   // Get all agents
   app.get("/api/agents", async (req, res) => {
     try {
       const agents = await storage.getAllAgents();
+      res.setHeader('Cache-Control', 'public, max-age=10');
       res.json(agents);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch agents" });
@@ -64,15 +133,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const projects = await storage.getAllProjects();
       
       // Fetch campaign mapping to resolve IDs to names
-      const campaignMapping = await fetchCampaignMapping();
-      // Optionally merge sheet status
+      const dialfireMapping = await fetchCampaignMapping();
+      // Optionally merge sheet status and name fallback
       let statusById: Record<string, string> = {};
       let statusByTitle: Record<string, string> = {};
+      let sheetNameById: Record<string, string> = {};
       if (process.env.GOOGLE_SHEETS_ID) {
-        const { getSheetCampaignsFull } = await import('./google-sheets');
+        const { getSheetCampaignsFull, getSheetCampaignMapping } = await import('./google-sheets');
         const rows = await getSheetCampaignsFull();
         statusById = Object.fromEntries(rows.map(r => [r.campaign_id, r.status || '']));
         statusByTitle = Object.fromEntries(rows.map(r => [r.campaign, r.status || '']));
+        try {
+          sheetNameById = await getSheetCampaignMapping();
+        } catch (e) {
+          console.warn('⚠️ Failed to fetch sheet name mapping:', e);
+        }
       }
       const normalizeTitle = (s?: string) => (s || '').toLowerCase().replace(/[–—−]/g, '-').replace(/\s+/g, ' ').trim();
       const statusByNormTitle: Record<string, string> = {};
@@ -80,12 +155,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Enhance projects with resolved names
       const enhancedProjects = projects.map(project => {
-        const resolvedName = campaignMapping[project.name] || project.name;
+        const resolvedName = dialfireMapping[project.name] || sheetNameById[project.name] || project.name;
         let status = statusById[project.name];
         if (!status && resolvedName) status = statusByTitle[resolvedName];
         if (!status && resolvedName) status = statusByNormTitle[normalizeTitle(resolvedName)];
         // Only log if we actually resolved something
-        if (campaignMapping[project.name] && project.name !== resolvedName) {
+        if ((dialfireMapping[project.name] || sheetNameById[project.name]) && project.name !== resolvedName) {
           console.log(`🔍 Resolved: ${project.name} → ${resolvedName}`);
         }
         
@@ -97,6 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       });
       
+      res.setHeader('Cache-Control', 'public, max-age=10');
       res.json(enhancedProjects);
     } catch (error) {
       console.error('Error fetching projects with campaign mapping:', error);
@@ -118,19 +194,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const projects = await storage.getProjectsForAgents(agentIds);
       
       // Fetch campaign mapping to resolve IDs to names
-      const campaignMapping = await fetchCampaignMapping();
-      // Optionally merge sheet status
+      const dialfireMapping = await fetchCampaignMapping();
+      // Optionally merge sheet status and sheet name fallback
       let statusById: Record<string, string> = {};
+      let sheetNameById: Record<string, string> = {};
       if (process.env.GOOGLE_SHEETS_ID) {
-        const { getSheetCampaignsFull } = await import('./google-sheets');
+        const { getSheetCampaignsFull, getSheetCampaignMapping } = await import('./google-sheets');
         const rows = await getSheetCampaignsFull();
         statusById = Object.fromEntries(rows.map(r => [r.campaign_id, r.status || '']));
+        try {
+          sheetNameById = await getSheetCampaignMapping();
+        } catch (e) {
+          console.warn('⚠️ Failed to fetch sheet name mapping:', e);
+        }
       }
       const normalizeTitle = (s?: string) => (s || '').toLowerCase().replace(/[–—−]/g, '-').replace(/\s+/g, ' ').trim();
       
       // Enhance projects with resolved names
       const enhancedProjects = projects.map(project => {
-        const resolvedName = campaignMapping[project.name] || project.name;
+        const resolvedName = dialfireMapping[project.name] || sheetNameById[project.name] || project.name;
         const status = statusById[project.name] || statusById[resolvedName] || statusById[normalizeTitle(resolvedName)];
         return {
           ...project,

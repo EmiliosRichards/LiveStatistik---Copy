@@ -68,7 +68,7 @@ export default function CampaignDetailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-slate-100">
       {/* Header */}
-      <header className={`bg-white border-b border-slate-200 sticky top-0 z-10 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
+      <header className={`bg-white border-b border-border app-header sticky top-0 z-10 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="w-full px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-baseline gap-3">

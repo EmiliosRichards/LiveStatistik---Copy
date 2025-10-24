@@ -14,7 +14,10 @@
   --color-accent: #4f7cff;
   --color-danger: #f04438;
   --color-success: #10b981;
-  --color-border: #e5e7eb;
+  /* Match agent/footer border (slate-200) */
+  --color-border: #e2e8f0;
+  /* compatibility alias used by Tailwind theme colors.border */
+  --border: var(--color-border);
   --color-focus: #4f7cff;
 
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -41,6 +44,8 @@
   --color-text: #ffffff;
   --color-text-muted: #b5bcc6;
   --color-border: #2a2f36;
+  /* compatibility alias used by Tailwind theme colors.border */
+  --border: var(--color-border);
 }
 
 body {
@@ -54,4 +59,10 @@ body {
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 0.5rem;
+}
+
+/* Unified header border style: lighter, hairline-like */
+.app-header {
+  border-bottom-color: var(--color-border) !important;
+  border-bottom-width: 1px !important;
 }

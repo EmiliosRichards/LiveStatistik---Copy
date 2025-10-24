@@ -4,7 +4,8 @@ import type { NextConfig } from "next";
 // Keep Next.js internal routes like /api/auth handled by NextAuth.
 const nextConfig: NextConfig = {
   async rewrites() {
-    const target = process.env.EXPRESS_BASE_URL || "http://localhost:5001";
+    // Use IPv4 loopback to avoid IPv6 (::1) mismatch on Windows
+    const target = process.env.EXPRESS_BASE_URL || "http://127.0.0.1:5001";
 
     const api = (path: string) => ({ source: path, destination: `${target}${path}` });
 
