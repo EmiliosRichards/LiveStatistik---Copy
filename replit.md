@@ -61,12 +61,15 @@ Optional/conditional:
 - Dev tooling: `server/vite.ts` wires Vite middleware; prod serves `dist/public`.
 
 ### Data layer
-- `server/external-db.ts`: `pg` Pool to external Postgres (read-only). Queries use parameterized SQL and `DISTINCT ON` for deduplication and limits for performance.
+- `server/external-db.ts`: `pg` Pool to external Postgres (read-only). Queries use parameterized SQL and `DISTINCT ON` for deduplication and limits for performance. Includes:
+  - `getAgentDataForStatistics()` — fetches raw records for detailed statistics
+  - `getAggregatedKpis()` — DB-level aggregation using SQL COUNT/SUM/AVG for KPIs (2 weeks of data)
 - `server/external-storage.ts`: In-memory maps of Agents/Projects (loaded from external DB). Implements `IStorage` against external DB data for:
   - Agents/projects discovery (unique logins/campaigns)
   - Statistics aggregation (single optimized query for selected agents/projects/date range/time filters)
   - Call details (agent+campaign with date/time filters, mapping to internal `CallDetails` and a deterministic `groupId`)
   - Project targets (kept in-memory)
+  - KPI aggregation with 5-minute cache (`getAggregatedKpisWithCache()`)
 - `shared/schema.ts`: Drizzle tables and Zod schemas shared with the client; includes `statisticsFilterSchema`, outcome categorization, and types used on the frontend.
 
 ### Frontend
@@ -95,6 +98,7 @@ Optional/conditional:
 - Statistics & details
   - `POST /api/statistics` — body validated by `statisticsFilterSchema`
   - `GET /api/call-details/:agentId/:projectId` — query: `dateFrom`, `dateTo`, `timeFrom`, `timeTo`
+  - `GET /api/kpis` — optimized aggregated KPIs with week-over-week comparison, 5-minute cache; query param: `?refresh=true` to bypass cache
 
 - Project targets (in-memory persistence)
   - `GET /api/project-targets`
