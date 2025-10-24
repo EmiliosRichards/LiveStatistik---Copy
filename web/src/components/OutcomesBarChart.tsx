@@ -26,21 +26,23 @@ export function OutcomesBarChart() {
     const fetchData = async () => {
       try {
         setLoading(true)
-        // Mock data for now - you can replace with actual API call
-        // const response = await fetch('/api/outcomes-summary')
-        // const result = await response.json()
+        // Fetch data for the current year
+        const currentYear = new Date().getFullYear()
+        const dateFrom = `${currentYear}-01-01`
+        const dateTo = new Date().toISOString().split('T')[0]
         
-        const mockData: OutcomeData[] = [
-          { name: 'Success', count: 296, percentage: 2.4 },
-          { name: 'Callback', count: 1240, percentage: 9.9 },
-          { name: 'No Answer', count: 1366, percentage: 10.9 },
-          { name: 'Declined', count: 2458, percentage: 19.6 },
-          { name: 'Other', count: 7209, percentage: 57.4 },
-        ]
+        const response = await fetch(`/api/outcome-distribution?dateFrom=${dateFrom}&dateTo=${dateTo}`)
         
-        setData(mockData)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`)
+        }
+        
+        const result: OutcomeData[] = await response.json()
+        setData(result)
       } catch (error) {
         console.error('Failed to fetch outcomes data:', error)
+        // Show empty state on error
+        setData([])
       } finally {
         setLoading(false)
       }

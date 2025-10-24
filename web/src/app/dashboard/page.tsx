@@ -362,7 +362,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.totalCalls.value.toLocaleString()}</div>
                     <div className={`text-xs ${globalKpis.totalCalls.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% vs. last month
+                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% vs. last week
                     </div>
                   </>
                 ) : (
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.reachRate.value}%</div>
                     <div className={`text-xs ${globalKpis.reachRate.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% vs. last month
+                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% vs. last week
                     </div>
                   </>
                 ) : (
@@ -412,7 +412,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.positiveOutcomes.value}</div>
                     <div className={`text-xs ${globalKpis.positiveOutcomes.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% vs. last month
+                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% vs. last week
                     </div>
                   </>
                 ) : (
@@ -437,7 +437,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.avgDuration.value} min</div>
                     <div className={`text-xs ${globalKpis.avgDuration.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% vs. last month
+                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% vs. last week
                     </div>
                   </>
                 ) : (

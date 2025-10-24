@@ -319,6 +319,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get monthly call trends for charts
+  app.get("/api/monthly-call-trends", async (req, res) => {
+    try {
+      const year = parseInt(req.query.year as string) || new Date().getFullYear();
+      const trends = await storage.getMonthlyCallTrends(year);
+      res.json(trends);
+    } catch (error) {
+      console.error('❌ Monthly trends API error:', error);
+      res.status(500).json({ message: "Failed to fetch monthly trends" });
+    }
+  });
+
+  // Get outcome distribution for charts
+  app.get("/api/outcome-distribution", async (req, res) => {
+    try {
+      const dateFrom = (req.query.dateFrom as string) || new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+      const dateTo = (req.query.dateTo as string) || new Date().toISOString().split('T')[0];
+      const distribution = await storage.getOutcomeDistribution(dateFrom, dateTo);
+      res.json(distribution);
+    } catch (error) {
+      console.error('❌ Outcome distribution API error:', error);
+      res.status(500).json({ message: "Failed to fetch outcome distribution" });
+    }
+  });
+
   // Get agent statistics with filters
   // Simple in-memory cache for statistics to speed up repeated queries
   const statsCache = new Map<string, { ts: number; data: any }>();

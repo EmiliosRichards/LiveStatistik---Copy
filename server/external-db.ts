@@ -496,3 +496,93 @@ export async function getAggregatedKpis(
     client.release();
   }
 }
+
+// Get monthly call trends for charts
+export async function getMonthlyCallTrends(
+  agentLogins: string[],
+  year: number
+): Promise<{ month: string; calls: number }[]> {
+  checkExternalDb();
+  const client = await externalPool!.connect();
+  try {
+    console.log(`📊 Monthly Trends: Querying ${agentLogins.length} agents for year ${year}`);
+    
+    const query = `
+      SELECT 
+        TO_CHAR(DATE_TRUNC('month', transactions_fired_date::date), 'Mon') AS month,
+        EXTRACT(MONTH FROM transactions_fired_date::date) AS month_num,
+        COUNT(DISTINCT COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text))) AS calls
+      FROM agent_data
+      WHERE transactions_user_login = ANY($1)
+        AND EXTRACT(YEAR FROM transactions_fired_date::date) = $2
+      GROUP BY DATE_TRUNC('month', transactions_fired_date::date), EXTRACT(MONTH FROM transactions_fired_date::date)
+      ORDER BY month_num
+    `;
+    
+    const result = await client.query(query, [agentLogins, year]);
+    console.log(`✅ Monthly Trends: Returned ${result.rows.length} month(s) of data`);
+    
+    return result.rows.map(row => ({
+      month: row.month,
+      calls: parseInt(row.calls) || 0
+    }));
+  } finally {
+    client.release();
+  }
+}
+
+// Get outcome distribution for charts
+export async function getOutcomeDistribution(
+  agentLogins: string[],
+  dateFrom: string,
+  dateTo: string
+): Promise<{ name: string; count: number; percentage: number }[]> {
+  checkExternalDb();
+  const client = await externalPool!.connect();
+  try {
+    console.log(`📊 Outcome Distribution: Querying ${agentLogins.length} agents from ${dateFrom} to ${dateTo}`);
+    
+    const query = `
+      WITH total AS (
+        SELECT COUNT(DISTINCT COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text)))::float AS total_count
+        FROM agent_data
+        WHERE transactions_user_login = ANY($1)
+          AND transactions_fired_date >= $2
+          AND transactions_fired_date <= $3
+      ),
+      outcomes AS (
+        SELECT 
+          CASE 
+            WHEN transactions_status = 'success' THEN 'Success'
+            WHEN transactions_status_detail IN ('cb', 'Callback') THEN 'Callback'
+            WHEN transactions_status_detail IN ('na', 'No Answer') THEN 'No Answer'
+            WHEN transactions_status = 'declined' THEN 'Declined'
+            ELSE 'Other'
+          END AS outcome_name,
+          COUNT(DISTINCT COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text))) AS count
+        FROM agent_data
+        WHERE transactions_user_login = ANY($1)
+          AND transactions_fired_date >= $2
+          AND transactions_fired_date <= $3
+        GROUP BY outcome_name
+      )
+      SELECT 
+        outcome_name AS name,
+        count,
+        ROUND((count / total.total_count * 100)::numeric, 1) AS percentage
+      FROM outcomes, total
+      ORDER BY count DESC
+    `;
+    
+    const result = await client.query(query, [agentLogins, dateFrom, dateTo]);
+    console.log(`✅ Outcome Distribution: Returned ${result.rows.length} outcome types`);
+    
+    return result.rows.map(row => ({
+      name: row.name,
+      count: parseInt(row.count) || 0,
+      percentage: parseFloat(row.percentage) || 0
+    }));
+  } finally {
+    client.release();
+  }
+}

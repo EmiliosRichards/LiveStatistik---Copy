@@ -17,28 +17,24 @@ export function CallsTimeSeriesChart() {
     const fetchData = async () => {
       try {
         setLoading(true)
-        // Mock data for now - you can replace with actual API call
-        // const response = await fetch('/api/monthly-calls')
-        // const result = await response.json()
+        const currentYear = new Date().getFullYear()
+        const response = await fetch(`/api/monthly-call-trends?year=${currentYear}`)
         
-        const mockData: TimeSeriesData[] = [
-          { month: 'Jan', calls: 9850 },
-          { month: 'Feb', calls: 10200 },
-          { month: 'Mar', calls: 11500 },
-          { month: 'Apr', calls: 10800 },
-          { month: 'May', calls: 12100 },
-          { month: 'Jun', calls: 11900 },
-          { month: 'Jul', calls: 12500 },
-          { month: 'Aug', calls: 11800 },
-          { month: 'Sep', calls: 12300 },
-          { month: 'Oct', calls: 12569 },
-          { month: 'Nov', calls: 11200 },
-          { month: 'Dec', calls: 10500 },
-        ]
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`)
+        }
         
-        setData(mockData)
+        const result: TimeSeriesData[] = await response.json()
+        
+        // Only show months up to current month
+        const currentMonth = new Date().getMonth() + 1 // 1-12
+        const filteredData = result.filter((_, index) => index + 1 <= currentMonth)
+        
+        setData(filteredData)
       } catch (error) {
         console.error('Failed to fetch time series data:', error)
+        // Show empty state on error
+        setData([])
       } finally {
         setLoading(false)
       }

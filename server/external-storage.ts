@@ -23,6 +23,8 @@ import {
   getAgentData,
   getAgentCallDetails,
   getAggregatedKpis,
+  getMonthlyCallTrends,
+  getOutcomeDistribution,
   type AgentData,
   type CampaignAgentReference,
   type AggregatedKpiData
@@ -45,6 +47,11 @@ export class ExternalStorage implements IStorage {
   private kpiCache: any = null;
   private kpiCacheTs = 0;
   private readonly KPI_CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+  
+  // Chart data cache (10 minute TTL)
+  private monthlyTrendsCache: Map<number, { data: any; ts: number }> = new Map();
+  private outcomeDistCache: Map<string, { data: any; ts: number }> = new Map();
+  private readonly CHART_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
   
   // Test system für Live-Benachrichtigungen
   // REMOVED: Test system variables komplett entfernt auf Benutzeranfrage
@@ -865,6 +872,57 @@ export class ExternalStorage implements IStorage {
       // ignore
     }
     return this.campaignMapping;
+  }
+
+  async getMonthlyCallTrends(year: number): Promise<{ month: string; calls: number }[]> {
+    await this.initializeData();
+    
+    // Check cache first
+    const cached = this.monthlyTrendsCache.get(year);
+    if (cached && (Date.now() - cached.ts < this.CHART_CACHE_TTL)) {
+      console.log(`📊 Monthly Trends Cache: Returning cached data for ${year} (age: ${Math.round((Date.now() - cached.ts) / 1000)}s)`);
+      return cached.data;
+    }
+    
+    const allAgentLogins = Array.from(this.agents.values()).map(a => a.name);
+    
+    if (allAgentLogins.length === 0) {
+      return [];
+    }
+    
+    const data = await getMonthlyCallTrends(allAgentLogins, year);
+    
+    // Cache the result
+    this.monthlyTrendsCache.set(year, { data, ts: Date.now() });
+    console.log(`✅ Monthly Trends Cache: Stored data for ${year}, expires in ${this.CHART_CACHE_TTL / 1000}s`);
+    
+    return data;
+  }
+
+  async getOutcomeDistribution(dateFrom: string, dateTo: string): Promise<{ name: string; count: number; percentage: number }[]> {
+    await this.initializeData();
+    
+    // Check cache first
+    const cacheKey = `${dateFrom}-${dateTo}`;
+    const cached = this.outcomeDistCache.get(cacheKey);
+    if (cached && (Date.now() - cached.ts < this.CHART_CACHE_TTL)) {
+      console.log(`📊 Outcome Distribution Cache: Returning cached data (age: ${Math.round((Date.now() - cached.ts) / 1000)}s)`);
+      return cached.data;
+    }
+    
+    const allAgentLogins = Array.from(this.agents.values()).map(a => a.name);
+    
+    if (allAgentLogins.length === 0) {
+      return [];
+    }
+    
+    const data = await getOutcomeDistribution(allAgentLogins, dateFrom, dateTo);
+    
+    // Cache the result
+    this.outcomeDistCache.set(cacheKey, { data, ts: Date.now() });
+    console.log(`✅ Outcome Distribution Cache: Stored data, expires in ${this.CHART_CACHE_TTL / 1000}s`);
+    
+    return data;
   }
 
   async getAggregatedKpisWithCache(refresh: boolean = false): Promise<AggregatedKpiData[]> {
