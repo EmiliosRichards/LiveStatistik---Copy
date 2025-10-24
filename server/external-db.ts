@@ -448,3 +448,51 @@ export async function getUniqueCampaigns(): Promise<string[]> {
     client.release();
   }
 }
+
+export interface AggregatedKpiData {
+  week_start: string;
+  total_calls: number;
+  calls_reached: number;
+  positive_outcomes: number;
+  avg_call_duration_sec: number;
+}
+
+export async function getAggregatedKpis(
+  agentLogins: string[],
+  dateFrom: string,
+  dateTo: string
+): Promise<AggregatedKpiData[]> {
+  checkExternalDb();
+  const client = await externalPool!.connect();
+  try {
+    console.log(`📊 KPI Aggregation: Querying ${agentLogins.length} agents from ${dateFrom} to ${dateTo}`);
+    
+    const query = `
+      SELECT 
+        DATE_TRUNC('week', transactions_fired_date::date)::date AS week_start,
+        COUNT(DISTINCT COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text))) AS total_calls,
+        SUM(CASE WHEN transactions_status = 'open' THEN 1 ELSE 0 END) AS calls_reached,
+        SUM(CASE WHEN transactions_status = 'success' THEN 1 ELSE 0 END) AS positive_outcomes,
+        AVG(CASE WHEN connections_duration > 0 THEN connections_duration ELSE NULL END) AS avg_call_duration_sec
+      FROM agent_data
+      WHERE transactions_user_login = ANY($1)
+        AND transactions_fired_date >= $2
+        AND transactions_fired_date <= $3
+      GROUP BY DATE_TRUNC('week', transactions_fired_date::date)
+      ORDER BY week_start
+    `;
+    
+    const result = await client.query(query, [agentLogins, dateFrom, dateTo]);
+    console.log(`✅ KPI Aggregation: Returned ${result.rows.length} week(s) of aggregated data`);
+    
+    return result.rows.map(row => ({
+      week_start: row.week_start,
+      total_calls: parseInt(row.total_calls) || 0,
+      calls_reached: parseInt(row.calls_reached) || 0,
+      positive_outcomes: parseInt(row.positive_outcomes) || 0,
+      avg_call_duration_sec: parseFloat(row.avg_call_duration_sec) || 0
+    }));
+  } finally {
+    client.release();
+  }
+}

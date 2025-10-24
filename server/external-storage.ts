@@ -22,8 +22,10 @@ import {
   getCampaignAgentReference,
   getAgentData,
   getAgentCallDetails,
+  getAggregatedKpis,
   type AgentData,
-  type CampaignAgentReference
+  type CampaignAgentReference,
+  type AggregatedKpiData
 } from "./external-db";
 
 export class ExternalStorage implements IStorage {
@@ -38,6 +40,11 @@ export class ExternalStorage implements IStorage {
   // Cache for campaign id -> title mapping (Dialfire)
   private campaignMapping: Record<string, string> = {};
   private campaignMappingTs = 0;
+  
+  // KPI cache (5 minute TTL)
+  private kpiCache: any = null;
+  private kpiCacheTs = 0;
+  private readonly KPI_CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
   
   // Test system für Live-Benachrichtigungen
   // REMOVED: Test system variables komplett entfernt auf Benutzeranfrage
@@ -860,6 +867,56 @@ export class ExternalStorage implements IStorage {
     return this.campaignMapping;
   }
 
+  async getAggregatedKpisWithCache(refresh: boolean = false): Promise<AggregatedKpiData[]> {
+    await this.initializeData();
+    
+    const now = Date.now();
+    
+    if (!refresh && this.kpiCache && (now - this.kpiCacheTs < this.KPI_CACHE_TTL)) {
+      console.log('📊 KPI Cache: Returning cached data (age: ' + Math.round((now - this.kpiCacheTs) / 1000) + 's)');
+      return this.kpiCache;
+    }
+    
+    console.log('📊 KPI Cache: Fetching fresh data from database');
+    
+    const allAgentLogins = Array.from(this.agents.values()).map(a => a.name);
+    
+    if (allAgentLogins.length === 0) {
+      console.log('⚠️ No agents found, returning empty KPI data');
+      return [];
+    }
+    
+    const today = new Date();
+    const currentWeekStart = new Date(today);
+    currentWeekStart.setDate(today.getDate() - today.getDay() + 1);
+    
+    const lastWeekStart = new Date(currentWeekStart);
+    lastWeekStart.setDate(currentWeekStart.getDate() - 7);
+    
+    const lastWeekEnd = new Date(currentWeekStart);
+    lastWeekEnd.setDate(currentWeekStart.getDate() - 1);
+    
+    const formatDate = (d: Date) => d.toISOString().split('T')[0];
+    
+    const dateFrom = formatDate(lastWeekStart);
+    const dateTo = formatDate(today);
+    
+    console.log(`📊 KPI Query: Fetching 2 weeks of data (${dateFrom} to ${dateTo}) for ${allAgentLogins.length} agents`);
+    
+    try {
+      const kpiData = await getAggregatedKpis(allAgentLogins, dateFrom, dateTo);
+      
+      this.kpiCache = kpiData;
+      this.kpiCacheTs = now;
+      
+      console.log(`✅ KPI Cache: Stored ${kpiData.length} week(s) of data, expires in ${this.KPI_CACHE_TTL / 1000}s`);
+      
+      return kpiData;
+    } catch (error) {
+      console.error('❌ Error fetching aggregated KPIs:', error);
+      return this.kpiCache || [];
+    }
+  }
 
   async createOrUpdateStatistics(insertStats: InsertAgentStatistics): Promise<AgentStatistics> {
     throw new Error('Create operations not allowed on external read-only database');

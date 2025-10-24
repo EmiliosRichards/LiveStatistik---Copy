@@ -183,144 +183,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get KPIs with intelligent month-over-month comparisons
+  // Get KPIs with intelligent week-over-week comparisons (optimized with DB aggregation + caching)
   app.get("/api/kpis", async (req, res) => {
     try {
-      console.log(`📊 KPI API: Fetching current week and month data`);
+      console.log(`📊 KPI API: Fetching aggregated KPI data`);
       
+      const refresh = req.query.refresh === 'true';
+      const kpiData = await storage.getAggregatedKpisWithCache(refresh);
+      
+      if (kpiData.length === 0) {
+        console.log('⚠️ No KPI data available');
+        return res.json({
+          totalCalls: { value: 0, comparison: 0, trend: 'neutral' },
+          reachRate: { value: 0, comparison: 0, trend: 'neutral' },
+          positiveOutcomes: { value: 0, comparison: 0, trend: 'neutral' },
+          avgDuration: { value: 0, comparison: 0, trend: 'neutral' },
+          metadata: { message: 'No data available' }
+        });
+      }
+      
+      const formatDate = (date: Date) => date.toISOString().split('T')[0];
       const now = new Date();
-      const agentList = await storage.getAllAgents();
-      const allAgentIds = agentList.map(a => a.id);
       
-      // Helper to format date as YYYY-MM-DD
-      const formatDate = (date: Date) => {
-        return date.toISOString().split('T')[0];
+      const getCurrentWeekStart = () => {
+        const d = new Date(now);
+        const dayOfWeek = d.getDay();
+        const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        d.setDate(d.getDate() + daysToMonday);
+        return formatDate(d);
       };
       
-      // Get start of current week (Monday)
-      const today = new Date(now);
-      const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() + daysToMonday);
-      weekStart.setHours(0, 0, 0, 0);
+      const currentWeekStart = getCurrentWeekStart();
       
-      // Get start of current month
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const sortedByDate = [...kpiData].sort((a, b) => 
+        new Date(b.week_start).getTime() - new Date(a.week_start).getTime()
+      );
       
-      // Get start of last month
-      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of last month
+      let thisWeekData = kpiData.find(d => d.week_start === currentWeekStart);
+      let lastWeekData: typeof thisWeekData | undefined;
+      let isUsingFallback = false;
       
-      console.log(`📅 Current week: ${formatDate(weekStart)} to ${formatDate(now)}`);
-      console.log(`📅 Current month: ${formatDate(monthStart)} to ${formatDate(now)}`);
-      console.log(`📅 Last month: ${formatDate(lastMonthStart)} to ${formatDate(lastMonthEnd)}`);
+      if (!thisWeekData && sortedByDate.length > 0) {
+        console.log(`⚠️ No data for current week (${currentWeekStart}), falling back to most recent week`);
+        thisWeekData = sortedByDate[0];
+        lastWeekData = sortedByDate[1];
+        isUsingFallback = true;
+      } else if (thisWeekData) {
+        lastWeekData = kpiData.find(d => d.week_start !== currentWeekStart);
+      }
       
-      // Fetch statistics for this week
-      const thisWeekStats = await storage.getAgentStatistics({
-        agentIds: allAgentIds,
-        dateFrom: formatDate(weekStart),
-        dateTo: formatDate(now)
-      });
+      console.log(`📊 This week (${currentWeekStart}):`, thisWeekData);
+      console.log(`📊 Last week:`, lastWeekData);
+      console.log(`📊 Using fallback:`, isUsingFallback);
       
-      // Fetch statistics for this month
-      const thisMonthStats = await storage.getAgentStatistics({
-        agentIds: allAgentIds,
-        dateFrom: formatDate(monthStart),
-        dateTo: formatDate(now)
-      });
+      if (!thisWeekData) {
+        console.log('⚠️ No KPI data available at all');
+        return res.json({
+          totalCalls: { value: 0, comparison: 0, trend: 'neutral' },
+          reachRate: { value: 0, comparison: 0, trend: 'neutral' },
+          positiveOutcomes: { value: 0, comparison: 0, trend: 'neutral' },
+          avgDuration: { value: 0, comparison: 0, trend: 'neutral' },
+          metadata: { message: 'No data available' }
+        });
+      }
       
-      // Fetch statistics for last month
-      const lastMonthStats = await storage.getAgentStatistics({
-        agentIds: allAgentIds,
-        dateFrom: formatDate(lastMonthStart),
-        dateTo: formatDate(lastMonthEnd)
-      });
+      const dayOfWeek = now.getDay();
+      const businessDaysElapsed = dayOfWeek === 0 ? 0 : (dayOfWeek === 6 ? 5 : dayOfWeek);
+      const projectionFactor = businessDaysElapsed > 0 ? 5 / businessDaysElapsed : 1;
       
-      // Calculate KPIs for this week
-      const weekCalls = thisWeekStats.reduce((sum, s) => sum + s.anzahl, 0);
-      const weekSuccess = thisWeekStats.reduce((sum, s) => sum + s.erfolgreich, 0);
-      const weekCompleted = thisWeekStats.reduce((sum, s) => sum + s.abgeschlossen, 0);
-      const weekReachRate = weekCalls > 0 ? (weekCompleted / weekCalls) * 100 : 0;
-      const weekTotalTime = thisWeekStats.reduce((sum, s) => sum + s.gespraechszeit, 0);
-      const weekAvgDuration = weekCompleted > 0 ? (weekTotalTime / weekCompleted) * 60 : 0;
+      const thisWeekCalls = thisWeekData.total_calls;
+      const thisWeekReached = thisWeekData.calls_reached;
+      const thisWeekPositive = thisWeekData.positive_outcomes;
+      const thisWeekDuration = thisWeekData.avg_call_duration_sec;
       
-      // Calculate KPIs for this month
-      const monthCalls = thisMonthStats.reduce((sum, s) => sum + s.anzahl, 0);
-      const monthSuccess = thisMonthStats.reduce((sum, s) => sum + s.erfolgreich, 0);
-      const monthCompleted = thisMonthStats.reduce((sum, s) => sum + s.abgeschlossen, 0);
-      const monthReachRate = monthCalls > 0 ? (monthCompleted / monthCalls) * 100 : 0;
-      const monthTotalTime = thisMonthStats.reduce((sum, s) => sum + s.gespraechszeit, 0);
-      const monthAvgDuration = monthCompleted > 0 ? (monthTotalTime / monthCompleted) * 60 : 0;
+      const thisWeekReachRate = thisWeekCalls > 0 ? (thisWeekReached / thisWeekCalls) * 100 : 0;
       
-      // Calculate KPIs for last month
-      const lastMonthCalls = lastMonthStats.reduce((sum, s) => sum + s.anzahl, 0);
-      const lastMonthSuccess = lastMonthStats.reduce((sum, s) => sum + s.erfolgreich, 0);
-      const lastMonthCompleted = lastMonthStats.reduce((sum, s) => sum + s.abgeschlossen, 0);
-      const lastMonthReachRate = lastMonthCalls > 0 ? (lastMonthCompleted / lastMonthCalls) * 100 : 0;
-      const lastMonthTotalTime = lastMonthStats.reduce((sum, s) => sum + s.gespraechszeit, 0);
-      const lastMonthAvgDuration = lastMonthCompleted > 0 ? (lastMonthTotalTime / lastMonthCompleted) * 60 : 0;
+      const projectedWeekCalls = Math.round(thisWeekCalls * projectionFactor);
+      const projectedWeekPositive = Math.round(thisWeekPositive * projectionFactor);
       
-      // Calculate projections if we're mid-month
-      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      const daysElapsedInMonth = now.getDate();
-      const projectionFactor = daysInMonth / daysElapsedInMonth;
+      let callsComparison = 0;
+      let reachRateComparison = 0;
+      let positiveComparison = 0;
+      let durationComparison = 0;
       
-      const projectedMonthCalls = Math.round(monthCalls * projectionFactor);
-      const projectedMonthSuccess = Math.round(monthSuccess * projectionFactor);
+      if (lastWeekData) {
+        const lastWeekCalls = lastWeekData.total_calls;
+        const lastWeekReached = lastWeekData.calls_reached;
+        const lastWeekPositive = lastWeekData.positive_outcomes;
+        const lastWeekDuration = lastWeekData.avg_call_duration_sec;
+        const lastWeekReachRate = lastWeekCalls > 0 ? (lastWeekReached / lastWeekCalls) * 100 : 0;
+        
+        callsComparison = lastWeekCalls > 0 ? ((projectedWeekCalls - lastWeekCalls) / lastWeekCalls) * 100 : 0;
+        reachRateComparison = lastWeekReachRate > 0 ? ((thisWeekReachRate - lastWeekReachRate) / lastWeekReachRate) * 100 : 0;
+        positiveComparison = lastWeekPositive > 0 ? ((projectedWeekPositive - lastWeekPositive) / lastWeekPositive) * 100 : 0;
+        durationComparison = lastWeekDuration > 0 ? ((thisWeekDuration - lastWeekDuration) / lastWeekDuration) * 100 : 0;
+      }
       
-      // Calculate comparison percentages
-      const callsComparison = lastMonthCalls > 0 
-        ? ((projectedMonthCalls - lastMonthCalls) / lastMonthCalls) * 100 
-        : 0;
-      
-      const successComparison = lastMonthSuccess > 0 
-        ? ((projectedMonthSuccess - lastMonthSuccess) / lastMonthSuccess) * 100 
-        : 0;
-      
-      const reachRateComparison = lastMonthReachRate > 0 
-        ? ((monthReachRate - lastMonthReachRate) / lastMonthReachRate) * 100 
-        : 0;
-      
-      const durationComparison = lastMonthAvgDuration > 0 
-        ? ((monthAvgDuration - lastMonthAvgDuration) / lastMonthAvgDuration) * 100 
-        : 0;
-      
-      console.log(`📊 This week: ${weekCalls} calls, ${weekSuccess} successful`);
-      console.log(`📊 This month: ${monthCalls} calls (projected: ${projectedMonthCalls}), ${monthSuccess} successful`);
-      console.log(`📊 Last month: ${lastMonthCalls} calls, ${lastMonthSuccess} successful`);
-      console.log(`📈 Comparisons: calls ${callsComparison.toFixed(1)}%, success ${successComparison.toFixed(1)}%`);
+      console.log(`📊 This week: ${thisWeekCalls} calls (projected: ${projectedWeekCalls}), ${thisWeekPositive} positive`);
+      console.log(`📈 Week-over-week: calls ${callsComparison.toFixed(1)}%, positive ${positiveComparison.toFixed(1)}%`);
       
       res.json({
         totalCalls: {
-          value: weekCalls,
+          value: thisWeekCalls,
           comparison: parseFloat(callsComparison.toFixed(1)),
           trend: callsComparison >= 0 ? 'up' : 'down'
         },
         reachRate: {
-          value: parseFloat(weekReachRate.toFixed(1)),
+          value: parseFloat(thisWeekReachRate.toFixed(1)),
           comparison: parseFloat(reachRateComparison.toFixed(1)),
           trend: reachRateComparison >= 0 ? 'up' : 'down'
         },
         positiveOutcomes: {
-          value: weekSuccess,
-          comparison: parseFloat(successComparison.toFixed(1)),
-          trend: successComparison >= 0 ? 'up' : 'down'
+          value: thisWeekPositive,
+          comparison: parseFloat(positiveComparison.toFixed(1)),
+          trend: positiveComparison >= 0 ? 'up' : 'down'
         },
         avgDuration: {
-          value: parseFloat(weekAvgDuration.toFixed(1)),
+          value: parseFloat((thisWeekDuration / 60).toFixed(1)),
           comparison: parseFloat(durationComparison.toFixed(1)),
           trend: durationComparison >= 0 ? 'up' : 'down'
         },
         metadata: {
-          weekStart: formatDate(weekStart),
-          monthStart: formatDate(monthStart),
-          lastMonthStart: formatDate(lastMonthStart),
-          lastMonthEnd: formatDate(lastMonthEnd),
-          daysElapsedInMonth,
-          daysInMonth,
-          projectedMonthCalls,
-          projectedMonthSuccess
+          currentWeekStart,
+          actualWeekStart: thisWeekData.week_start,
+          usingFallbackData: isUsingFallback,
+          businessDaysElapsed,
+          projectedWeekCalls,
+          projectedWeekPositive,
+          cacheUsed: !refresh
         }
       });
     } catch (error) {
