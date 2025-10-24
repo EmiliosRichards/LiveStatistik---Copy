@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 // Only proxy specific backend API endpoints to Express.
 // Keep Next.js internal routes like /api/auth handled by NextAuth.
 const nextConfig: NextConfig = {
+  experimental: {
+    // Increase proxy timeout for slow chart queries (first load ~30-60s)
+    proxyTimeout: 120000, // 2 minutes
+  },
   async rewrites() {
     // Use IPv4 loopback to avoid IPv6 (::1) mismatch on Windows
     const target = process.env.EXPRESS_BASE_URL || "http://127.0.0.1:5001";

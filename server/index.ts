@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { warmChartCache } from "./cache-warmer";
 
 const app = express();
 app.use(express.json());
@@ -106,5 +107,12 @@ app.get("/healthz", (_req, res) => {
   }
   server.listen(listenOpts, () => {
     log(`serving on port ${port}`);
+    
+    // Pre-warm chart cache in background (don't block startup)
+    setTimeout(() => {
+      warmChartCache().catch(err => {
+        console.error('Cache warmer failed:', err);
+      });
+    }, 5000); // Wait 5s for database initialization to complete
   });
 })();
