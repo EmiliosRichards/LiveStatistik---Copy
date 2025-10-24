@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import ThemeSwitch from '../../components/ThemeSwitch'
 import { InlineCalendar } from '@/components/InlineCalendar'
+import { CallsTimeSeriesChart } from '@/components/CallsTimeSeriesChart'
+import { OutcomesBarChart } from '@/components/OutcomesBarChart'
 import { format } from 'date-fns'
 
 interface KPIData {
@@ -267,30 +270,38 @@ export default function DashboardPage() {
           <aside className="w-64 shrink-0 sticky self-start" style={{ top: showHeader ? headerHeight : 0, marginTop: showHeader ? 0 : -headerHeight }}>
             <div className="bg-bg-elevated rounded-lg shadow-md p-2">
               <nav className="space-y-1 text-slate-800">
-                <button
-                  className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='dashboard' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
-                  onClick={() => { setSection('dashboard'); const sp = new URLSearchParams(searchParams.toString()); sp.set('view','dashboard'); router.replace(`/dashboard?${sp.toString()}`) }}
+                <Link
+                  href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','dashboard'); return sp.toString() })()}`}
+                  onClick={() => setSection('dashboard')}
+                  className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='dashboard' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
+                  data-testid="link-dashboard"
                 >
                   <Layers className="w-4 h-4" /> Dashboard
-                </button>
-                <button
-                  className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='agents' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
-                  onClick={() => { setSection('agents'); const sp = new URLSearchParams(searchParams.toString()); sp.set('view','agents'); router.replace(`/dashboard?${sp.toString()}`) }}
+                </Link>
+                <Link
+                  href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','agents'); return sp.toString() })()}`}
+                  onClick={() => setSection('agents')}
+                  className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='agents' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
+                  data-testid="link-agents"
                 >
                   <Users className="w-4 h-4" /> Agents
-                </button>
-                <button
-                  className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='campaigns' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
-                  onClick={() => { setSection('campaigns'); const sp = new URLSearchParams(searchParams.toString()); sp.set('view','campaigns'); router.replace(`/dashboard?${sp.toString()}`) }}
+                </Link>
+                <Link
+                  href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','campaigns'); return sp.toString() })()}`}
+                  onClick={() => setSection('campaigns')}
+                  className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='campaigns' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
+                  data-testid="link-campaigns"
                 >
                   <Layers className="w-4 h-4" /> Campaigns
-                </button>
-                <button
-                  className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='search' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
-                  onClick={() => { setSection('search'); const sp = new URLSearchParams(searchParams.toString()); sp.set('view','search'); router.replace(`/dashboard?${sp.toString()}`) }}
+                </Link>
+                <Link
+                  href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','search'); return sp.toString() })()}`}
+                  onClick={() => setSection('search')}
+                  className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='search' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
+                  data-testid="link-search"
                 >
                   <CalendarClock className="w-4 h-4" /> Time-based Search
-                </button>
+                </Link>
               </nav>
             </div>
           </aside>
@@ -454,10 +465,10 @@ export default function DashboardPage() {
                   </button>
                 </div>
               </div>
-              {/* Placeholder: we can show recent stats here based on filters in future */}
+              {/* Charts showing performance metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="h-40 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-slate-500">Placeholder Card A</div>
-                <div className="h-40 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-slate-500">Placeholder Card B</div>
+                <CallsTimeSeriesChart />
+                <OutcomesBarChart />
               </div>
             </div>
           </>

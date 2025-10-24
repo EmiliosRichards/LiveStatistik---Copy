@@ -299,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trend: positiveComparison >= 0 ? 'up' : 'down'
         },
         avgDuration: {
-          value: parseFloat((thisWeekDuration / 60).toFixed(1)),
+          value: parseFloat((thisWeekDuration / 60000).toFixed(1)),
           comparison: parseFloat(durationComparison.toFixed(1)),
           trend: durationComparison >= 0 ? 'up' : 'down'
         },
