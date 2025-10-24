@@ -11,7 +11,15 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "search:cli": "node tools/search-cli.mjs",
+    "verify:sheets": "tsx tools/verify-sheets.ts",
+    "diff:campaigns": "tsx tools/diff-campaign-sources.ts",
+    "test:db:ping": "tsx tools/tests/db-connectivity.ts",
+    "test:db:agents": "tsx tools/tests/campaigns-for-agents.ts 5",
+    "test:db:calls": "tsx tools/tests/calls-for-agent-campaign.ts",
+    "test:stats": "tsx tools/tests/stats-for-agents.ts",
+    "test:agent-campaign": "tsx tools/tests/agent-campaign-calls.ts"
   },
   "dependencies": {
     "@google/genai": "^1.17.0",

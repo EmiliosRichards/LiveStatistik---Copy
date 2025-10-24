@@ -35,12 +35,21 @@ export class ExternalStorage implements IStorage {
   private projectTargets: Map<string, ProjectTargets> = new Map();
   private initialized = false;
   private initializationPromise: Promise<void> | null = null;
+  // Cache for campaign id -> title mapping (Dialfire)
+  private campaignMapping: Record<string, string> = {};
+  private campaignMappingTs = 0;
   
   // Test system für Live-Benachrichtigungen
   // REMOVED: Test system variables komplett entfernt auf Benutzeranfrage
 
   constructor() {
     // Don't initialize immediately, wait for first request
+  }
+
+  private makeStableId(input: string): string {
+    // Deterministic pseudo-UUID v5-style derived from input
+    const h = createHash('md5').update(input).digest('hex');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20,32)}`;
   }
 
   private async initializeData() {
@@ -192,7 +201,7 @@ export class ExternalStorage implements IStorage {
     this.agents.clear();
     
     uniqueAgentLogins.forEach(agentLogin => {
-      const id = randomUUID();
+      const id = this.makeStableId(`agent:${agentLogin.trim()}`);
       this.agents.set(id, {
         id,
         name: agentLogin.trim(), // Use the login as display name, trimmed
@@ -216,7 +225,7 @@ export class ExternalStorage implements IStorage {
     const uniqueCampaignSet = new Set(uniqueCampaigns.filter(campaign => campaign && campaign.trim() !== ''));
     
     uniqueCampaignSet.forEach(campaignId => {
-      const id = randomUUID();
+      const id = this.makeStableId(`project:${campaignId.trim()}`);
       this.projects.set(id, {
         id,
         name: campaignId.trim(), // Use campaign ID as project name, trimmed
@@ -265,7 +274,8 @@ export class ExternalStorage implements IStorage {
   // Convert optimized external data (multiple agents/projects) to statistics
   private convertOptimizedDataToStatistics(
     externalData: AgentData[],
-    filter: StatisticsFilter
+    filter: StatisticsFilter,
+    campaignTitleMap: Record<string, string>
   ): AgentStatistics[] {
     const statsMap = new Map<string, AgentStatistics>();
     
@@ -305,26 +315,35 @@ export class ExternalStorage implements IStorage {
       const stat = statsMap.get(dateKey)!;
       stat.anzahl += 1;
       
-      // Add time metrics
-      const durationHours = record.connections_duration / 3600;
+      // Add time metrics (hours)
+      // connections_duration is in milliseconds in external DB → convert to hours
+      const durationHours = (record.connections_duration || 0) / 3_600_000;
       stat.gespraechszeit += durationHours;
-      
+
       if (record.transactions_wait_time_sec) {
         stat.wartezeit += record.transactions_wait_time_sec / 3600;
       }
-      if (record.transactions_edit_time_sec) {
-        stat.nachbearbeitungszeit += record.transactions_edit_time_sec / 3600;
+      if (record.transactions_edit_time_sec != null) {
+        // NBZ: isolate after-call work per documentation → edit_time - talk_time
+        const nbzAdd = (record.transactions_edit_time_sec / 3600) - durationHours;
+        stat.nachbearbeitungszeit += Math.max(0, nbzAdd);
       }
       if (record.transactions_pause_time_sec) {
         stat.vorbereitungszeit += record.transactions_pause_time_sec / 3600;
       }
-      
-      const recordWorkTimeHours = 
-        (record.transactions_wait_time_sec || 0) / 3600 + 
-        durationHours + 
-        (record.transactions_edit_time_sec || 0) / 3600 + 
-        (record.transactions_pause_time_sec || 0) / 3600;
-      stat.arbeitszeit += recordWorkTimeHours;
+
+      // AZ only for Terminhütte/Jagdhütte campaigns
+      const resolvedTitle = campaignTitleMap[project.name] || project.name || '';
+      const qualifiesForAZ = /Terminhütte|Jagdhütte|Terminhuette|Jagdhuette/i.test(resolvedTitle);
+      if (qualifiesForAZ) {
+        const recordWorkTimeHours =
+          (record.transactions_wait_time_sec || 0) / 3600 +
+          durationHours +
+          // use NBZ add computed above
+          Math.max(0, ((record.transactions_edit_time_sec || 0) / 3600) - durationHours) +
+          (record.transactions_pause_time_sec || 0) / 3600;
+        stat.arbeitszeit += recordWorkTimeHours;
+      }
       
       // Count outcomes
       const status = record.transactions_status || '';
@@ -424,8 +443,9 @@ export class ExternalStorage implements IStorage {
       const stat = statsMap.get(dateKey)!;
       stat.anzahl += 1;
       
-      // Convert duration from milliseconds to hours
-      const durationHours = parseInt(record.connections_duration.toString()) / (1000 * 60 * 60);
+      // Convert duration to hours (agent_data provides seconds)
+      // connections_duration is milliseconds → hours
+      const durationHours = (Number(record.connections_duration) || 0) / 3_600_000;
       stat.gespraechszeit += durationHours;
       
       // Convert waiting time from seconds to hours (WZ)
@@ -433,27 +453,31 @@ export class ExternalStorage implements IStorage {
         const waitingTimeHours = record.transactions_wait_time_sec / 3600; // Convert seconds to hours
         stat.wartezeit += waitingTimeHours;
       }
-      
-      // Convert edit time from seconds to hours (NBZ - Nachbearbeitungszeit)
-      if (record.transactions_edit_time_sec) {
-        const editTimeHours = record.transactions_edit_time_sec / 3600; // Convert seconds to hours
-        stat.nachbearbeitungszeit += editTimeHours;
+
+      // NBZ - Nachbearbeitungszeit per documentation (edit - talk)
+      if (record.transactions_edit_time_sec != null) {
+        const nbzAdd = (record.transactions_edit_time_sec / 3600) - durationHours;
+        stat.nachbearbeitungszeit += Math.max(0, nbzAdd);
       }
-      
+
       // Convert pause time from seconds to hours (VBZ - Vorbereitungszeit)
       if (record.transactions_pause_time_sec) {
         const pauseTimeHours = record.transactions_pause_time_sec / 3600; // Convert seconds to hours
         stat.vorbereitungszeit += pauseTimeHours;
       }
-      
-      // Calculate total work time (AZ) from all time components for this record
-      // AZ = WZ + GZ + NBZ + VBZ (all converted to hours)
-      const recordWorkTimeHours = 
-        (record.transactions_wait_time_sec || 0) / 3600 + 
-        durationHours + // GZ already in hours
-        (record.transactions_edit_time_sec || 0) / 3600 + // NBZ
-        (record.transactions_pause_time_sec || 0) / 3600; // VBZ
-      stat.arbeitszeit += recordWorkTimeHours;
+
+      // AZ only for qualifying campaign names
+      const projectForAZ = this.projects.get(projectId);
+      const resolvedTitle = projectForAZ ? (this.campaignMapping[projectForAZ.name] || projectForAZ.name) : '';
+      const qualifiesForAZ2 = /Terminhütte|Jagdhütte|Terminhuette|Jagdhuette/i.test(resolvedTitle);
+      if (qualifiesForAZ2) {
+        const recordWorkTimeHours =
+          (record.transactions_wait_time_sec || 0) / 3600 +
+          durationHours +
+          Math.max(0, ((record.transactions_edit_time_sec || 0) / 3600) - durationHours) +
+          (record.transactions_pause_time_sec || 0) / 3600;
+        stat.arbeitszeit += recordWorkTimeHours;
+      }
 
 
       // Count outcomes based on real data structure from your file
@@ -685,10 +709,12 @@ export class ExternalStorage implements IStorage {
       try {
         console.log(`🚀 OPTIMIZED: Making SINGLE DB query with dateFrom=${dateFrom}, dateTo=${dateTo}`);
         const externalData = await this.getOptimizedAgentData(filter.agentIds, filter.projectIds, dateFrom, dateTo, filter.timeFrom, filter.timeTo);
+        // Ensure campaign mapping is available for AZ calculation
+        const campaignTitleMap = await this.getCampaignMapping();
         console.log(`🚀 OPTIMIZED: Received ${externalData.length} pre-filtered records from single DB query`);
         
         // Convert external data to statistics format efficiently
-        const allStats = this.convertOptimizedDataToStatistics(externalData, filter);
+        const allStats = this.convertOptimizedDataToStatistics(externalData, filter, campaignTitleMap);
         
         console.log(`📊 OPTIMIZED: Generated ${allStats.length} statistics from optimized query`);
         return allStats;
@@ -753,31 +779,41 @@ export class ExternalStorage implements IStorage {
         params.push(dateTo);
       }
       
-      // Time range filter (convert to UTC for DB query)
+      // Time range filter (derive time from recordings_started; DB stores UTC → convert Cyprus to UTC)
       if (timeFrom || timeTo) {
+        const timeExpr = `to_char(recordings_started, 'HH24:MI')`;
         if (timeFrom) {
-          // Convert Cyprus time to UTC (-3 hours) for DB comparison
           const [hours, minutes] = timeFrom.split(':').map(Number);
           const utcHours = (hours - 3 + 24) % 24;
-          const utcTimeFrom = `${utcHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-          conditions.push(`SUBSTRING(recordings_start_time, 12, 5) >= $${params.length + 1}`);
+          const utcTimeFrom = `${utcHours.toString().padStart(2, '0')}:${(minutes || 0).toString().padStart(2, '0')}`;
+          conditions.push(`${timeExpr} >= $${params.length + 1}`);
           params.push(utcTimeFrom);
         }
         if (timeTo) {
-          // Convert Cyprus time to UTC (-3 hours) for DB comparison
           const [hours, minutes] = timeTo.split(':').map(Number);
           const utcHours = (hours - 3 + 24) % 24;
-          const utcTimeTo = `${utcHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-          conditions.push(`SUBSTRING(recordings_start_time, 12, 5) <= $${params.length + 1}`);
+          const utcTimeTo = `${utcHours.toString().padStart(2, '0')}:${(minutes || 0).toString().padStart(2, '0')}`;
+          conditions.push(`${timeExpr} <= $${params.length + 1}`);
           params.push(utcTimeTo);
         }
       }
       
       const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
       
-      // Use DISTINCT ON for deduplication with performance limit
+      // Use DISTINCT ON for deduplication with performance limit and select only needed columns
       const query = `
-        SELECT DISTINCT ON (transaction_id) *
+        SELECT DISTINCT ON (transaction_id)
+          transaction_id,
+          transactions_fired_date,
+          recordings_start_time,
+          connections_duration,
+          transactions_user_login,
+          transactions_status,
+          transactions_status_detail,
+          transactions_wait_time_sec,
+          transactions_edit_time_sec,
+          transactions_pause_time_sec,
+          contacts_campaign_id
         FROM agent_data 
         ${whereClause}
         ORDER BY transaction_id, recordings_started DESC NULLS LAST, connections_duration DESC NULLS LAST
@@ -793,6 +829,35 @@ export class ExternalStorage implements IStorage {
     } finally {
       client.release();
     }
+  }
+
+  // Fetch campaign mapping from Dialfire API with cache
+  private async getCampaignMapping(): Promise<Record<string, string>> {
+    const now = Date.now();
+    if (now - this.campaignMappingTs < 60 * 60 * 1000 && Object.keys(this.campaignMapping).length > 0) {
+      return this.campaignMapping;
+    }
+    try {
+      const token = process.env.DIALFIRE_API_TOKEN;
+      if (!token) {
+        return this.campaignMapping; // empty / previous
+      }
+      const tenantId = "9c6d0163";
+      const baseUrl = "https://api.dialfire.com/api";
+      const url = `${baseUrl}/tenants/${tenantId}/campaigns/`;
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } });
+      if (!resp.ok) return this.campaignMapping;
+      const campaigns = await resp.json();
+      if (Array.isArray(campaigns)) {
+        const map: Record<string, string> = {};
+        campaigns.forEach((c: any) => { if (c.id && c.title) map[c.id] = c.title; });
+        this.campaignMapping = map;
+        this.campaignMappingTs = now;
+      }
+    } catch {
+      // ignore
+    }
+    return this.campaignMapping;
   }
 
 
@@ -831,9 +896,9 @@ export class ExternalStorage implements IStorage {
       
       console.log(`✅ Using stored names directly: agent="${realAgentName}", project="${realProjectName}"`);
       
-      const { getAgentCallDetails } = await import('./external-db.js');
+      const { getAgentCallDetails } = await import('./external-db');
       console.log(`🔍 Calling getAgentCallDetails with: agent="${realAgentName}", project="${realProjectName}", dateFrom="${dateFromStr}", dateTo="${dateToStr}"`);
-      const filteredData = await getAgentCallDetails(realAgentName!, realProjectName!, dateFromStr, dateToStr, 10000);
+      const filteredData = await getAgentCallDetails(realAgentName!.trim(), realProjectName!.trim(), dateFromStr, dateToStr, 0);
       
       console.log(`🎯 Filtered to ${filteredData.length} records for ${realAgentName} + ${realProjectName}`);
       
@@ -860,13 +925,10 @@ export class ExternalStorage implements IStorage {
         const groupingKey = `${record.contacts_id}_${record.contacts_campaign_id}_${record.transactions_fired_date}`.replace(/[^a-zA-Z0-9]/g, '_');
         const groupId = createHash('md5').update(groupingKey).digest('hex').substring(0, 8);
         
-        
-        // Create unique ID per row (includes index to avoid collisions)
-        const uniqueKey = `${record.contacts_id}_${record.contacts_campaign_id}_${record.transactions_fired_date}_${index}`.replace(/[^a-zA-Z0-9]/g, '_');
-        const fallbackId = createHash('md5').update(uniqueKey).digest('hex').substring(0, 8);
-        
-        // CRITICAL FIX: Always use transaction_id if available, otherwise create guaranteed unique ID
-        const uniqueId = record.transaction_id || `fallback_${fallbackId}_${index}`;
+        // Unique key even if transaction_id is missing
+        const uniqueKey = `${record.transaction_id || ''}_${record.contacts_id || ''}_${record.contacts_campaign_id || ''}_${record.transactions_fired_date || ''}`;
+        const fallbackId = createHash('md5').update(uniqueKey).digest('hex');
+        const uniqueId = record.transaction_id || `row_${fallbackId}`;
         
         return {
         id: uniqueId, // Always guaranteed unique ID

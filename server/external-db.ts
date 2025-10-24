@@ -184,16 +184,16 @@ export async function getAgentCallDetails(
   campaignId: string, 
   dateFrom?: string, 
   dateTo?: string,
-  limit: number = 10000  // ERHÖHT: Von 500 auf 10.000 für vollständige Call Details
+  limit: number = 0  // 0 means no cap; we will rely on DISTINCT ON and filters
 ): Promise<AgentData[]> {
   checkExternalDb();
   const client = await externalPool!.connect();
   try {
     const conditions = [
-      `transactions_user_login = $1`,
-      `contacts_campaign_id = $2`
+      `LOWER(TRIM(transactions_user_login)) = LOWER(TRIM($1))`,
+      `TRIM(contacts_campaign_id) = TRIM($2)`
     ];
-    const params: any[] = [agentLogin, campaignId];
+    const params: any[] = [agentLogin.trim(), campaignId.trim()];
     
     if (dateFrom && dateTo) {
       // Date range query
@@ -209,13 +209,15 @@ export async function getAgentCallDetails(
       params.push(dateTo);
     }
     
-    // Use DISTINCT ON (transaction_id) for deduplication as specified by user
+    // Use DISTINCT ON with robust unique key when transaction_id is missing
+    const uniqueExpr = `COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text))`
+    const limitClause = limit && limit > 0 ? `LIMIT ${limit}` : ''
     const result = await client.query(`
-      SELECT DISTINCT ON (transaction_id) *
+      SELECT DISTINCT ON (${uniqueExpr}) *
       FROM agent_data 
       WHERE ${conditions.join(' AND ')}
-      ORDER BY transaction_id, recordings_started DESC NULLS LAST, connections_duration DESC NULLS LAST
-      LIMIT ${limit}
+      ORDER BY ${uniqueExpr}, recordings_started DESC NULLS LAST, connections_duration DESC NULLS LAST
+      ${limitClause}
     `, params);
     
     console.log(`🔍 Found ${result.rows.length} unique records for agent "${agentLogin}" + campaign "${campaignId}" using DISTINCT ON (transaction_id)`);

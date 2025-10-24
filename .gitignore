@@ -38,6 +38,7 @@ server/.env
 server/.env.*
 web/.env
 web/.env.*
+web/.
 
 # OS junk
 .DS_Store

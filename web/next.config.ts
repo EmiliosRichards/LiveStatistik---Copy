@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
         api("/api/projects"),
         api("/api/projects-for-agents"),
         api("/api/projects-with-calls"),
+        { source: "/api/call-details-paged/:path*", destination: `${target}/api/call-details-paged/:path*` },
         { source: "/api/call-details/:path*", destination: `${target}/api/call-details/:path*` },
         api("/api/call-outcomes"),
         api("/api/statistics"),

@@ -1,10 +1,41 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: ["class", '[data-theme="dark"]'],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        bg: "var(--color-bg)",
+        "bg-elevated": "var(--color-bg-elevated)",
+        text: "var(--color-text)",
+        "text-muted": "var(--color-text-muted)",
+        accent: "var(--color-accent)",
+        danger: "var(--color-danger)",
+        success: "var(--color-success)",
+        border: "var(--color-border)",
+      },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        full: "var(--radius-pill)",
+      },
+      spacing: {
+        1: "var(--space-1)",
+        2: "var(--space-2)",
+        3: "var(--space-3)",
+        4: "var(--space-4)",
+        6: "var(--space-6)",
+        8: "var(--space-8)",
+      },
+      fontSize: {
+        xs: ["var(--fs-xs)", { lineHeight: "var(--lh-tight)" }],
+        sm: ["var(--fs-sm)", { lineHeight: "var(--lh-normal)" }],
+        base: ["var(--fs-md)", { lineHeight: "var(--lh-normal)" }],
+        lg: ["var(--fs-lg)", { lineHeight: "var(--lh-relaxed)" }],
+        xl: ["var(--fs-xl)", { lineHeight: "var(--lh-relaxed)" }],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

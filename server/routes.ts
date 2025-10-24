@@ -33,13 +33,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const projects = await storage.getAllProjects();
       
-      // Fetch campaign mapping to resolve cryptic IDs to real names
+      // Fetch campaign mapping to resolve IDs to names
       const campaignMapping = await fetchCampaignMapping();
+      // Optionally merge sheet status
+      let statusById: Record<string, string> = {};
+      let statusByTitle: Record<string, string> = {};
+      if (process.env.GOOGLE_SHEETS_ID) {
+        const { getSheetCampaignsFull } = await import('./google-sheets');
+        const rows = await getSheetCampaignsFull();
+        statusById = Object.fromEntries(rows.map(r => [r.campaign_id, r.status || '']));
+        statusByTitle = Object.fromEntries(rows.map(r => [r.campaign, r.status || '']));
+      }
+      const normalizeTitle = (s?: string) => (s || '').toLowerCase().replace(/[–—−]/g, '-').replace(/\s+/g, ' ').trim();
+      const statusByNormTitle: Record<string, string> = {};
+      Object.entries(statusByTitle).forEach(([title, st]) => { statusByNormTitle[normalizeTitle(title)] = st; });
       
       // Enhance projects with resolved names
       const enhancedProjects = projects.map(project => {
         const resolvedName = campaignMapping[project.name] || project.name;
-        
+        let status = statusById[project.name];
+        if (!status && resolvedName) status = statusByTitle[resolvedName];
+        if (!status && resolvedName) status = statusByNormTitle[normalizeTitle(resolvedName)];
         // Only log if we actually resolved something
         if (campaignMapping[project.name] && project.name !== resolvedName) {
           console.log(`🔍 Resolved: ${project.name} → ${resolvedName}`);
@@ -48,7 +62,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return {
           ...project,
           name: resolvedName,
-          originalId: project.name !== resolvedName ? project.name : undefined
+          originalId: project.name !== resolvedName ? project.name : undefined,
+          status: status || undefined
         };
       });
       
@@ -72,17 +87,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const projects = await storage.getProjectsForAgents(agentIds);
       
-      // Fetch campaign mapping to resolve cryptic IDs to real names
+      // Fetch campaign mapping to resolve IDs to names
       const campaignMapping = await fetchCampaignMapping();
+      // Optionally merge sheet status
+      let statusById: Record<string, string> = {};
+      if (process.env.GOOGLE_SHEETS_ID) {
+        const { getSheetCampaignsFull } = await import('./google-sheets');
+        const rows = await getSheetCampaignsFull();
+        statusById = Object.fromEntries(rows.map(r => [r.campaign_id, r.status || '']));
+      }
+      const normalizeTitle = (s?: string) => (s || '').toLowerCase().replace(/[–—−]/g, '-').replace(/\s+/g, ' ').trim();
       
       // Enhance projects with resolved names
       const enhancedProjects = projects.map(project => {
         const resolvedName = campaignMapping[project.name] || project.name;
-        
+        const status = statusById[project.name] || statusById[resolvedName] || statusById[normalizeTitle(resolvedName)];
         return {
           ...project,
           name: resolvedName,
-          originalId: project.name !== resolvedName ? project.name : undefined
+          originalId: project.name !== resolvedName ? project.name : undefined,
+          status: status || undefined
         };
       });
       
@@ -130,6 +154,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get agent statistics with filters
+  // Simple in-memory cache for statistics to speed up repeated queries
+  const statsCache = new Map<string, { ts: number; data: any }>();
+  const STATS_TTL_MS = 30_000; // 30s
+
   app.post("/api/statistics", async (req, res) => {
     try {
       const { _cacheBust, ...filterData } = req.body; // Remove cache buster
@@ -151,7 +179,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.log(`✅ STATISTICS API: No time filters (loading all data)`);
       }
+
+      // Build cache key from filter
+      const cacheKey = JSON.stringify(filter);
+      const now = Date.now();
+      const cached = statsCache.get(cacheKey);
+      if (!process.env.DISABLE_STATS_CACHE && cached && (now - cached.ts) < STATS_TTL_MS) {
+        console.log(`⚡ Serving statistics from cache`);
+        return res.json(cached.data);
+      }
+
       const statistics = await storage.getAgentStatistics(filter);
+      if (!process.env.DISABLE_STATS_CACHE) {
+        statsCache.set(cacheKey, { ts: now, data: statistics });
+      }
       console.log(`📊 STATISTICS API: Returning ${statistics.length} statistics`);
       res.json(statistics);
     } catch (error) {
@@ -218,6 +259,133 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch call details" });
     }
   });
+
+  // Paged Call Details with totals and grouping
+  app.get(`/api/call-details-paged/:agentId(${uuidRegex})/:projectId(${uuidRegex})`, async (req, res) => {
+    try {
+      const paramsSchema = z.object({
+        agentId: z.string().uuid(),
+        projectId: z.string().uuid()
+      })
+      const { agentId, projectId } = paramsSchema.parse(req.params)
+      const raw = req.query as any
+      const cleanStr = (v: any) => (typeof v === 'string' && (v.trim() === '' || v === 'undefined' || v === 'null')) ? undefined : v
+      const dateFrom = cleanStr(raw.dateFrom)
+      const dateTo = cleanStr(raw.dateTo)
+      const timeFrom = cleanStr(raw.timeFrom)
+      const timeTo = cleanStr(raw.timeTo)
+      const page = cleanStr(raw.page) || '1'
+      const pageSize = cleanStr(raw.pageSize) || '200'
+
+      const agent = await storage.getAgent(agentId)
+      const project = await storage.getProject(projectId)
+      console.log(`🔎 PagedCalls params: agentId=${agentId}, projectId=${projectId}`)
+      console.log(`🔎 Resolved: agentLogin=${agent?.name || 'NOT_FOUND'}, campaignId=${project?.name || 'NOT_FOUND'}`)
+      if (!agent || !project) return res.json({ total: 0, grouped: { positiv:{}, negativ:{}, offen:{} }, items: [] })
+
+      const { externalPool } = await import('./external-db')
+      if (!externalPool) return res.json({ total: 0, grouped: { positiv:{}, negativ:{}, offen:{} }, items: [] })
+
+      const client = await externalPool.connect()
+      try {
+        // Be robust to case/whitespace differences on agent logins
+        const conditions: string[] = [ `LOWER(TRIM(transactions_user_login)) = LOWER(TRIM($1))`, `TRIM(contacts_campaign_id) = TRIM($2)` ]
+        const params: any[] = [agent.name?.trim(), project.name?.trim()]
+        if (dateFrom) { conditions.push(`transactions_fired_date >= $${params.length+1}`); params.push(dateFrom) }
+        if (dateTo) { conditions.push(`transactions_fired_date <= $${params.length+1}`); params.push(dateTo) }
+
+        // time filters via time derived from recordings_started (UTC), converting Cyprus(+3) to UTC
+        let utcFrom: string | null = null
+        let utcTo: string | null = null
+        const isTime = (s: any) => typeof s === 'string' && /^\d{1,2}:\d{2}$/.test(s)
+        if (isTime(timeFrom)) {
+          const [h,m] = (timeFrom as string).split(':').map(Number); const uh = (h-3+24)%24; utcFrom = `${uh.toString().padStart(2,'0')}:${(m||0).toString().padStart(2,'0')}`
+        }
+        if (isTime(timeTo)) {
+          const [h,m] = (timeTo as string).split(':').map(Number); const uh = (h-3+24)%24; utcTo = `${uh.toString().padStart(2,'0')}:${(m||0).toString().padStart(2,'0')}`
+        }
+        const timeExpr = `to_char(recordings_started, 'HH24:MI')`
+        if (utcFrom) { conditions.push(`${timeExpr} >= $${params.length+1}`); params.push(utcFrom) }
+        if (utcTo) { conditions.push(`${timeExpr} <= $${params.length+1}`); params.push(utcTo) }
+
+        const where = `WHERE ${conditions.join(' AND ')}`
+
+        // Use robust unique key when transaction_id is missing
+        const uniqueExpr = `COALESCE(transaction_id::text, CONCAT_WS(':', contacts_id::text, contacts_campaign_id::text, transactions_fired_date::text))`
+        // total count (distinct by unique expression)
+        const totalRes = await client.query(`SELECT COUNT(*) AS total FROM (SELECT DISTINCT ${uniqueExpr} AS k FROM agent_data ${where}) t`, params)
+        const total = Number(totalRes.rows?.[0]?.total || 0)
+        console.log(`🔎 PagedCalls matched total=${total}`)
+
+        // grouped counts by status/detail
+        const groupRes = await client.query(`
+          SELECT transactions_status, transactions_status_detail, COUNT(DISTINCT ${uniqueExpr}) AS cnt
+          FROM agent_data
+          ${where}
+          GROUP BY transactions_status, transactions_status_detail
+        `, params)
+        const grouped = { positiv: {} as Record<string, number>, negativ: {} as Record<string, number>, offen: {} as Record<string, number> }
+        groupRes.rows.forEach((r:any) => {
+          const status = String(r.transactions_status||'').toLowerCase()
+          const key = r.transactions_status_detail || '—'
+          const n = Number(r.cnt||0)
+          if (status === 'success') grouped.positiv[key] = (grouped.positiv[key]||0) + n
+          else if (status === 'declined') grouped.negativ[key] = (grouped.negativ[key]||0) + n
+          else grouped.offen[key] = (grouped.offen[key]||0) + n
+        })
+
+        // page items
+        const p = Math.max(1, parseInt(String(page),10)||1)
+        const ps = Math.max(1, parseInt(String(pageSize),10)||200)
+        const offset = (p-1)*ps
+        const itemsRes = await client.query(`
+          SELECT * FROM (
+            SELECT *, ROW_NUMBER() OVER (
+              PARTITION BY ${uniqueExpr}
+              ORDER BY recordings_started DESC NULLS LAST, connections_duration DESC NULLS LAST
+            ) AS rn
+            FROM agent_data
+            ${where}
+          ) t
+          WHERE t.rn = 1
+          ORDER BY recordings_started DESC NULLS LAST, connections_duration DESC NULLS LAST
+          LIMIT $${params.length+1} OFFSET $${params.length+2}
+        `, [...params, ps, offset])
+
+        // map to CallDetails minimal; reuse mapping in external storage style
+        const mapItems = itemsRes.rows.map((record:any, index:number) => ({
+          id: record.transaction_id || `${record.contacts_id}_${index}`,
+          agentId,
+          projectId,
+          contactName: record.contacts_firma || null,
+          contactPerson: record.contacts_full_name || record.contacts_name || null,
+          contactNumber: record.connections_phone,
+          callStart: record.recordings_started ? new Date(record.recordings_started) : new Date(record.transactions_fired_date),
+          callEnd: record.recordings_stopped ? new Date(record.recordings_stopped) : null,
+          duration: Math.round((Number(record.connections_duration)||0)/1000),
+          outcome: record.transactions_status_detail || 'Unknown',
+          outcomeCategory: record.transactions_status === 'success' ? 'positive' : (record.transactions_status === 'declined' ? 'negative' : 'offen'),
+          recordingUrl: record.recordings_location,
+          notes: record.contacts_notiz || null,
+          wrapupTimeSeconds: record.transactions_edit_time_sec || null,
+          waitTimeSeconds: record.transactions_wait_time_sec || null,
+          editTimeSeconds: record.transactions_pause_time_sec || null,
+          contactsId: record.contacts_id || null,
+          contactsCampaignId: record.contacts_campaign_id || null,
+          recordingsDate: record.transactions_fired_date ? String(record.transactions_fired_date).split(' ')[0] : null,
+          groupId: null,
+          createdAt: new Date()
+        }))
+
+        res.json({ total, grouped, items: mapItems })
+      } finally {
+        client.release()
+      }
+    } catch (error) {
+      console.error('Paged Call Details error:', error)
+      res.status(500).json({ total:0, grouped:{positiv:{},negativ:{},offen:{}}, items: [] })
+    }
+  })
 
   // Get all project targets
   app.get("/api/project-targets", async (req, res) => {
@@ -406,6 +574,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
+      // Prefer Google Sheets mapping if configured
+      if (process.env.GOOGLE_SHEETS_ID) {
+        const { getSheetCampaignMapping } = await import('./google-sheets');
+        const sheetMap = await getSheetCampaignMapping();
+        if (Object.keys(sheetMap).length > 0) {
+          campaignCache = sheetMap;
+          cacheTimestamp = now;
+          console.log("✅ Campaign mapping loaded from Google Sheets:", Object.keys(campaignCache).length);
+          return campaignCache;
+        }
+      }
+
       const token = process.env.DIALFIRE_API_TOKEN;
       if (!token) {
         console.log("❌ DIALFIRE_API_TOKEN not configured for campaign mapping");
@@ -460,10 +640,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/campaign-mapping", async (req, res) => {
     try {
       const mapping = await fetchCampaignMapping();
+      let merged: any = { mapping };
+      if (process.env.GOOGLE_SHEETS_ID) {
+        const { getSheetCampaignsFull } = await import('./google-sheets');
+        const rows = await getSheetCampaignsFull();
+        merged.rows = rows;
+      }
       res.json({
         status: "success",
         campaigns: Object.keys(mapping).length,
         mapping: mapping,
+        ...merged,
         cached_at: new Date(cacheTimestamp).toISOString()
       });
     } catch (error) {

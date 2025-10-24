@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
 :root {
+  /* legacy */
   --background: #ffffff;
   --foreground: #171717;
+
+  /* design tokens - light */
+  /* Light theme surfaces: make background slightly tinted and cards pure white for stronger contrast */
+  --color-bg: #f5f7fb;           /* page background */
+  --color-bg-elevated: #ffffff;  /* cards/surfaces */
+  --color-text: #0b0c0e;
+  --color-text-muted: #637082;
+  --color-accent: #4f7cff;
+  --color-danger: #f04438;
+  --color-success: #10b981;
+  --color-border: #e5e7eb;
+  --color-focus: #4f7cff;
+
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px; --fs-lg: 18px; --fs-xl: 20px;
+  --lh-tight: 1.25; --lh-normal: 1.5; --lh-relaxed: 1.7;
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 9999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px; --space-8: 32px;
 }
 
 @theme inline {
@@ -12,11 +32,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  /* design tokens - dark */
+  --color-bg: #0b0c0e;
+  --color-bg-elevated: #15171a;
+  --color-text: #ffffff;
+  --color-text-muted: #b5bcc6;
+  --color-border: #2a2f36;
 }
 
 body {
