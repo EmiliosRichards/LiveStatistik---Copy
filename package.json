@@ -15,6 +15,7 @@
     "search:cli": "node tools/search-cli.mjs",
     "verify:sheets": "tsx tools/verify-sheets.ts",
     "diff:campaigns": "tsx tools/diff-campaign-sources.ts",
+    "suggest:indexes": "tsx tools/index-suggestions.ts",
     "test:db:ping": "tsx tools/tests/db-connectivity.ts",
     "test:db:agents": "tsx tools/tests/campaigns-for-agents.ts 5",
     "test:db:calls": "tsx tools/tests/calls-for-agent-campaign.ts",
