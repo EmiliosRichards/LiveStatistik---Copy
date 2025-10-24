@@ -70,40 +70,42 @@ export function OutcomesBarChart() {
           <p className="text-xs text-slate-500 dark:text-slate-400">Breakdown by outcome type</p>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" />
-          <XAxis 
-            dataKey="name" 
-            tick={{ fontSize: 11, fill: '#94a3b8' }} 
-            stroke="#cbd5e1"
-            angle={-15}
-            textAnchor="end"
-            height={60}
-          />
-          <YAxis 
-            tick={{ fontSize: 12, fill: '#94a3b8' }} 
-            stroke="#cbd5e1"
-          />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#ffffff', 
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              fontSize: '12px'
-            }}
-            formatter={(value: number, name: string, props: any) => [
-              `${value} calls (${props.payload.percentage}%)`,
-              name
-            ]}
-          />
-          <Bar dataKey="count" name="Calls" radius={[6, 6, 0, 0]}>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="bg-white rounded-md p-2">
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fontSize: 11, fill: '#94a3b8' }} 
+              stroke="#cbd5e1"
+              angle={-15}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis 
+              tick={{ fontSize: 12, fill: '#94a3b8' }} 
+              stroke="#cbd5e1"
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#ffffff', 
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '12px'
+              }}
+              formatter={(value: number, name: string, props: any) => [
+                `${value} calls (${props.payload.percentage}%)`,
+                name
+              ]}
+            />
+            <Bar dataKey="count" name="Calls" radius={[6, 6, 0, 0]}>
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }

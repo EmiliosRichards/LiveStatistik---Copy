@@ -68,43 +68,39 @@ export function CallsTimeSeriesChart() {
           <p className="text-xs text-slate-500 dark:text-slate-400">Monthly call volume trends</p>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-          <defs>
-            <linearGradient id="chartBg" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f8fafc" stopOpacity={0.8}/>
-              <stop offset="100%" stopColor="#f8fafc" stopOpacity={0.3}/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" />
-          <XAxis 
-            dataKey="month" 
-            tick={{ fontSize: 12, fill: '#94a3b8' }} 
-            stroke="#cbd5e1"
-          />
-          <YAxis 
-            tick={{ fontSize: 12, fill: '#94a3b8' }} 
-            stroke="#cbd5e1"
-          />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#ffffff', 
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              fontSize: '12px'
-            }}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="calls" 
-            stroke="#93c5fd" 
-            strokeWidth={3}
-            dot={{ fill: '#60a5fa', r: 4, strokeWidth: 0 }}
-            activeDot={{ r: 6, fill: '#3b82f6' }}
-            name="Total Calls"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="bg-white rounded-md p-2">
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis 
+              dataKey="month" 
+              tick={{ fontSize: 12, fill: '#94a3b8' }} 
+              stroke="#cbd5e1"
+            />
+            <YAxis 
+              tick={{ fontSize: 12, fill: '#94a3b8' }} 
+              stroke="#cbd5e1"
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#ffffff', 
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '12px'
+              }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="calls" 
+              stroke="#93c5fd" 
+              strokeWidth={3}
+              dot={{ fill: '#60a5fa', r: 4, strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: '#3b82f6' }}
+              name="Total Calls"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }
