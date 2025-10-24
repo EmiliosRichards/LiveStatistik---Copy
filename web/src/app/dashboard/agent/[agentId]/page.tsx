@@ -352,11 +352,12 @@ export default function AgentDetailPage() {
                       <table className={tableBase}>
                         {campView==='overview' ? (
                           <colgroup>
-                            <col style={{ width: '40%' }} />
-                            <col style={{ width: '15%' }} />
-                            <col style={{ width: '15%' }} />
-                            <col style={{ width: '15%' }} />
-                            <col style={{ width: '15%' }} />
+                            <col style={{ width: '30%' }} />
+                            <col style={{ width: '14%' }} />
+                            <col style={{ width: '14%' }} />
+                            <col style={{ width: '14%' }} />
+                            <col style={{ width: '14%' }} />
+                            <col style={{ width: '14%' }} />
                           </colgroup>
                         ) : (
                           <colgroup>
@@ -369,7 +370,7 @@ export default function AgentDetailPage() {
                             <col style={{ width: '8%' }} />
                             <col style={{ width: '8%' }} />
                             <col style={{ width: '7%' }} />
-                            <col style={{ width: '4%' }} />
+                            <col style={{ width: '12%' }} />
                           </colgroup>
                         )}
                         <thead className="bg-slate-50 border-b border-slate-200 font-semibold">
@@ -401,8 +402,8 @@ export default function AgentDetailPage() {
                         <tbody className="divide-y divide-slate-100">
                           {sortedCampStats.map((row)=> (
                             <Fragment key={row.projectId}>
-                              <tr className="hover:bg-slate-50 align-middle">
-                                <td className="px-4 py-3 text-sm text-blue-700 align-middle">
+                              <tr className="hover:bg-slate-50">
+                                <td className="px-4 py-2 text-sm text-blue-700">
                                   <div className="flex items-center gap-2 min-w-0">
                                     <button className="text-slate-500 hover:text-slate-700" onClick={(e)=>{e.stopPropagation(); setExpandedId(expandedId===row.projectId?null:row.projectId)}} aria-label="Show calls">{expandedId===row.projectId? '▾' : '▸'}</button>
                                     <span className="truncate">{row.projectName}</span>
@@ -410,11 +411,11 @@ export default function AgentDetailPage() {
                                 </td>
                                 {campView==='overview' ? (
                                   <>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.totalCalls.toLocaleString()}</td>
-                                    <td className="px-4 py-3 text-right whitespace-nowrap align-middle"><span className={`text-sm font-medium ${row.reachRate>=70?'text-green-600':'text-amber-600'}`}>{row.reachRate.toFixed(1)}%</span></td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.outcomes.toLocaleString()}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.avgDuration.toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm whitespace-nowrap align-middle">
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCalls.toLocaleString()}</td>
+                                    <td className="px-4 py-2 text-right whitespace-nowrap"><span className={`text-sm font-medium ${row.reachRate>=70?'text-green-600':'text-amber-600'}`}>{row.reachRate.toFixed(1)}%</span></td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.outcomes.toLocaleString()}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.avgDuration.toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm whitespace-nowrap">
                                       {row.status && (
                                         <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
                                       )}
@@ -422,16 +423,16 @@ export default function AgentDetailPage() {
                                   </>
                                 ) : (
                                   <>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.totalCalls.toLocaleString()}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.totalCompleted.toLocaleString()}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{row.totalSuccess.toLocaleString()}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.wz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.gz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.nbz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.vbz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.erfolgProStunde/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold whitespace-nowrap align-middle">{(row.az/1).toFixed(2)}</td>
-                                    <td className="px-4 py-3 text-right text-sm whitespace-nowrap align-middle">
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCalls.toLocaleString()}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCompleted.toLocaleString()}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalSuccess.toLocaleString()}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.wz/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.gz/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.nbz/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.vbz/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.erfolgProStunde/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.az/1).toFixed(2)}</td>
+                                    <td className="px-4 py-2 text-right text-sm whitespace-nowrap">
                                       {row.status && (
                                         <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
                                       )}
