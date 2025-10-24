@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
 // Keep Next.js internal routes like /api/auth handled by NextAuth.
 const nextConfig: NextConfig = {
   async rewrites() {
-    const target = process.env.EXPRESS_BASE_URL || "http://localhost:5000";
+    const target = process.env.EXPRESS_BASE_URL || "http://localhost:5001";
 
     const api = (path: string) => ({ source: path, destination: `${target}${path}` });
 

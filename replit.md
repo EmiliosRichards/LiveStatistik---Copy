@@ -2,14 +2,19 @@
 
 ## Overview
 
-A full-stack, real-time(ish) dashboard for team leaders to monitor call-center performance. The React frontend talks to an Express backend that aggregates live data from a read-only external Postgres (views like `agent_data`). The UI supports agent/project filtering, date and time windows (Cyprus time), call outcome drill-downs, notifications, and project KPIs.
+A full-stack, real-time(ish) dashboard for team leaders to monitor call-center performance. The **Next.js app** (`web/`) serves as the main frontend on port 5000, proxying API requests to the **Express backend** (`server/`) running on port 5001. The backend aggregates live data from a read-only external Postgres database. The UI supports agent/project filtering, date and time windows (Cyprus time), call outcome drill-downs, campaign management, and detailed analytics.
+
+**Note:** The `client/` directory contains the legacy React SPA and is no longer actively developed.
 
 ## Stack at a glance
 
-- **Frontend**: React + TypeScript, Vite, TanStack Query, Wouter, Tailwind + shadcn/ui (Radix primitives), i18next
-- **Backend**: Express + TypeScript, serves API + client; Vite middleware in dev, static in prod
-- **Data model**: Shared types and Zod validation in `shared/schema.ts` (Drizzle schema present for optional DB mode)
-- **Data source (prod)**: External read-only Postgres via `pg`, optimized SQL with `DISTINCT ON` and parameterized filters
+- **Frontend**: Next.js 15 (Turbopack) + TypeScript, React 19, Tailwind CSS, NextAuth
+- **Backend**: Express + TypeScript on port 5001, serves API endpoints
+- **Architecture**: Next.js proxies `/api/*` requests to Express backend via rewrites in `next.config.ts`
+- **Data model**: Shared types and Zod validation in `shared/schema.ts`
+- **Data source**: External read-only Postgres via `pg`, optimized SQL queries
+- **Campaign management**: Google Sheets integration for campaign metadata and status
+- **Legacy**: React SPA in `client/` (no longer active)
 
 ## Run the app
 
@@ -20,9 +25,9 @@ Prerequisites: Node.js ≥ 20
 npm install
 ```
 - Configure environment (see “Environment variables”). In Replit, add secrets accordingly.
-- Development (Express + Vite middleware):
+- Development (runs both Express backend on 5001 and Next.js on 5000):
 ```bash
-npm run dev
+bash start-all.sh
 ```
 - Build client and bundle server:
 ```bash
