@@ -58,17 +58,17 @@ export function CallsTimeSeriesChart() {
   }
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-100 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-blue-600" />
             Calls This Year
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">Monthly call volume trends</p>
         </div>
       </div>
-      <div className="bg-white rounded-md p-2">
+      <div className="bg-slate-50 rounded-md p-2">
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
