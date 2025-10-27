@@ -59,7 +59,19 @@
     "activeProjects": "Active Projects",
     "newProjects": "New Projects",
     "archivedProjects": "Archived Projects",
-    "totalProjects": "Total Projects"
+    "totalProjects": "Total Projects",
+    "totalCampaigns": "total campaigns",
+    "recentlyAdded": "Recently added",
+    "running": "Running",
+    "inactive": "Inactive",
+    "statusUnknown": "Status unknown",
+    "noCampaignsLoaded": "No campaigns loaded yet.",
+    "noCampaignsMatch": "No campaigns match your filters.",
+    "clearFilters": "Clear filters",
+    "sortNewestFirst": "📅 Newest First",
+    "sortOldestFirst": "📅 Oldest First",
+    "sortAZ": "🔤 A → Z",
+    "sortZA": "🔤 Z → A"
   },
   "table": {
     "agent": "Agent",

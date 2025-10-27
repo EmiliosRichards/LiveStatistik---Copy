@@ -59,7 +59,19 @@
     "activeProjects": "Aktive Projekte",
     "newProjects": "Neue Projekte",
     "archivedProjects": "Archivierte Projekte",
-    "totalProjects": "Projekte gesamt"
+    "totalProjects": "Projekte gesamt",
+    "totalCampaigns": "Kampagnen gesamt",
+    "recentlyAdded": "Kürzlich hinzugefügt",
+    "running": "Läuft",
+    "inactive": "Inaktiv",
+    "statusUnknown": "Status unbekannt",
+    "noCampaignsLoaded": "Noch keine Kampagnen geladen.",
+    "noCampaignsMatch": "Keine Kampagnen entsprechen Ihren Filtern.",
+    "clearFilters": "Filter löschen",
+    "sortNewestFirst": "📅 Neueste zuerst",
+    "sortOldestFirst": "📅 Älteste zuerst",
+    "sortAZ": "🔤 A → Z",
+    "sortZA": "🔤 Z → A"
   },
   "table": {
     "agent": "Agent",

@@ -512,8 +512,8 @@ export default function DashboardPage() {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Campaigns</h2>
-                  <p className="text-sm text-slate-600 mt-1">{campaignsList.length} total campaigns</p>
+                  <h2 className="text-2xl font-bold text-slate-900">{t('dashboard.campaigns')}</h2>
+                  <p className="text-sm text-slate-600 mt-1">{campaignsList.length} {t('dashboard.totalCampaigns')}</p>
                 </div>
                 
                 {/* Filter Chips */}
@@ -526,7 +526,7 @@ export default function DashboardPage() {
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    All <span className="ml-1 opacity-70">({campaignsList.length})</span>
+                    {t('dashboard.filterAll')} <span className="ml-1 opacity-70">({campaignsList.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('new')}
@@ -537,7 +537,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    New <span className="ml-0.5 opacity-70">({groupedCampaigns.new.length})</span>
+                    {t('dashboard.filterNew')} <span className="ml-0.5 opacity-70">({groupedCampaigns.new.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('active')}
@@ -548,7 +548,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Activity className="w-3.5 h-3.5" />
-                    Active <span className="ml-0.5 opacity-70">({groupedCampaigns.active.length})</span>
+                    {t('dashboard.filterActive')} <span className="ml-0.5 opacity-70">({groupedCampaigns.active.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('archived')}
@@ -559,7 +559,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Archive className="w-3.5 h-3.5" />
-                    Archived <span className="ml-0.5 opacity-70">({groupedCampaigns.archived.length})</span>
+                    {t('dashboard.filterArchived')} <span className="ml-0.5 opacity-70">({groupedCampaigns.archived.length})</span>
                   </button>
                 </div>
               </div>
@@ -580,10 +580,10 @@ export default function DashboardPage() {
                   onChange={(e)=>setCampaignSort(e.target.value as any)}
                   className="border border-slate-300 rounded-lg text-sm px-3 py-2.5 text-slate-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
                 >
-                  <option value="date_desc">📅 Newest First</option>
-                  <option value="date_asc">📅 Oldest First</option>
-                  <option value="name_asc">🔤 A → Z</option>
-                  <option value="name_desc">🔤 Z → A</option>
+                  <option value="date_desc">{t('dashboard.sortNewestFirst')}</option>
+                  <option value="date_asc">{t('dashboard.sortOldestFirst')}</option>
+                  <option value="name_asc">{t('dashboard.sortAZ')}</option>
+                  <option value="name_desc">{t('dashboard.sortZA')}</option>
                 </select>
               </div>
             </div>
@@ -605,12 +605,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 shrink-0">
                         <Sparkles className="w-3 h-3" />
-                        New
+                        {t('dashboard.filterNew')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <Circle className="w-2 h-2 fill-blue-500 text-blue-500" />
-                      <span>Recently added</span>
+                      <span>{t('dashboard.recentlyAdded')}</span>
                     </div>
                   </div>
                 </button>
@@ -631,12 +631,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shrink-0">
                         <Activity className="w-3 h-3" />
-                        Active
+                        {t('dashboard.filterActive')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
-                      <span>Running</span>
+                      <span>{t('dashboard.running')}</span>
                     </div>
                   </div>
                 </button>
@@ -657,12 +657,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-300 shrink-0">
                         <Archive className="w-3 h-3" />
-                        Archived
+                        {t('dashboard.filterArchived')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                       <Circle className="w-2 h-2 fill-slate-400 text-slate-400" />
-                      <span>Inactive</span>
+                      <span>{t('dashboard.inactive')}</span>
                     </div>
                   </div>
                 </button>
@@ -680,7 +680,7 @@ export default function DashboardPage() {
                   </h3>
                   <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-2">
                     <Circle className="w-2 h-2 fill-slate-300 text-slate-300" />
-                    <span>Status unknown</span>
+                    <span>{t('dashboard.statusUnknown')}</span>
                   </div>
                 </button>
               ))}
@@ -690,7 +690,7 @@ export default function DashboardPage() {
             {campaignsList.length === 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
                 <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 text-lg">No campaigns loaded yet.</p>
+                <p className="text-slate-500 text-lg">{t('dashboard.noCampaignsLoaded')}</p>
               </div>
             )}
 
@@ -702,7 +702,7 @@ export default function DashboardPage() {
              groupedCampaigns.unknown.length === 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
                 <SearchIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 text-lg">No campaigns match your filters.</p>
+                <p className="text-slate-500 text-lg">{t('dashboard.noCampaignsMatch')}</p>
                 <button
                   onClick={() => {
                     setCampaignFilter('all')
@@ -710,7 +710,7 @@ export default function DashboardPage() {
                   }}
                   className="mt-4 text-blue-600 hover:text-blue-700 font-medium text-sm"
                 >
-                  Clear filters
+                  {t('dashboard.clearFilters')}
                 </button>
               </div>
             )}
