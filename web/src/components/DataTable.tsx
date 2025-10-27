@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, ReactNode } from 'react'
-import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from './DataTable'
+import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from './table-styles'
 
 export interface DataTableColumn {
   key: string

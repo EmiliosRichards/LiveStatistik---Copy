@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/DataTable'
+import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/table-styles'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } from '@/lib/api'

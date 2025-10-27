@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { type Statistics } from '@/lib/api'
-import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/DataTable'
+import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/table-styles'
 
 interface AgentStats {
   agentId: string
