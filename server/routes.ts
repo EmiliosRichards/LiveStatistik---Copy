@@ -551,6 +551,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Transcription endpoints
+  app.post('/api/transcribe', async (req, res) => {
+    try {
+      const apiKey = process.env.TRANSCRIPTION_API_KEY;
+      if (!apiKey) {
+        return res.status(503).json({ 
+          error: 'Transcription service not configured',
+          message: 'TRANSCRIPTION_API_KEY is not set'
+        });
+      }
+
+      const bodySchema = z.object({
+        audioUrl: z.string().url("Invalid audio URL")
+      });
+      
+      const { audioUrl } = bodySchema.parse(req.body);
+      console.log('🎙️ Transcription request for:', audioUrl);
+      
+      const job = await transcriptionService.submitTranscription(audioUrl);
+      res.json(job);
+    } catch (error) {
+      console.error("Error submitting transcription:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid request", details: error.errors });
+      } else {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        res.status(500).json({ error: "Failed to submit transcription", message: errorMessage });
+      }
+    }
+  });
+
+  app.get('/api/transcribe/:audioFileId/status', async (req, res) => {
+    try {
+      const apiKey = process.env.TRANSCRIPTION_API_KEY;
+      if (!apiKey) {
+        return res.status(503).json({ 
+          error: 'Transcription service not configured',
+          message: 'TRANSCRIPTION_API_KEY is not set'
+        });
+      }
+
+      const audioFileId = parseInt(req.params.audioFileId, 10);
+      if (isNaN(audioFileId)) {
+        return res.status(400).json({ error: "Invalid audio file ID" });
+      }
+
+      console.log('🔍 Checking transcription status for:', audioFileId);
+      const status = await transcriptionService.getTranscriptionStatus(audioFileId);
+      res.json(status);
+    } catch (error) {
+      console.error("Error checking transcription status:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: "Failed to check transcription status", message: errorMessage });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

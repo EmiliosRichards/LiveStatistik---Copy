@@ -702,15 +702,50 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
         credentials: 'include',
         body: JSON.stringify({ audioUrl: call.recordingUrl })
       })
-      if (!submit.ok) throw new Error('Failed to submit transcription')
-      const { audioFileId } = await submit.json()
+      
+      if (!submit.ok) {
+        let errorMessage = 'Failed to submit transcription'
+        try {
+          const errorData = await submit.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+        } catch {
+          // If response is not JSON, use default error message
+          errorMessage = `Server error: ${submit.status} ${submit.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+      
+      let submitData
+      try {
+        submitData = await submit.json()
+      } catch {
+        throw new Error('Invalid response from server')
+      }
+      
+      if (!submitData.audio_file_id) {
+        throw new Error('No transcription job ID returned')
+      }
+      
+      const audioFileId = submitData.audio_file_id
+      
       // poll status briefly here for UX; production could offload
       const max = 6
       for (let i = 0; i < max; i++) {
         await new Promise(r => setTimeout(r, 5000))
         const statusRes = await fetch(`/api/transcribe/${audioFileId}/status`, { credentials: 'include' })
-        if (!statusRes.ok) continue
-        const status = await statusRes.json()
+        if (!statusRes.ok) {
+          console.warn('Status check failed, retrying...')
+          continue
+        }
+        
+        let status
+        try {
+          status = await statusRes.json()
+        } catch {
+          console.warn('Invalid JSON from status endpoint, retrying...')
+          continue
+        }
+        
         if (status.status === 'completed' && status.transcript) {
           setTranscript(status.transcript)
           break
@@ -721,6 +756,7 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
         }
       }
     } catch (e: any) {
+      console.error('Transcription error:', e)
       setError(e?.message || 'Transcription error')
     } finally {
       setTranscribing(false)
