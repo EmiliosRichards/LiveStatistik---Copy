@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import DashboardHeader from "@/components/DashboardHeader";
 
 export const metadata: Metadata = {
   title: "Dashboard | LiveStatistik",
@@ -10,5 +11,10 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-slate-100">
+      <DashboardHeader />
+      {children}
+    </div>
+  );
 }

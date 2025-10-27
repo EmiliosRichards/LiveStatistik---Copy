@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
-import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle } from 'lucide-react'
+import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
@@ -23,17 +22,6 @@ export default function DashboardPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const showHeader = useAutoHideHeader(24, 24)
-  const headerRef = useRef<HTMLElement | null>(null)
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const recalc = () => {
-      if (headerRef.current) setHeaderHeight(headerRef.current.offsetHeight || 0)
-    }
-    recalc()
-    window.addEventListener('resize', recalc)
-    return () => window.removeEventListener('resize', recalc)
-  }, [])
   const [statsView, setStatsView] = useState<'overview' | 'details'>('overview')
   const initialSection = (searchParams.get('view') as 'dashboard' | 'agents' | 'campaigns' | 'search') || 'dashboard'
   const [section, setSection] = useState<'dashboard' | 'agents' | 'campaigns' | 'search'>(initialSection)
@@ -257,58 +245,12 @@ export default function DashboardPage() {
   // Do not early-return; show the new layout and an inline empty state instead
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-text">
-      {/* Header */}
-      <header ref={headerRef} className={`bg-bg-elevated border-b border-border app-header sticky top-0 z-10 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-baseline gap-3">
-              <a href="/dashboard" className="inline-flex items-center" aria-label="Manuav Internal App">
-                <img src="/Manuav-web-site-LOGO.png" alt="Manuav" className="h-8 w-auto invert" />
-              </a>
-              {(() => {
-                const df = searchParams.get('dateFrom') || undefined
-                const dt = searchParams.get('dateTo') || undefined
-                const tf = searchParams.get('timeFrom') || undefined
-                const tt = searchParams.get('timeTo') || undefined
-                const datePart = df && dt && df !== dt ? `${df} - ${dt}` : (df || dt)
-                const timePart = (tf || tt) ? ` · ${tf || '00:00'}–${tt || '23:59'}` : ''
-                const label = datePart ? `${datePart}${timePart}` : ''
-                return label ? <span className="text-sm text-slate-500">Period: {label}</span> : null
-              })()}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button aria-label="Help" className="p-2 rounded hover:bg-slate-100" data-testid="button-help">
-              <HelpCircle className="w-5 h-5 text-slate-700" />
-            </button>
-            <button aria-label="Notifications" className="relative p-2 rounded hover:bg-slate-100" data-testid="button-notifications">
-              <Bell className="w-5 h-5 text-slate-700" />
-              <span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span>
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100" data-testid="button-account">
-              <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
-                <User className="w-4 h-4 text-slate-600" />
-              </div>
-              <span className="hidden sm:inline text-sm text-slate-700">Emilios</span>
-              <ChevronDown className="w-4 h-4 text-slate-500" />
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-de">DE</button>
-            <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-en">EN</button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 w-full px-6 py-8">
+    <div className="flex-1 w-full px-6 py-8">
         {/* View state script no longer required; using React state */}
         {/* Layout: Sidebar + Content */}
         <div className="flex gap-6">
           {/* Sidebar */}
-          <aside className="w-64 shrink-0 sticky self-start" style={{ top: showHeader ? headerHeight : 0, marginTop: showHeader ? 0 : -headerHeight }}>
+          <aside className="w-64 shrink-0 sticky self-start top-0">
             <div className="bg-bg-elevated rounded-lg shadow-md p-2">
               <nav className="space-y-1 text-slate-800">
                 <Link
@@ -778,7 +720,6 @@ export default function DashboardPage() {
         )}
           </section>
         </div>
-      </main>
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto">
