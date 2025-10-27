@@ -9,6 +9,7 @@ import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRig
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -19,6 +20,7 @@ type AgentMap = Record<string, string>
 type ProjectMap = Record<string, string>
 
 export default function AgentDetailPage() {
+  const { t } = useLanguage()
   const { agentId } = useParams<{ agentId: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -339,25 +341,25 @@ export default function AgentDetailPage() {
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
                   onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; const sp = new URLSearchParams(); sp.set('view','dashboard'); router.push(`/dashboard?${sp.toString()}`) }}
                 >
-                  <Layers className="w-4 h-4" /> Dashboard
+                  <Layers className="w-4 h-4" /> {t('nav.dashboard')}
                 </button>
                 <button
                   className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 bg-slate-100 font-semibold border-l-4 border-blue-600`}
                   onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; router.push(`/dashboard?view=agents`) }}
                 >
-                  <Users className="w-4 h-4" /> Agents
+                  <Users className="w-4 h-4" /> {t('nav.agents')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
                   onClick={() => { router.push(`/dashboard?view=campaigns`) }}
                 >
-                  <Layers className="w-4 h-4" /> Campaigns
+                  <Layers className="w-4 h-4" /> {t('nav.campaigns')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 text-slate-800"
                   onClick={() => router.push('/dashboard/search')}
                 >
-                  <span className="inline-flex items-center gap-2"><CalendarClock className="w-4 h-4" /> Time-based Search</span>
+                  <span className="inline-flex items-center gap-2"><CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}</span>
                 </button>
               </nav>
             </div>
@@ -371,7 +373,7 @@ export default function AgentDetailPage() {
                 onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
                 className="text-sm text-slate-800 hover:underline underline-offset-2"
               >
-                ← Back to agents
+                ← {t('agent.backToAgents')}
               </a>
             </div>
             <div className="bg-bg-elevated rounded-lg shadow-lg p-6 relative">
@@ -380,13 +382,13 @@ export default function AgentDetailPage() {
                 className="absolute left-4 top-4 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white/90 hover:bg-slate-50 text-slate-700 shadow-sm"
                 onClick={() => navigateRelative(-1)}
               >
-                <ArrowLeft className="w-4 h-4" /> Prev
+                <ArrowLeft className="w-4 h-4" /> {t('agent.prev')}
               </button>
               <button
                 className="absolute right-4 top-4 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white/90 hover:bg-slate-50 text-slate-700 shadow-sm"
                 onClick={() => navigateRelative(1)}
               >
-                Next <ArrowRight className="w-4 h-4" />
+                {t('agent.next')} <ArrowRight className="w-4 h-4" />
               </button>
 
               <div className="mb-10">
@@ -412,24 +414,24 @@ export default function AgentDetailPage() {
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-900">Campaigns</h2>
+                    <h2 className="text-lg font-semibold text-slate-900">{t('agent.campaigns')}</h2>
                     <div className="flex items-center gap-3">
                       <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
-                        <button className={`px-3 py-1 text-sm ${campView==='overview'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('overview')}>Overview</button>
+                        <button className={`px-3 py-1 text-sm ${campView==='overview'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('overview')}>{t('agent.overview')}</button>
                         <div className="w-px h-5 bg-slate-300" />
-                        <button className={`px-3 py-1 text-sm ${campView==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('details')}>Details</button>
+                        <button className={`px-3 py-1 text-sm ${campView==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('details')}>{t('agent.details')}</button>
                       </div>
-                      <label className="text-sm text-slate-700">Sort</label>
+                      <label className="text-sm text-slate-700">{t('agent.sort')}</label>
                       <select value={sortMode} onChange={e=>setSortMode(e.target.value as any)} className="border border-slate-300 rounded px-2 py-1 text-sm">
-                        <option value="date">Date (recent)</option>
-                        <option value="name">Name (A–Z)</option>
+                        <option value="date">{t('agent.dateRecent')}</option>
+                        <option value="name">{t('agent.nameAZ')}</option>
                       </select>
                       <div className="relative" ref={filterRef}>
                         <button
                           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-700 bg-white hover:bg-slate-50"
                           onClick={() => setShowFilterPopover(v=>!v)}
                         >
-                          <CalendarClock className="w-4 h-4" /> Change period
+                          <CalendarClock className="w-4 h-4" /> {t('agent.changePeriod')}
                         </button>
                         {showFilterPopover && (
                           <div className="absolute right-0 z-20 mt-2 w-[560px] max-w-[92vw] bg-white border border-slate-200 rounded-lg shadow-xl p-4">
@@ -532,26 +534,26 @@ export default function AgentDetailPage() {
                         <thead className={theadBase}>
                           {campView==='overview' ? (
                             <tr>
-                              <th className={`${thBase} text-left`}>Campaign</th>
-                              <th className={`${thBase} text-right`}>Total Calls</th>
-                              <th className={`${thBase} text-right`}>Reach %</th>
-                              <th className={`${thBase} text-right`}>Positive Outcomes</th>
-                              <th className={`${thBase} text-right`}>Avg Duration (min)</th>
-                              <th className={`${thBase} text-right`}>Status</th>
+                              <th className={`${thBase} text-left`}>{t('agent.campaign')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.totalCalls')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.reachPercent')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.positiveOutcomes')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.avgDurationMin')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.status')}</th>
                             </tr>
                           ) : (
                             <tr>
-                              <th className={`${thBase} text-left`}>Campaign</th>
-                              <th className={`${thBase} text-right`}>Anzahl</th>
-                              <th className={`${thBase} text-right`}>abgeschlossen</th>
-                              <th className={`${thBase} text-right`}>erfolgreich</th>
-                              <th className={`${thBase} text-right`}>WZ (h)</th>
-                              <th className={`${thBase} text-right`}>GZ (h)</th>
-                              <th className={`${thBase} text-right`}>NBZ (h)</th>
-                              <th className={`${thBase} text-right`}>VBZ (h)</th>
-                              <th className={`${thBase} text-right`}>Erfolg/h</th>
-                              <th className={`${thBase} text-right`}>AZ (h)</th>
-                              <th className={`${thBase} text-right`}>Status</th>
+                              <th className={`${thBase} text-left`}>{t('agent.campaign')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.anzahl')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.abgeschlossen')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.erfolgreich')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.wzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.gzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.nbzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.vbzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.erfolgProStunde')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.azh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.status')}</th>
                             </tr>
                           )}
                         </thead>
@@ -584,7 +586,7 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase}`}>
                                       <div className="flex justify-end">
                                         {row.status && (
-                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{t(`agent.${row.status}`)}</span>
                                         )}
                                       </div>
                                     </td>
@@ -603,7 +605,7 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase}`}>
                                       <div className="flex justify-end">
                                         {row.status && (
-                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{t(`agent.${row.status}`)}</span>
                                         )}
                                       </div>
                                     </td>
