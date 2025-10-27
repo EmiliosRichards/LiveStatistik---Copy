@@ -528,22 +528,29 @@ function ProjectPanel(props: ProjectPanelProps) {
   const loadCalls = async () => {
     setLoading(true)
     try {
-      // fetch paged slice and totals
-      const url = `/api/call-details-paged/${props.agentId}/${props.projectId}?${query}&page=${page}&pageSize=${pageSize}`
+      // fetch call details
+      const url = `/api/call-details/${props.agentId}/${props.projectId}?${query}`
       const res = await fetch(url, { credentials: 'include' })
       if (res.ok) {
         const payload = await res.json()
-        if (Array.isArray(payload?.items)) setCalls(payload.items)
-        if (typeof payload?.total === 'number') setServerTotal(Number(payload.total))
-        // Build synthetic stats from grouped totals if available
-        if (payload?.grouped) {
-          setServerGrouped(payload.grouped as any)
+        // The API returns an array of calls directly
+        if (Array.isArray(payload)) {
+          setCalls(payload)
+          setServerTotal(payload.length)
+          // Calculate grouped stats from calls
+          const map: Record<'negativ'|'positiv'|'offen', Record<string, number>> = { negativ: {}, positiv: {}, offen: {} }
+          payload.forEach((c: any) => {
+            const cat: 'negativ'|'positiv'|'offen' = (String(c.outcomeCategory || 'offen').toLowerCase().includes('neg') ? 'negativ' : String(c.outcomeCategory || 'offen').toLowerCase().includes('pos') ? 'positiv' : 'offen')
+            const key = c.outcome || '—'
+            map[cat][key] = (map[cat][key] || 0) + 1
+          })
+          setServerGrouped(map)
           const sum = (obj: Record<string, number>) => Object.values(obj || {}).reduce((acc: number, n: any) => acc + Number(n || 0), 0)
-          const total = sum(payload.grouped.positiv||{}) + sum(payload.grouped.negativ||{}) + sum(payload.grouped.offen||{})
+          const total = sum(map.positiv||{}) + sum(map.negativ||{}) + sum(map.offen||{})
           setStats({
             anzahl: total,
-            abgeschlossen: sum(payload.grouped.negativ||{}) + sum(payload.grouped.positiv||{}),
-            erfolgreich: sum(payload.grouped.positiv||{}),
+            abgeschlossen: sum(map.negativ||{}) + sum(map.positiv||{}),
+            erfolgreich: sum(map.positiv||{}),
             gespraechszeit: 0,
             arbeitszeit: 0
           })
