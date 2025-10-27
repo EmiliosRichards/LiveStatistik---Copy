@@ -48,6 +48,7 @@ export interface IStorage {
 
   // Call details methods
   getCallDetails(agentId: string, projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]>;
+  getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]>;
   createCallDetail(detail: InsertCallDetails): Promise<CallDetails>;
 
   // Project targets methods
