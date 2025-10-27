@@ -7,7 +7,6 @@ import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
-import ThemeSwitch from '../../components/ThemeSwitch'
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { CallsTimeSeriesChart } from '@/components/CallsTimeSeriesChart'
 import { OutcomesBarChart } from '@/components/OutcomesBarChart'
@@ -249,10 +248,6 @@ export default function DashboardPage() {
               <Bell className="w-5 h-5 text-slate-700" />
               <span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span>
             </button>
-            {/* Theme switch */}
-            <div className="ml-2">
-              <ThemeSwitch />
-            </div>
             <div className="h-6 w-px bg-slate-200 mx-1" />
             <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100" data-testid="button-account">
               <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
