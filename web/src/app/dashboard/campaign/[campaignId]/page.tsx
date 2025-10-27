@@ -304,11 +304,10 @@ export default function CampaignDetailPage() {
     return list
   }, [calls, selectedCategory, selectedSub, filterCalls, filterTime, filterDuration])
 
-  const pageCount = filteredCalls.length
-  const overallTotal = serverTotal ?? pageCount
-  const totalPages = Math.max(1, Math.ceil(overallTotal / pageSize))
+  const filteredCount = filteredCalls.length
+  const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize))
   const startIdx = (page - 1) * pageSize
-  const endIdx = Math.min(startIdx + pageSize, overallTotal)
+  const endIdx = Math.min(startIdx + pageSize, filteredCount)
   const visibleCalls = filteredCalls.slice(startIdx, endIdx)
 
   return (
@@ -571,7 +570,7 @@ export default function CampaignDetailPage() {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <div className="text-sm text-slate-700 font-semibold">{overallTotal.toLocaleString()} Ergebnisse</div>
+                    <div className="text-sm text-slate-700 font-semibold">{filteredCount.toLocaleString()} {t('campaign.results')}</div>
                     <div className="flex items-center gap-2 text-sm text-slate-800">
                       <button
                         className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===1 ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
@@ -581,7 +580,7 @@ export default function CampaignDetailPage() {
                       >
                         <ArrowLeft className="w-4 h-4" /> Prev
                       </button>
-                      <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {overallTotal.toLocaleString()}</span>
+                      <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {filteredCount.toLocaleString()}</span>
                       <button
                         className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===totalPages ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
                         disabled={page===totalPages}
@@ -627,7 +626,7 @@ export default function CampaignDetailPage() {
 
                 {/* Bottom Pagination */}
                 <div className="flex items-center justify-end gap-3 mt-4">
-                  <div className="text-sm text-slate-700 font-semibold">{overallTotal.toLocaleString()} Ergebnisse</div>
+                  <div className="text-sm text-slate-700 font-semibold">{filteredCount.toLocaleString()} {t('campaign.results')}</div>
                   <div className="flex items-center gap-2 text-sm text-slate-800">
                     <button
                       className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===1 ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
@@ -637,7 +636,7 @@ export default function CampaignDetailPage() {
                     >
                       <ArrowLeft className="w-4 h-4" /> {t('campaign.prev')}
                     </button>
-                    <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {overallTotal.toLocaleString()}</span>
+                    <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {filteredCount.toLocaleString()}</span>
                     <button
                       className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===totalPages ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
                       disabled={page===totalPages}

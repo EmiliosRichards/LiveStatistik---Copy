@@ -184,7 +184,9 @@
     "azh": "Work T. (h)",
     "new": "New",
     "active": "Active",
-    "archived": "Archived"
+    "archived": "Archived",
+    "positiveOutcomes": "Positive Outcomes",
+    "results": "Results"
   },
   "agent": {
     "title": "Agent Details",
