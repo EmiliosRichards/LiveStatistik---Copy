@@ -119,7 +119,16 @@
     "searchStatistics": "Search Statistics",
     "searching": "Searching…",
     "helpText": "Select at least one agent and a date range to view statistics",
-    "helpTextProject": "Select at least one project and a date range to view statistics"
+    "helpTextProject": "Select at least one project and a date range to view statistics",
+    "loadingAgents": "Loading agents...",
+    "noAgentsFound": "No agents found",
+    "loadingProjects": "Loading projects...",
+    "noProjectsAvailable": "No projects available",
+    "agentsSelected": "agents selected",
+    "agentSelected": "agent selected",
+    "projectsSelected": "projects selected",
+    "projectSelected": "project selected",
+    "filter": "Filter:"
   },
   "campaign": {
     "title": "Campaign Details",

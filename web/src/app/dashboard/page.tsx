@@ -751,6 +751,7 @@ function ViewToggle({ view, onChange, t }: { view: 'overview' | 'details'; onCha
 }
 
 function TimeSearchView() {
+  const { t } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchType, setSearchType] = useState<'agent' | 'project'>('agent')
@@ -1013,28 +1014,29 @@ function TimeSearchView() {
   }, [searchParams])
 
   return (
-    <div className="bg-bg-elevated rounded-lg shadow-lg p-8">
-      {/* Tabs */}
-      <div className="flex gap-4 mb-8 border-b border-slate-200">
-        <button
-          onClick={() => setSearchType('agent')}
-          className={`pb-3 px-4 font-medium transition-colors relative ${
-            searchType === 'agent' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Agent Data
-          {searchType === 'agent' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
-        </button>
-        <button
-          onClick={() => setSearchType('project')}
-          className={`pb-3 px-4 font-medium transition-colors relative ${
-            searchType === 'project' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Project Data
-          {searchType === 'project' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
-        </button>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 bg-bg-elevated rounded-lg shadow-lg p-8">
+        {/* Tabs */}
+        <div className="flex gap-4 mb-8 border-b border-slate-200">
+          <button
+            onClick={() => setSearchType('agent')}
+            className={`pb-3 px-4 font-medium transition-colors relative ${
+              searchType === 'agent' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {t('search.agentData')}
+            {searchType === 'agent' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
+          </button>
+          <button
+            onClick={() => setSearchType('project')}
+            className={`pb-3 px-4 font-medium transition-colors relative ${
+              searchType === 'project' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {t('search.projectData')}
+            {searchType === 'project' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
+          </button>
+        </div>
 
       {/* Form Fields */}
       <div className="space-y-6">
@@ -1042,7 +1044,7 @@ function TimeSearchView() {
           <div className="relative" ref={fromRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Calendar className="inline w-4 h-4 mr-2" />
-              From
+              {t('search.from')}
             </label>
             <input
               type="text"
@@ -1070,7 +1072,7 @@ function TimeSearchView() {
           <div className="relative" ref={toRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Calendar className="inline w-4 h-4 mr-2" />
-              To
+              {t('search.to')}
             </label>
             <input
               type="text"
@@ -1099,9 +1101,9 @@ function TimeSearchView() {
 
         {/* Quick Date Shortcuts */}
         <div className="flex gap-2">
-          <button onClick={() => setQuickDate('today')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">Today</button>
-          <button onClick={() => setQuickDate('week')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">This Week</button>
-          <button onClick={() => setQuickDate('month')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">This Month</button>
+          <button onClick={() => setQuickDate('today')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.today')}</button>
+          <button onClick={() => setQuickDate('week')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.thisWeek')}</button>
+          <button onClick={() => setQuickDate('month')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.thisMonth')}</button>
         </div>
 
         {/* Agent Selector */}
@@ -1109,13 +1111,13 @@ function TimeSearchView() {
           <div className="relative" ref={agentRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Users className="inline w-4 h-4 mr-2" />
-              Select Agents
+              {t('search.selectAgents')}
             </label>
             <button
               onClick={() => setShowAgentDropdown(!showAgentDropdown)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between hover:border-slate-400 transition-colors"
             >
-              <span className="text-slate-700">{selectedAgents.length === 0 ? 'Choose agents...' : `${selectedAgents.length} agent${selectedAgents.length > 1 ? 's' : ''} selected`}</span>
+              <span className="text-slate-700">{selectedAgents.length === 0 ? t('search.chooseAgents') : `${selectedAgents.length} ${selectedAgents.length > 1 ? t('search.agentsSelected') : t('search.agentSelected')}`}</span>
               <ChevronDown className="w-5 h-5 text-slate-400" />
             </button>
             {showAgentDropdown && (
@@ -1134,9 +1136,9 @@ function TimeSearchView() {
                 </div>
                 <div className="overflow-y-auto max-h-60">
                   {loadingAgents ? (
-                    <div className="p-4 text-sm text-slate-500 text-center">Loading agents...</div>
+                    <div className="p-4 text-sm text-slate-500 text-center">{t('search.loadingAgents')}</div>
                   ) : filteredAgents.length === 0 ? (
-                    <div className="p-4 text-sm text-slate-500 text-center">No agents found</div>
+                    <div className="p-4 text-sm text-slate-500 text-center">{t('search.noAgentsFound')}</div>
                   ) : (
                     filteredAgents.map((agent) => (
                       <label key={agent.id} className="flex items-center px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors">
@@ -1156,28 +1158,28 @@ function TimeSearchView() {
           <div className="relative" ref={projectRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Briefcase className="inline w-4 h-4 mr-2" />
-              Select Projects
+              {t('search.selectProjects')}
             </label>
             <button
               onClick={() => setShowProjectDropdown(!showProjectDropdown)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between transition-colors hover:border-slate-400"
             >
-              <span className="text-slate-700">{selectedProjects.length === 0 ? 'Choose projects...' : `${selectedProjects.length} project${selectedProjects.length > 1 ? 's' : ''} selected`}</span>
+              <span className="text-slate-700">{selectedProjects.length === 0 ? t('search.chooseProjects') : `${selectedProjects.length} ${selectedProjects.length > 1 ? t('search.projectsSelected') : t('search.projectSelected')}`}</span>
               <ChevronDown className="w-5 h-5 text-slate-400" />
             </button>
             {showProjectDropdown && (
               <div className="absolute z-10 mt-2 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
                 <div className="sticky top-0 z-10 bg-white p-2 border-b border-slate-200 flex items-center gap-2 text-xs">
-                  <span className="text-slate-600">Filter:</span>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='all'?'bg-slate-900 text-white':'hover:bg-slate-50'}`} onClick={()=>setProjectFilter('all')}>All</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='active'?'bg-emerald-600 text-white':'hover:bg-slate-50 text-emerald-700'}`} onClick={()=>setProjectFilter('active')}>Active</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='new'?'bg-blue-600 text-white':'hover:bg-slate-50 text-blue-700'}`} onClick={()=>setProjectFilter('new')}>New</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='archived'?'bg-slate-700 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setProjectFilter('archived')}>Archived</button>
+                  <span className="text-slate-600">{t('search.filter')}</span>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='all'?'bg-slate-900 text-white':'hover:bg-slate-50'}`} onClick={()=>setProjectFilter('all')}>{t('dashboard.filterAll')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='active'?'bg-emerald-600 text-white':'hover:bg-slate-50 text-emerald-700'}`} onClick={()=>setProjectFilter('active')}>{t('dashboard.filterActive')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='new'?'bg-blue-600 text-white':'hover:bg-slate-50 text-blue-700'}`} onClick={()=>setProjectFilter('new')}>{t('dashboard.filterNew')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='archived'?'bg-slate-700 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setProjectFilter('archived')}>{t('dashboard.filterArchived')}</button>
                 </div>
                 {loadingProjects ? (
-                  <div className="p-4 text-sm text-slate-500 text-center">Loading projects...</div>
+                  <div className="p-4 text-sm text-slate-500 text-center">{t('search.loadingProjects')}</div>
                 ) : filteredProjects.length === 0 ? (
-                  <div className="p-4 text-sm text-slate-500 text-center">No projects available</div>
+                  <div className="p-4 text-sm text-slate-500 text-center">{t('search.noProjectsAvailable')}</div>
                 ) : (
                   filteredProjects.map((project: any) => (
                     <label key={project.id} className="flex items-center px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors">
@@ -1205,7 +1207,7 @@ function TimeSearchView() {
           onClick={clearFilters}
           className="px-4 py-2 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Clear
+          {t('search.clear')}
         </button>
         <button
           onClick={handleSearch}
@@ -1219,10 +1221,10 @@ function TimeSearchView() {
           {submitting ? (
             <span className="inline-flex items-center gap-2">
               <span className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" aria-hidden />
-              Searching…
+              {t('search.searching')}
             </span>
           ) : (
-            'Search Statistics'
+            t('search.searchStatistics')
           )}
         </button>
       </div>
@@ -1230,9 +1232,13 @@ function TimeSearchView() {
       {/* Help Text */}
       <p className="text-center text-sm text-slate-500 mt-6">
         {searchType === 'agent' 
-          ? 'Select at least one agent and a date range to view statistics'
-          : 'Select at least one project and a date range to view statistics'}
+          ? t('search.helpText')
+          : t('search.helpTextProject')}
       </p>
+      </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

@@ -119,7 +119,16 @@
     "searchStatistics": "Statistiken suchen",
     "searching": "Suche läuft…",
     "helpText": "Wählen Sie mindestens einen Agenten und einen Datumsbereich aus, um Statistiken anzuzeigen",
-    "helpTextProject": "Wählen Sie mindestens ein Projekt und einen Datumsbereich aus, um Statistiken anzuzeigen"
+    "helpTextProject": "Wählen Sie mindestens ein Projekt und einen Datumsbereich aus, um Statistiken anzuzeigen",
+    "loadingAgents": "Agenten werden geladen...",
+    "noAgentsFound": "Keine Agenten gefunden",
+    "loadingProjects": "Projekte werden geladen...",
+    "noProjectsAvailable": "Keine Projekte verfügbar",
+    "agentsSelected": "Agenten ausgewählt",
+    "agentSelected": "Agent ausgewählt",
+    "projectsSelected": "Projekte ausgewählt",
+    "projectSelected": "Projekt ausgewählt",
+    "filter": "Filter:"
   },
   "campaign": {
     "title": "Kampagnendetails",
