@@ -33,7 +33,9 @@
     "totalCalls": "Total Calls This Week",
     "reachRate": "Reach Rate",
     "positiveOutcomes": "Positive Outcomes",
-    "avgDuration": "Avg. Call Duration"
+    "avgDuration": "Avg. Call Duration",
+    "vsLastWeek": "vs. last week",
+    "noData": "No data"
   },
   "dashboard": {
     "callsThisYear": "Calls This Year",
@@ -193,6 +195,10 @@
     "yes": "Yes",
     "no": "No",
     "refresh": "Refresh",
-    "export": "Export"
+    "export": "Export",
+    "noProjectsFound": "No projects found",
+    "noProjectsForAgents": "No projects found for the specified time frame for the following agents:",
+    "running": "Running",
+    "inactive": "Inactive"
   }
 }

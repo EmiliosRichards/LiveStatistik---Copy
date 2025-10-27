@@ -10,6 +10,7 @@ import { InlineCalendar } from '@/components/InlineCalendar'
 import { CallsTimeSeriesChart } from '@/components/CallsTimeSeriesChart'
 import { OutcomesBarChart } from '@/components/OutcomesBarChart'
 import { format } from 'date-fns'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface KPIData {
   totalCalls: number
@@ -19,6 +20,7 @@ interface KPIData {
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -259,7 +261,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='dashboard' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-dashboard"
                 >
-                  <Layers className="w-4 h-4" /> Dashboard
+                  <Layers className="w-4 h-4" /> {t('nav.dashboard')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','agents'); return sp.toString() })()}`}
@@ -267,7 +269,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='agents' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-agents"
                 >
-                  <Users className="w-4 h-4" /> Agents
+                  <Users className="w-4 h-4" /> {t('nav.agents')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','campaigns'); return sp.toString() })()}`}
@@ -275,7 +277,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='campaigns' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-campaigns"
                 >
-                  <Layers className="w-4 h-4" /> Campaigns
+                  <Layers className="w-4 h-4" /> {t('nav.campaigns')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','search'); return sp.toString() })()}`}
@@ -283,7 +285,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='search' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-search"
                 >
-                  <CalendarClock className="w-4 h-4" /> Time-based Search
+                  <CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}
                 </Link>
               </nav>
             </div>
@@ -296,15 +298,15 @@ export default function DashboardPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/30" onClick={() => setShowMissingModal(false)} />
             <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
-              <div className="text-lg font-semibold mb-2">No projects found</div>
-              <div className="text-sm text-slate-600 mb-4">No projects found for the specified time frame for the following agents:</div>
+              <div className="text-lg font-semibold mb-2">{t('common.noProjectsFound')}</div>
+              <div className="text-sm text-slate-600 mb-4">{t('common.noProjectsForAgents')}</div>
               <ul className="list-disc pl-5 text-sm text-slate-700 max-h-48 overflow-auto mb-4">
                 {missingAgents.map(name => (
                   <li key={name}>{name}</li>
                 ))}
               </ul>
               <div className="flex justify-end gap-2">
-                <button className="px-4 py-2 text-sm rounded bg-slate-100 hover:bg-slate-200" onClick={() => setShowMissingModal(false)}>Close</button>
+                <button className="px-4 py-2 text-sm rounded bg-slate-100 hover:bg-slate-200" onClick={() => setShowMissingModal(false)}>{t('common.close')}</button>
               </div>
             </div>
           </div>
@@ -325,7 +327,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-total-calls">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Total Calls This Week</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.totalCalls')}</span>
                   <Phone className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -337,20 +339,20 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.totalCalls.value.toLocaleString()}</div>
                     <div className={`text-xs ${globalKpis.totalCalls.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% vs. last week
+                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-reach-rate">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Reach Rate</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.reachRate')}</span>
                   <TrendingUp className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -362,20 +364,20 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.reachRate.value}%</div>
                     <div className={`text-xs ${globalKpis.reachRate.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% vs. last week
+                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0%</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-positive-outcomes">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Positive Outcomes</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.positiveOutcomes')}</span>
                   <CheckCircle className="w-5 h-5 text-green-500" />
                 </div>
                 {kpiLoading ? (
@@ -393,14 +395,14 @@ export default function DashboardPage() {
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-avg-duration">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Avg. Call Duration</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.avgDuration')}</span>
                   <Clock className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -418,7 +420,7 @@ export default function DashboardPage() {
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0 min</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
@@ -467,7 +469,7 @@ export default function DashboardPage() {
                 <input
                   value={agentSearchQuery}
                   onChange={(e)=>setAgentSearchQuery(e.target.value)}
-                  placeholder="Search agents..."
+                  placeholder={t('dashboard.searchAgents')}
                   className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 />
               </div>
@@ -568,7 +570,7 @@ export default function DashboardPage() {
                   <input
                     value={campaignSearchQuery}
                     onChange={(e)=>setCampaignSearchQuery(e.target.value)}
-                    placeholder="Search campaigns..."
+                    placeholder={t('dashboard.searchAgents')}
                     className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                 </div>
@@ -1140,7 +1142,7 @@ function TimeSearchView() {
                       type="text"
                       value={agentSearch}
                       onChange={(e) => setAgentSearch(e.target.value)}
-                      placeholder="Search agents..."
+                      placeholder={t('dashboard.searchAgents')}
                       className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>

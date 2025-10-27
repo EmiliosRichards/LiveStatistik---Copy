@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import deTranslations from '../locales/de.json'
+import enTranslations from '../locales/en.json'
 
 type Language = 'de' | 'en'
 
@@ -12,23 +14,13 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
+const translations = {
+  de: deTranslations,
+  en: enTranslations
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('de')
-  const [translations, setTranslations] = useState<Record<string, any>>({})
-
-  // Load translations
-  useEffect(() => {
-    async function loadTranslations() {
-      try {
-        const de = await import('../locales/de.json')
-        const en = await import('../locales/en.json')
-        setTranslations({ de: de.default, en: en.default })
-      } catch (error) {
-        console.error('Failed to load translations:', error)
-      }
-    }
-    loadTranslations()
-  }, [])
 
   // Initialize language from localStorage
   useEffect(() => {
@@ -49,10 +41,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const t = (key: string): string => {
     const keys = key.split('.')
-    let value: any = translations[language] || {}
+    let value: any = translations[language]
     
     for (const k of keys) {
-      value = value?.[k]
+      if (value && typeof value === 'object') {
+        value = value[k]
+      } else {
+        return key
+      }
     }
     
     return typeof value === 'string' ? value : key

@@ -6,8 +6,10 @@ import { Calendar, Users, Briefcase, ChevronDown, Search, CalendarClock, Layers 
 import { format } from 'date-fns'
 import { fetchAgents, fetchProjectsForAgents, type Agent, type Project } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function SearchPage() {
+  const { t } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchType, setSearchType] = useState<'agent' | 'project'>('agent')

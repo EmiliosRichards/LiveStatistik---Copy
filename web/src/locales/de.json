@@ -33,7 +33,9 @@
     "totalCalls": "Anrufe diese Woche",
     "reachRate": "Erreichungsrate",
     "positiveOutcomes": "Positive Ergebnisse",
-    "avgDuration": "Durchschn. Anrufdauer"
+    "avgDuration": "Durchschn. Anrufdauer",
+    "vsLastWeek": "vs. letzte Woche",
+    "noData": "Keine Daten"
   },
   "dashboard": {
     "callsThisYear": "Anrufe dieses Jahr",
@@ -193,6 +195,10 @@
     "yes": "Ja",
     "no": "Nein",
     "refresh": "Aktualisieren",
-    "export": "Exportieren"
+    "export": "Exportieren",
+    "noProjectsFound": "Keine Projekte gefunden",
+    "noProjectsForAgents": "Keine Projekte für den angegebenen Zeitraum für folgende Agenten gefunden:",
+    "running": "Läuft",
+    "inactive": "Inaktiv"
   }
 }
