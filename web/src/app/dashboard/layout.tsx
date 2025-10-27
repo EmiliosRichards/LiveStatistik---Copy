@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: "Statistics Dashboard",
 };
 
+// Force dynamic rendering for all dashboard pages
+export const dynamic = 'force-dynamic';
+
 export default function DashboardLayout({
   children,
 }: {

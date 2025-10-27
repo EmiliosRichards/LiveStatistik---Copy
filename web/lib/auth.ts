@@ -12,7 +12,6 @@ export async function requireRole(role: 'admin' | 'user'): Promise<Session> {
     throw new Response('Unauthorized', { status: 401 });
   }
   
-  // Type-safe access to roles (assumes NextAuth session has been extended)
   const userWithRoles = session.user as { roles?: string[] };
   const roles = userWithRoles.roles || [];
   

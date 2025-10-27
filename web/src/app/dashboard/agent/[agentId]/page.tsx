@@ -1,5 +1,8 @@
 'use client'
 
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
+
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/table-styles'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'

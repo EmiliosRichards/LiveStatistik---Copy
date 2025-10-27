@@ -1,5 +1,8 @@
 'use client'
 
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
+
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock } from 'lucide-react'
