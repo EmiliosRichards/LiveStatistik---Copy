@@ -508,6 +508,35 @@ export default function CampaignDetailPage() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Bottom Pagination */}
+                <div className="flex items-center justify-end gap-3 mt-4">
+                  <div className="text-sm text-slate-700 font-semibold">{overallTotal.toLocaleString()} Ergebnisse</div>
+                  <div className="flex items-center gap-2 text-sm text-slate-800">
+                    <button
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===1 ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
+                      disabled={page===1}
+                      onClick={()=>setPage(p=>Math.max(1,p-1))}
+                      aria-label="Previous page"
+                    >
+                      <ArrowLeft className="w-4 h-4" /> Prev
+                    </button>
+                    <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {overallTotal.toLocaleString()}</span>
+                    <button
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded border font-medium ${page===totalPages ? 'text-slate-300 border-slate-200' : 'text-slate-800 bg-white border-slate-500 hover:bg-slate-50'}`}
+                      disabled={page===totalPages}
+                      onClick={()=>setPage(p=>Math.min(totalPages,p+1))}
+                      aria-label="Next page"
+                    >
+                      Next <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <select className="border border-slate-400 rounded px-2 py-1 text-sm text-slate-800 ml-2" value={page} onChange={e=>setPage(parseInt(e.target.value)||1)}>
+                      {Array.from({length: totalPages}, (_,i)=>i+1).slice(0,500).map(n=> (
+                        <option key={n} value={n}>Page {n}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </>
             )}
           </div>
