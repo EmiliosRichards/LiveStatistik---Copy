@@ -512,6 +512,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get call details for multiple agents in a campaign - used by campaign detail page
+  app.post('/api/call-details-by-project', async (req, res) => {
+    try {
+      const bodySchema = z.object({
+        projectId: z.string().uuid("Invalid project ID format"),
+        agentIds: z.array(z.string().uuid("Invalid agent ID format")).min(1, "At least one agent ID is required"),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+        timeFrom: z.string().optional(),
+        timeTo: z.string().optional()
+      });
+      
+      const { projectId, agentIds, dateFrom, dateTo, timeFrom, timeTo } = bodySchema.parse(req.body);
+      
+      console.log(`🔍 Call Details by Project API: projectId=${projectId}, ${agentIds.length} agent(s)`);
+      console.log(`🗓️  Date range: ${dateFrom} to ${dateTo}`);
+      console.log(`⏰ Time filters: ${timeFrom || 'start'} to ${timeTo || 'end'}`);
+      
+      const details = await storage.getCallDetailsForAgents(
+        agentIds,
+        projectId,
+        dateFrom ? new Date(dateFrom) : undefined,
+        dateTo ? new Date(dateTo) : undefined,
+        timeFrom,
+        timeTo
+      );
+      
+      console.log(`📊 Returning ${details.length} call details for ${agentIds.length} agent(s)`);
+      res.json(details);
+    } catch (error) {
+      console.error("Error fetching call details by project:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid request parameters", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to fetch call details" });
+      }
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
