@@ -3,8 +3,10 @@
 import { BarChart3 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function OutcomesBarChart() {
+  const { t } = useLanguage()
   const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]
   const today = new Date().toISOString().split('T')[0]
 
@@ -24,23 +26,23 @@ export function OutcomesBarChart() {
         <div>
           <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-blue-600" />
-            Call Outcomes Distribution
+            {t('dashboard.outcomesDistribution')}
           </h3>
-          <p className="text-xs text-slate-500">Breakdown by outcome type</p>
+          <p className="text-xs text-slate-500">{t('dashboard.outcomeBreakdown')}</p>
         </div>
       </div>
       
       {isLoading ? (
         <div className="h-48 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-center">
-          <div className="text-xs text-slate-500">Loading chart data...</div>
+          <div className="text-xs text-slate-500">{t('dashboard.loadingChart')}</div>
         </div>
       ) : error ? (
         <div className="h-48 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-center">
-          <div className="text-xs text-red-500">Failed to load chart data</div>
+          <div className="text-xs text-red-500">{t('dashboard.loadingChart')}</div>
         </div>
       ) : !chartData || chartData.length === 0 ? (
         <div className="h-48 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-center">
-          <div className="text-xs text-slate-500">No data available</div>
+          <div className="text-xs text-slate-500">{t('dashboard.noData')}</div>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={200}>

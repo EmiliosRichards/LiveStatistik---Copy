@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export interface InlineCalendarProps {
   value: Date | null
@@ -12,10 +13,6 @@ export interface InlineCalendarProps {
   onYearChange: (year: number) => void
 }
 
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-]
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
@@ -28,6 +25,14 @@ function startWeekday(year: number, month: number) {
 }
 
 export function InlineCalendar({ value, onChange, visibleMonth, visibleYear, onMonthChange, onYearChange }: InlineCalendarProps) {
+  const { t } = useLanguage()
+  
+  const monthNames = [
+    t('months.january'), t('months.february'), t('months.march'), t('months.april'), 
+    t('months.may'), t('months.june'), t('months.july'), t('months.august'),
+    t('months.september'), t('months.october'), t('months.november'), t('months.december')
+  ]
+
   const days = useMemo(() => {
     const leading = startWeekday(visibleYear, visibleMonth)
     const total = getDaysInMonth(visibleYear, visibleMonth)
