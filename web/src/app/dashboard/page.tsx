@@ -389,7 +389,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.positiveOutcomes.value}</div>
                     <div className={`text-xs ${globalKpis.positiveOutcomes.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% vs. last week
+                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
@@ -414,7 +414,7 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.avgDuration.value} min</div>
                     <div className={`text-xs ${globalKpis.avgDuration.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% vs. last week
+                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
@@ -444,9 +444,9 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {/* View toggle */}
-                  <ViewToggle view={statsView} onChange={setStatsView} />
+                  <ViewToggle view={statsView} onChange={setStatsView} t={t} />
                   <button className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" data-testid="button-export-csv">
-                    Export CSV
+                    {t('dashboard.exportCsv')}
                   </button>
                 </div>
               </div>
@@ -745,21 +745,21 @@ export default function DashboardPage() {
   )
 }
 
-function ViewToggle({ view, onChange }: { view: 'overview' | 'details'; onChange: (v: 'overview' | 'details') => void }) {
+function ViewToggle({ view, onChange, t }: { view: 'overview' | 'details'; onChange: (v: 'overview' | 'details') => void; t: (key: string) => string }) {
   return (
     <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
       <button
         className={`px-3 py-1 text-sm ${view === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
         onClick={() => onChange('overview')}
       >
-        Overview
+        {t('dashboard.overview')}
       </button>
       <div className="w-px h-5 bg-slate-300" />
       <button
         className={`px-3 py-1 text-sm ${view === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
         onClick={() => onChange('details')}
       >
-        Details
+        {t('dashboard.details')}
       </button>
     </div>
   )

@@ -621,7 +621,7 @@ export default function AgentDetailPage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto">
