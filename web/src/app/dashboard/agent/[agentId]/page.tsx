@@ -361,16 +361,17 @@ export default function AgentDetailPage() {
                           </colgroup>
                         ) : (
                           <colgroup>
-                            <col style={{ width: '25%' }} />
+                            <col style={{ width: '22%' }} />
+                            <col style={{ width: '7.5%' }} />
+                            <col style={{ width: '9%' }} />
                             <col style={{ width: '8%' }} />
+                            <col style={{ width: '7.5%' }} />
+                            <col style={{ width: '7.5%' }} />
+                            <col style={{ width: '7.5%' }} />
+                            <col style={{ width: '7.5%' }} />
                             <col style={{ width: '8%' }} />
+                            <col style={{ width: '7.5%' }} />
                             <col style={{ width: '8%' }} />
-                            <col style={{ width: '8%' }} />
-                            <col style={{ width: '8%' }} />
-                            <col style={{ width: '8%' }} />
-                            <col style={{ width: '8%' }} />
-                            <col style={{ width: '7%' }} />
-                            <col style={{ width: '12%' }} />
                           </colgroup>
                         )}
                         <thead className={theadBase}>
@@ -415,10 +416,12 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase} text-right`}><span className={`text-sm font-medium ${row.reachRate>=70?'text-green-600':'text-amber-600'}`}>{row.reachRate.toFixed(1)}%</span></td>
                                     <td className={`${tdBase} text-right font-semibold`}>{row.outcomes.toLocaleString()}</td>
                                     <td className={`${tdBase} text-right font-semibold`}>{row.avgDuration.toFixed(2)}</td>
-                                    <td className={`${tdBase} text-right`}>
-                                      {row.status && (
-                                        <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
-                                      )}
+                                    <td className={`${tdBase}`}>
+                                      <div className="flex justify-end">
+                                        {row.status && (
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                        )}
+                                      </div>
                                     </td>
                                   </>
                                 ) : (
@@ -432,10 +435,12 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase} text-right font-semibold`}>{(row.vbz/1).toFixed(2)}</td>
                                     <td className={`${tdBase} text-right font-semibold`}>{(row.erfolgProStunde/1).toFixed(2)}</td>
                                     <td className={`${tdBase} text-right font-semibold`}>{(row.az/1).toFixed(2)}</td>
-                                    <td className={`${tdBase} text-right`}>
-                                      {row.status && (
-                                        <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
-                                      )}
+                                    <td className={`${tdBase}`}>
+                                      <div className="flex justify-end">
+                                        {row.status && (
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                        )}
+                                      </div>
                                     </td>
                                   </>
                                 )}
