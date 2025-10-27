@@ -101,8 +101,9 @@ export default function CampaignDetailPage() {
             const agentIdsWithData = [...new Set(statsData.map((s: any) => s.agentId))]
             
             // Filter to agents that have statistics for this campaign
+            // Exclude team leaders (identified by spaces in their names instead of dots)
             const campaignAgents = allAgents.filter((agent: any) => 
-              agentIdsWithData.includes(agent.id)
+              agentIdsWithData.includes(agent.id) && !agent.name.includes(' ')
             )
             
             const formattedAgents = campaignAgents.map((a: any) => ({
@@ -620,6 +621,7 @@ export default function CampaignDetailPage() {
                     <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
                       <tr>
                         <th className="py-3 px-4 text-left font-medium">ID</th>
+                        <th className="py-3 px-4 text-left font-medium">Agent</th>
                         <th className="py-3 px-4 text-left font-medium">Datum</th>
                         <th className="py-3 px-4 text-left font-medium">Zeit</th>
                         <th className="py-3 px-4 text-left font-medium">Dauer</th>
@@ -633,7 +635,7 @@ export default function CampaignDetailPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-200">
                       {visibleCalls.map((c, idx) => (
-                        <CallRow key={c.id || (startIdx+idx)} index={startIdx+idx+1} call={c} />
+                        <CallRow key={c.id || (startIdx+idx)} index={startIdx+idx+1} call={c} availableAgents={availableAgents} />
                       ))}
                     </tbody>
                   </table>
@@ -695,13 +697,17 @@ export default function CampaignDetailPage() {
   )
 }
 
-function CallRow({ call, index }: { call: any; index: number }) {
+function CallRow({ call, index, availableAgents }: { call: any; index: number; availableAgents: { id: string; name: string }[] }) {
   const [transcribing, setTranscribing] = useState(false)
   const [transcript, setTranscript] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [showAudio, setShowAudio] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
   const [copied, setCopied] = useState(false)
+  
+  // Find agent name from agentId
+  const agent = availableAgents.find(a => a.id === call.agentId)
+  const agentName = agent?.name || '—'
 
   const copyIdToClipboard = async () => {
     const fullId = String(call.id || '')
@@ -784,6 +790,7 @@ function CallRow({ call, index }: { call: any; index: number }) {
             )}
           </span>
         </td>
+        <td className="py-3 px-4 text-slate-700">{agentName}</td>
         <td className="py-3 px-4 text-slate-700">{datum}</td>
         <td className="py-3 px-4 text-slate-700">{zeit}</td>
         <td className="py-3 px-4 text-slate-700 tabular-nums">{dauer}</td>
