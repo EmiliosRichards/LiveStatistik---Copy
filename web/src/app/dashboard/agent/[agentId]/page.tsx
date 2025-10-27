@@ -34,7 +34,6 @@ export default function AgentDetailPage() {
   const [projectsMap, setProjectsMap] = useState<ProjectMap>({})
   const [campStats, setCampStats] = useState<any[]>([])
   const [campView, setCampView] = useState<'overview'|'details'>('overview')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
   const [sortMode, setSortMode] = useState<'date'|'name'>('date')
   const showHeader = useAutoHideHeader(24, 24)
   const headerRef = useRef<HTMLElement | null>(null)
@@ -402,12 +401,22 @@ export default function AgentDetailPage() {
                         </thead>
                         <tbody className={tbodyBase}>
                           {sortedCampStats.map((row)=> (
-                            <Fragment key={row.projectId}>
-                              <tr className={`${trBase} cursor-pointer`} onClick={() => setExpandedId(expandedId===row.projectId?null:row.projectId)}>
+                            <tr 
+                              key={row.projectId}
+                              className={`${trBase} cursor-pointer hover:bg-blue-50`} 
+                              onClick={() => {
+                                const params = new URLSearchParams()
+                                params.set('agentId', agentId)
+                                if (dateFrom) params.set('dateFrom', dateFrom)
+                                if (dateTo) params.set('dateTo', dateTo)
+                                if (timeFrom) params.set('timeFrom', timeFrom)
+                                if (timeTo) params.set('timeTo', timeTo)
+                                router.push(`/dashboard/campaign/${row.projectId}?${params.toString()}`)
+                              }}
+                            >
                                 <td className={`${tdBase} text-blue-700`}>
                                   <div className="flex items-center gap-2 min-w-0">
-                                    <button className="text-slate-500 hover:text-slate-700" onClick={(e)=>{e.stopPropagation(); setExpandedId(expandedId===row.projectId?null:row.projectId)}} aria-label="Show calls">{expandedId===row.projectId? '▾' : '▸'}</button>
-                                    <span className="truncate">{row.projectName}</span>
+                                    <span className="truncate hover:underline">{row.projectName}</span>
                     </div>
                                 </td>
                                 {campView==='overview' ? (
@@ -445,14 +454,6 @@ export default function AgentDetailPage() {
                                   </>
                                 )}
                               </tr>
-                              {expandedId===row.projectId && (
-                                <tr key={`${row.projectId}-expanded`}>
-                                  <td colSpan={campView==='overview'?6:11} className="px-0">
-                                    <ProjectPanel embedded agentId={agentId} projectId={row.projectId} projectName={row.projectName} dateFrom={dateFrom} dateTo={dateTo} timeFrom={timeFrom} timeTo={timeTo} />
-                                  </td>
-                                </tr>
-                              )}
-                            </Fragment>
                           ))}
                           {sortedCampStats.length===0 && (
                             <tr><td colSpan={campView==='overview'?6:11} className="text-center py-8 text-slate-500">No campaigns for the selected range.</td></tr>
