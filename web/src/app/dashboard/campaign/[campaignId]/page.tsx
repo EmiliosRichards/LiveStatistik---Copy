@@ -525,7 +525,7 @@ export default function CampaignDetailPage() {
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
                       <tr>
-                        <th className="py-3 px-4 text-left font-medium">Nr</th>
+                        <th className="py-3 px-4 text-left font-medium">ID</th>
                         <th className="py-3 px-4 text-left font-medium">Datum</th>
                         <th className="py-3 px-4 text-left font-medium">Zeit</th>
                         <th className="py-3 px-4 text-left font-medium">Dauer</th>
@@ -654,11 +654,20 @@ function CallRow({ call, index }: { call: any; index: number }) {
   const dauer = `${Math.floor(dauerSec/60)}:${(dauerSec%60).toString().padStart(2,'0')}`
   const firm = call.companyName || call.contactName || '—'
   const person = call.contactPerson || '—'
+  
+  // Show shortened ID (last 8 chars) with full ID on hover
+  const fullId = String(call.id || '')
+  const shortId = fullId.slice(-8) || '—'
 
   return (
     <>
       <tr className="hover:bg-slate-50">
-        <td className="py-3 px-4 text-slate-700 tabular-nums">{index}</td>
+        <td 
+          className="py-3 px-4 text-slate-700 tabular-nums font-mono text-xs cursor-text select-all" 
+          title={fullId}
+        >
+          {shortId}
+        </td>
         <td className="py-3 px-4 text-slate-700">{datum}</td>
         <td className="py-3 px-4 text-slate-700">{zeit}</td>
         <td className="py-3 px-4 text-slate-700 tabular-nums">{dauer}</td>
