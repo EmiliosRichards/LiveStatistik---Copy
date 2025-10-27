@@ -12,7 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-slate-100">
+    <div className="min-h-screen flex flex-col bg-white">
       <DashboardHeader />
       {children}
     </div>
