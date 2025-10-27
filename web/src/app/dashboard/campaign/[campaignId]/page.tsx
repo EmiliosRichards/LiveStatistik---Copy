@@ -607,6 +607,20 @@ function CallRow({ call, index }: { call: any; index: number }) {
   const [error, setError] = useState<string | null>(null)
   const [showAudio, setShowAudio] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const copyIdToClipboard = async () => {
+    const fullId = String(call.id || '')
+    if (!fullId) return
+    
+    try {
+      await navigator.clipboard.writeText(fullId)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy ID:', err)
+    }
+  }
 
   const startTranscription = async () => {
     if (!call.recordingUrl) {
@@ -663,10 +677,18 @@ function CallRow({ call, index }: { call: any; index: number }) {
     <>
       <tr className="hover:bg-slate-50">
         <td 
-          className="py-3 px-4 text-slate-700 tabular-nums font-mono text-xs cursor-text select-all" 
-          title={fullId}
+          className="py-3 px-4 text-slate-700 tabular-nums font-mono text-xs cursor-pointer hover:bg-blue-50 hover:text-blue-700 transition-colors relative group" 
+          title={copied ? 'Copied!' : `Click to copy: ${fullId}`}
+          onClick={copyIdToClipboard}
         >
-          {shortId}
+          <span className="relative">
+            {shortId}
+            {copied && (
+              <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                Copied!
+              </span>
+            )}
+          </span>
         </td>
         <td className="py-3 px-4 text-slate-700">{datum}</td>
         <td className="py-3 px-4 text-slate-700">{zeit}</td>
