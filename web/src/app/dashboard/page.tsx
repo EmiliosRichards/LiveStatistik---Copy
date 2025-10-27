@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
-import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase } from 'lucide-react'
+import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
@@ -524,126 +524,213 @@ export default function DashboardPage() {
 
         {/* Campaigns view */}
         {section==='campaigns' && (
-          <div className="bg-bg-elevated rounded-lg shadow-lg hover:shadow-xl p-6">
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-slate-900">Campaigns</h2>
-              <div className="flex items-center gap-3 w-full max-w-xl">
-                <div className="relative flex-1">
+          <div className="space-y-6">
+            {/* Header and filters */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Campaigns</h2>
+                  <p className="text-sm text-slate-600 mt-1">{campaignsList.length} total campaigns</p>
+                </div>
+                
+                {/* Filter Chips */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCampaignFilter('all')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      campaignFilter === 'all' 
+                        ? 'bg-slate-900 text-white shadow-md' 
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    All <span className="ml-1 opacity-70">({campaignsList.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setCampaignFilter('new')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
+                      campaignFilter === 'new' 
+                        ? 'bg-blue-600 text-white shadow-md' 
+                        : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    New <span className="ml-0.5 opacity-70">({groupedCampaigns.new.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setCampaignFilter('active')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
+                      campaignFilter === 'active' 
+                        ? 'bg-emerald-600 text-white shadow-md' 
+                        : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                    }`}
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    Active <span className="ml-0.5 opacity-70">({groupedCampaigns.active.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setCampaignFilter('archived')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
+                      campaignFilter === 'archived' 
+                        ? 'bg-slate-600 text-white shadow-md' 
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                    }`}
+                  >
+                    <Archive className="w-3.5 h-3.5" />
+                    Archived <span className="ml-0.5 opacity-70">({groupedCampaigns.archived.length})</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Search and Sort */}
+              <div className="flex items-center gap-3">
+                <div className="relative flex-1 max-w-md">
                   <SearchIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     value={campaignSearchQuery}
                     onChange={(e)=>setCampaignSearchQuery(e.target.value)}
                     placeholder="Search campaigns..."
-                    className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                 </div>
                 <select
                   value={campaignSort}
                   onChange={(e)=>setCampaignSort(e.target.value as any)}
-                  className="border border-slate-300 rounded-lg text-sm px-2 py-2 text-slate-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="border border-slate-300 rounded-lg text-sm px-3 py-2.5 text-slate-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
                 >
-                  <option value="date_desc">Date (newest)</option>
-                  <option value="date_asc">Date (oldest)</option>
-                  <option value="name_asc">Name (A–Z)</option>
-                  <option value="name_desc">Name (Z–A)</option>
-                </select>
-                <select
-                  value={campaignFilter}
-                  onChange={(e)=>setCampaignFilter(e.target.value as any)}
-                  className="border border-slate-300 rounded-lg text-sm px-2 py-2 text-slate-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All campaigns</option>
-                  <option value="active">Active (incl. New)</option>
-                  <option value="new">New only</option>
-                  <option value="archived">Archived</option>
+                  <option value="date_desc">📅 Newest First</option>
+                  <option value="date_asc">📅 Oldest First</option>
+                  <option value="name_asc">🔤 A → Z</option>
+                  <option value="name_desc">🔤 Z → A</option>
                 </select>
               </div>
             </div>
-            <div className="overflow-auto">
-              <table className="w-full text-sm">
-                <thead className="text-xs uppercase text-slate-700 bg-slate-50">
-                  <tr>
-                    <th className="text-left py-2 px-3">Name</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {/* Group: New (treated as Active, but shown separately) */}
-                  {(campaignFilter === 'all' || campaignFilter === 'new' || campaignFilter === 'active') && groupedCampaigns.new.length > 0 && (
-                    <>
-                      <tr><td className="p-0"><div className="h-2" /></td></tr>
-                      <tr><td className="py-2 px-3 text-center text-[11px] uppercase tracking-wide font-semibold text-blue-700 bg-blue-50 border-y border-blue-100">New</td></tr>
-                    </>
-                  )}
-                  {(campaignFilter === 'all' || campaignFilter === 'new' || campaignFilter === 'active') && groupedCampaigns.new.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => goToCampaign(c.id)}>
-                      <td className="py-2 px-3 text-slate-900 underline-offset-2 hover:underline">
-                        <span className="inline-flex items-center gap-2">
-                          <span>{c.name}</span>
-                          <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200">new</span>
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
 
-                  {/* Group: Active */}
-                  {(campaignFilter === 'all' || campaignFilter === 'active') && groupedCampaigns.active.length > 0 && (
-                    <>
-                      <tr><td className="p-0"><div className="h-2" /></td></tr>
-                      <tr><td className="py-2 px-3 text-center text-[11px] uppercase tracking-wide font-semibold text-emerald-700 bg-emerald-50 border-y border-emerald-100">Active</td></tr>
-                    </>
-                  )}
-                  {(campaignFilter === 'all' || campaignFilter === 'active') && groupedCampaigns.active.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => goToCampaign(c.id)}>
-                      <td className="py-2 px-3 text-slate-900 underline-offset-2 hover:underline">
-                        <span className="inline-flex items-center gap-2">
-                          <span>{c.name}</span>
-                          <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">active</span>
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+            {/* Campaigns Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* New Campaigns */}
+              {(campaignFilter === 'all' || campaignFilter === 'new' || campaignFilter === 'active') && groupedCampaigns.new.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => goToCampaign(c.id)}
+                  className="group bg-white rounded-lg border-2 border-blue-200 p-4 hover:border-blue-400 hover:shadow-lg transition-all text-left relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-transparent rounded-bl-full opacity-50" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors line-clamp-2 flex-1">
+                        {c.name}
+                      </h3>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 shrink-0">
+                        <Sparkles className="w-3 h-3" />
+                        New
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <Circle className="w-2 h-2 fill-blue-500 text-blue-500" />
+                      <span>Recently added</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
 
-                  {/* Group: Archived */}
-                  {(campaignFilter === 'all' || campaignFilter === 'archived') && groupedCampaigns.archived.length > 0 && (
-                    <>
-                      <tr><td className="p-0"><div className="h-2" /></td></tr>
-                      <tr><td className="py-2 px-3 text-center text-[11px] uppercase tracking-wide font-semibold text-slate-600 bg-slate-50 border-y border-slate-200">Archived</td></tr>
-                    </>
-                  )}
-                  {(campaignFilter === 'all' || campaignFilter === 'archived') && groupedCampaigns.archived.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => goToCampaign(c.id)}>
-                      <td className="py-2 px-3 text-slate-900 underline-offset-2 hover:underline">
-                        <span className="inline-flex items-center gap-2">
-                          <span>{c.name}</span>
-                          <span className="text-xs px-2 py-0.5 rounded-full border bg-slate-50 text-slate-600 border-slate-200">archived</span>
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+              {/* Active Campaigns */}
+              {(campaignFilter === 'all' || campaignFilter === 'active') && groupedCampaigns.active.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => goToCampaign(c.id)}
+                  className="group bg-white rounded-lg border-2 border-emerald-200 p-4 hover:border-emerald-400 hover:shadow-lg transition-all text-left relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-100 to-transparent rounded-bl-full opacity-50" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 flex-1">
+                        {c.name}
+                      </h3>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shrink-0">
+                        <Activity className="w-3 h-3" />
+                        Active
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
+                      <span>Running</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
 
-                  {/* Group: Other (no status provided) */}
-                  {(campaignFilter === 'all') && groupedCampaigns.unknown.length > 0 && (
-                    <>
-                      <tr><td className="p-0"><div className="h-2" /></td></tr>
-                      <tr><td className="py-2 px-3 text-center text-[11px] uppercase tracking-wide font-semibold text-slate-700 bg-slate-100 border-y border-slate-200">Other</td></tr>
-                    </>
-                  )}
-                  {(campaignFilter === 'all') && groupedCampaigns.unknown.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => goToCampaign(c.id)}>
-                      <td className="py-2 px-3 text-slate-900 underline-offset-2 hover:underline">
-                        <span className="inline-flex items-center gap-2">
-                          <span>{c.name}</span>
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+              {/* Archived Campaigns */}
+              {(campaignFilter === 'all' || campaignFilter === 'archived') && groupedCampaigns.archived.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => goToCampaign(c.id)}
+                  className="group bg-white rounded-lg border-2 border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition-all text-left relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-slate-100 to-transparent rounded-bl-full opacity-30" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-slate-700 group-hover:text-slate-900 transition-colors line-clamp-2 flex-1">
+                        {c.name}
+                      </h3>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-300 shrink-0">
+                        <Archive className="w-3 h-3" />
+                        Archived
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                      <Circle className="w-2 h-2 fill-slate-400 text-slate-400" />
+                      <span>Inactive</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
 
-                  {campaignsList.length === 0 && (
-                    <tr><td className="py-6 px-3 text-slate-500">No campaigns loaded yet.</td></tr>
-                  )}
-                </tbody>
-              </table>
+              {/* Unknown Campaigns */}
+              {(campaignFilter === 'all') && groupedCampaigns.unknown.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => goToCampaign(c.id)}
+                  className="group bg-white rounded-lg border-2 border-slate-200 p-4 hover:border-slate-400 hover:shadow-md transition-all text-left"
+                >
+                  <h3 className="font-semibold text-slate-900 group-hover:text-slate-700 transition-colors line-clamp-2">
+                    {c.name}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-2">
+                    <Circle className="w-2 h-2 fill-slate-300 text-slate-300" />
+                    <span>Status unknown</span>
+                  </div>
+                </button>
+              ))}
             </div>
+
+            {/* Empty State */}
+            {campaignsList.length === 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+                <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 text-lg">No campaigns loaded yet.</p>
+              </div>
+            )}
+
+            {/* No Results State */}
+            {campaignsList.length > 0 && 
+             groupedCampaigns.new.length === 0 && 
+             groupedCampaigns.active.length === 0 && 
+             groupedCampaigns.archived.length === 0 && 
+             groupedCampaigns.unknown.length === 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+                <SearchIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 text-lg">No campaigns match your filters.</p>
+                <button
+                  onClick={() => {
+                    setCampaignFilter('all')
+                    setCampaignSearchQuery('')
+                  }}
+                  className="mt-4 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
           </div>
         )}
         
