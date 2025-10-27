@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
-import { HelpCircle, Bell, User, ChevronDown, ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download } from 'lucide-react'
+import { HelpCircle, Bell, User, ChevronDown, ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock } from 'lucide-react'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -29,6 +29,7 @@ export default function CampaignDetailPage() {
   const [selectedSub, setSelectedSub] = useState<string | null>(null)
   const [filterCalls, setFilterCalls] = useState<'alle' | 'mit_audio' | 'mit_transkript' | 'mit_notizen'>('alle')
   const [filterTime, setFilterTime] = useState<'alle' | 'heute' | 'woche' | 'monat'>('alle')
+  const [filterDuration, setFilterDuration] = useState<'alle' | '0-30s' | '30-60s' | '1-5min' | '5-10min' | '10+min'>('alle')
   const [page, setPage] = useState(1)
   const pageSize = 100
 
@@ -171,7 +172,7 @@ export default function CampaignDetailPage() {
   }, [agentId, campaignId, dateFrom, dateTo, timeFrom, timeTo])
 
   // Reset page when filters change
-  useEffect(() => { setPage(1) }, [selectedCategory, selectedSub, filterCalls, filterTime])
+  useEffect(() => { setPage(1) }, [selectedCategory, selectedSub, filterCalls, filterTime, filterDuration])
 
   // Derived: grouping by category/subcategory
   const grouped = useMemo(() => {
@@ -201,6 +202,18 @@ export default function CampaignDetailPage() {
     if (filterCalls === 'mit_audio') list = list.filter(c => !!c.recordingUrl)
     if (filterCalls === 'mit_transkript') list = list.filter(c => !!c.transcript)
     if (filterCalls === 'mit_notizen') list = list.filter(c => !!c.notes)
+    // duration filter (call duration in seconds)
+    if (filterDuration !== 'alle') {
+      list = list.filter(c => {
+        const durationSec = c.duration || 0
+        if (filterDuration === '0-30s') return durationSec >= 0 && durationSec <= 30
+        if (filterDuration === '30-60s') return durationSec > 30 && durationSec <= 60
+        if (filterDuration === '1-5min') return durationSec > 60 && durationSec <= 300
+        if (filterDuration === '5-10min') return durationSec > 300 && durationSec <= 600
+        if (filterDuration === '10+min') return durationSec > 600
+        return true
+      })
+    }
     // time filters
     const now = new Date()
     if (filterTime !== 'alle') {
@@ -225,7 +238,7 @@ export default function CampaignDetailPage() {
       })
     }
     return list
-  }, [calls, selectedCategory, selectedSub, filterCalls, filterTime])
+  }, [calls, selectedCategory, selectedSub, filterCalls, filterTime, filterDuration])
 
   const pageCount = filteredCalls.length
   const overallTotal = serverTotal ?? pageCount
@@ -446,20 +459,35 @@ export default function CampaignDetailPage() {
 
                 {/* Filters and controls */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <Filter className="w-4 h-4 text-slate-500" />
+                      <select className="border border-slate-300 rounded px-3 py-1.5" value={filterDuration} onChange={e=>setFilterDuration(e.target.value as any)}>
+                        <option value="alle">Alle Dauern</option>
+                        <option value="0-30s">0-30 Sekunden</option>
+                        <option value="30-60s">30-60 Sekunden</option>
+                        <option value="1-5min">1-5 Minuten</option>
+                        <option value="5-10min">5-10 Minuten</option>
+                        <option value="10+min">10+ Minuten</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-slate-500" />
+                      <select className="border border-slate-300 rounded px-3 py-1.5" value={filterTime} onChange={e=>setFilterTime(e.target.value as any)}>
+                        <option value="alle">Alle Zeiten</option>
+                        <option value="heute">Heute</option>
+                        <option value="woche">Diese Woche</option>
+                        <option value="monat">Dieser Monat</option>
+                      </select>
+                    </div>
+
                     <label className="text-slate-600 font-medium">Anrufe:</label>
                     <select className="border border-slate-300 rounded px-3 py-1.5" value={filterCalls} onChange={e=>setFilterCalls(e.target.value as any)}>
                       <option value="alle">Alle Anrufe</option>
                       <option value="mit_audio">Mit Audio</option>
                       <option value="mit_transkript">Mit Transkript</option>
                       <option value="mit_notizen">Mit Notizen</option>
-                    </select>
-                    <label className="text-slate-600 font-medium ml-3">Zeiten:</label>
-                    <select className="border border-slate-300 rounded px-3 py-1.5" value={filterTime} onChange={e=>setFilterTime(e.target.value as any)}>
-                      <option value="alle">Alle Zeiten</option>
-                      <option value="heute">Heute</option>
-                      <option value="woche">Diese Woche</option>
-                      <option value="monat">Dieser Monat</option>
                     </select>
                   </div>
                   
