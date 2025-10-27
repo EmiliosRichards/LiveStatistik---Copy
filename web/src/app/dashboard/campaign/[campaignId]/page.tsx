@@ -417,6 +417,9 @@ export default function CampaignDetailPage() {
               <div className="p-8 text-center text-slate-600">No calls found for this campaign and agent combination.</div>
             ) : (
               <>
+                {/* Category Filter Title */}
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Call Outcome Categories</h2>
+                
                 {/* Category columns */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                   {(['negativ','positiv','offen'] as const).map(col => (
