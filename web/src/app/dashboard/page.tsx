@@ -1014,8 +1014,7 @@ function TimeSearchView() {
   }, [searchParams])
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-1 bg-bg-elevated rounded-lg shadow-lg p-8">
+    <div className="bg-bg-elevated rounded-lg shadow-lg p-8">
         {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-slate-200">
           <button
@@ -1235,10 +1234,6 @@ function TimeSearchView() {
           ? t('search.helpText')
           : t('search.helpTextProject')}
       </p>
-      </div>
-      
-      {/* Footer */}
-      <Footer />
     </div>
   )
 }
