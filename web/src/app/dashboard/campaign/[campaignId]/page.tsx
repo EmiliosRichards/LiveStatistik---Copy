@@ -16,6 +16,8 @@ export default function CampaignDetailPage() {
   const [loading, setLoading] = useState(false)
   const [campaignName, setCampaignName] = useState('')
   const [showHeader, setShowHeader] = useState(true)
+  const [showHelpModal, setShowHelpModal] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
   
   // Agent selection state
   const [availableAgents, setAvailableAgents] = useState<Array<{ id: string; name: string }>>([])
@@ -336,8 +338,33 @@ export default function CampaignDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button aria-label="Help" className="p-2 rounded hover:bg-slate-100"><HelpCircle className="w-5 h-5 text-slate-700" /></button>
-            <button aria-label="Notifications" className="relative p-2 rounded hover:bg-slate-100"><Bell className="w-5 h-5 text-slate-700" /><span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span></button>
+            <button aria-label="Help" onClick={() => setShowHelpModal(true)} className="p-2 rounded hover:bg-slate-100"><HelpCircle className="w-5 h-5 text-slate-700" /></button>
+            <div className="relative">
+              <button aria-label="Notifications" onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 rounded hover:bg-slate-100"><Bell className="w-5 h-5 text-slate-700" /><span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span></button>
+              
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
+                  <div className="p-3 border-b border-slate-200 flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-800">Benachrichtigungen</h3>
+                    <button className="text-xs text-slate-500 hover:text-slate-700">Als gelesen markieren</button>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    {/* Placeholder notification */}
+                    <div className="p-4 border-b border-slate-100 hover:bg-slate-50">
+                      <div className="flex gap-3">
+                        <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-800 text-sm mb-1">📢 Neue Funktion: Multi-Agent Kampagnenansicht</h4>
+                          <p className="text-xs text-slate-600 mb-2">Sie können jetzt mehrere Agenten gleichzeitig auf der Kampagnendetailseite anzeigen und filtern!</p>
+                          <p className="text-xs text-slate-400">Okt 27, 2025</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="h-6 w-px bg-slate-200 mx-1" />
             <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100"><div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center"><User className="w-4 h-4 text-slate-600" /></div><span className="hidden sm:inline text-sm text-slate-700">Emilios</span><ChevronDown className="w-4 h-4 text-slate-500" /></button>
             <div className="h-6 w-px bg-slate-200 mx-1" />
@@ -694,6 +721,74 @@ export default function CampaignDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowHelpModal(false)}>
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-slate-800">Wie können wir helfen?</h2>
+              <button onClick={() => setShowHelpModal(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <p className="text-slate-600 text-center mb-8">
+                Wir haben eine Vielzahl von Ressourcen, die Ihnen helfen, das Beste aus unserer Plattform herauszuholen. Wählen Sie unten aus, was für Sie am besten funktioniert.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Open Support Ticket */}
+                <div className="border-2 border-slate-200 rounded-lg p-6 hover:border-blue-400 transition-colors">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                      <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-800 mb-3">Support-Ticket öffnen</h3>
+                    <p className="text-slate-600 text-sm mb-6">
+                      Haben Sie noch Probleme? Öffnen Sie ein Support-Ticket und jemand aus unserem Team wird sich gerne mit Ihnen in Verbindung setzen, um bei der Lösung zu helfen oder Ihre Fragen zu beantworten.
+                    </p>
+                    <button className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                      Ticket erstellen
+                    </button>
+                    <button className="text-blue-600 text-sm mt-3 hover:underline">
+                      Frühere Tickets
+                    </button>
+                  </div>
+                </div>
+
+                {/* Knowledge Base / Support Docs */}
+                <div className="border-2 border-slate-200 rounded-lg p-6 hover:border-blue-400 transition-colors">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                      <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-800 mb-3">Wissensdatenbank</h3>
+                    <p className="text-slate-600 text-sm mb-6">
+                      Sehen Sie sich unsere umfangreiche Bibliothek mit Support-Artikeln, Anleitungen, YouTube-Videos und mehr an, um Sie bei der Einrichtung erfolgreicher Kampagnen zu unterstützen.
+                    </p>
+                    <button className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium mb-2 w-full">
+                      Support-Dokumentation
+                    </button>
+                    <button className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium w-full">
+                      YouTube-Videos
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto">
