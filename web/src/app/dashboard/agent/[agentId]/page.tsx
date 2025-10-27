@@ -6,7 +6,9 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } from '@/lib/api'
 import type { Project } from '@/lib/api'
-import { Users, Layers, HelpCircle, Bell, User, ChevronDown, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download } from 'lucide-react'
+import { Users, Layers, HelpCircle, Bell, User, ChevronDown, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar } from 'lucide-react'
+import { InlineCalendar } from '@/components/InlineCalendar'
+import { format } from 'date-fns'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -58,6 +60,107 @@ export default function AgentDetailPage() {
     : ''
 
   // header visibility handled by hook
+
+  // Local UI state for date filter popover
+  const [showFilterPopover, setShowFilterPopover] = useState(false)
+  const filterRef = useRef<HTMLDivElement | null>(null)
+  const [dateFromDisplay, setDateFromDisplay] = useState<string>(dateFrom || '')
+  const [dateToDisplay, setDateToDisplay] = useState<string>(dateTo || '')
+  const [showFromCal, setShowFromCal] = useState(false)
+  const [showToCal, setShowToCal] = useState(false)
+  const [fromMonth, setFromMonth] = useState<number>(new Date().getMonth())
+  const [fromYear, setFromYear] = useState<number>(new Date().getFullYear())
+  const [toMonth, setToMonth] = useState<number>(new Date().getMonth())
+  const [toYear, setToYear] = useState<number>(new Date().getFullYear())
+
+  useEffect(() => {
+    setDateFromDisplay(dateFrom || '')
+    setDateToDisplay(dateTo || '')
+  }, [dateFrom, dateTo])
+
+  useEffect(() => {
+    function onPointer(e: MouseEvent | TouchEvent) {
+      const t = e.target as Node | null
+      if (showFilterPopover && filterRef.current && t && !filterRef.current.contains(t)) {
+        setShowFilterPopover(false)
+        setShowFromCal(false)
+        setShowToCal(false)
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setShowFilterPopover(false)
+        setShowFromCal(false)
+        setShowToCal(false)
+      }
+    }
+    document.addEventListener('mousedown', onPointer)
+    document.addEventListener('touchstart', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onPointer)
+      document.removeEventListener('touchstart', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [showFilterPopover])
+
+  const isoToDisplay = (iso: string) => {
+    if (!iso) return ''
+    const [y, m, d] = iso.split('-')
+    return `${d.padStart(2,'0')} - ${m.padStart(2,'0')} - ${y}`
+  }
+  const displayToIso = (display: string): string => {
+    const compact = display.replace(/\s+/g, '')
+    const parts = compact.split('-')
+    if (parts.length !== 3) return ''
+    const [dd, mm, yyyy] = parts
+    if (dd.length !== 2 || mm.length !== 2 || yyyy.length !== 4) return ''
+    const day = parseInt(dd, 10), mon = parseInt(mm, 10)
+    if (isNaN(day) || isNaN(mon) || day < 1 || day > 31 || mon < 1 || mon > 12) return ''
+    return `${yyyy}-${mm}-${dd}`
+  }
+  const dateToIsoLocal = (d: Date) => {
+    const y = d.getFullYear()
+    const m = (d.getMonth() + 1).toString().padStart(2, '0')
+    const day = d.getDate().toString().padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const setQuickDate = (range: 'today'|'week'|'month') => {
+    const today = new Date()
+    const formatted = format(today, 'yyyy-MM-dd')
+    if (range === 'today') {
+      setDateFromDisplay(isoToDisplay(formatted))
+      setDateToDisplay(isoToDisplay(formatted))
+      return
+    }
+    if (range === 'week') {
+      const weekStart = new Date(today)
+      weekStart.setDate(today.getDate() - today.getDay())
+      const fromIso = format(weekStart, 'yyyy-MM-dd')
+      setDateFromDisplay(isoToDisplay(fromIso))
+      setDateToDisplay(isoToDisplay(formatted))
+      return
+    }
+    if (range === 'month') {
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+      const fromIso = format(monthStart, 'yyyy-MM-dd')
+      setDateFromDisplay(isoToDisplay(fromIso))
+      setDateToDisplay(isoToDisplay(formatted))
+    }
+  }
+
+  const applyFilters = () => {
+    const df = displayToIso(dateFromDisplay)
+    const dt = displayToIso(dateToDisplay)
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    if (df) params.set('dateFrom', df)
+    else params.delete('dateFrom')
+    if (dt) params.set('dateTo', dt)
+    else params.delete('dateTo')
+    router.push(`?${params.toString()}`)
+    setShowFilterPopover(false)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -221,6 +324,16 @@ export default function AgentDetailPage() {
     router.push(`/dashboard/agent/${nextId}?${params.toString()}`)
   }
 
+  const backAgentsHref = useMemo(() => {
+    const p = new URLSearchParams()
+    p.set('view','agents')
+    const df = searchParams.get('dateFrom'); if (df) p.set('dateFrom', df)
+    const dt = searchParams.get('dateTo'); if (dt) p.set('dateTo', dt)
+    const tf = searchParams.get('timeFrom'); if (tf) p.set('timeFrom', tf)
+    const tt = searchParams.get('timeTo'); if (tt) p.set('timeTo', tt)
+    return `/dashboard?${p.toString()}`
+  }, [searchParams])
+
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text">
       {/* Header */}
@@ -266,13 +379,13 @@ export default function AgentDetailPage() {
               <nav className="space-y-1 text-slate-800">
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
-                  onClick={() => { const sp = new URLSearchParams(); sp.set('view','dashboard'); router.push(`/dashboard?${sp.toString()}`) }}
+                  onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; const sp = new URLSearchParams(); sp.set('view','dashboard'); router.push(`/dashboard?${sp.toString()}`) }}
                 >
                   <Layers className="w-4 h-4" /> Dashboard
                 </button>
                 <button
                   className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 bg-slate-100 font-semibold border-l-4 border-blue-600`}
-                  onClick={() => { router.push(`/dashboard?view=agents`) }}
+                  onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; router.push(`/dashboard?view=agents`) }}
                 >
                   <Users className="w-4 h-4" /> Agents
                 </button>
@@ -294,6 +407,15 @@ export default function AgentDetailPage() {
 
           {/* Content */}
           <section className="flex-1">
+            <div className="flex items-center justify-between mb-4">
+              <a
+                href={backAgentsHref}
+                onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
+                className="text-sm text-slate-800 hover:underline underline-offset-2"
+              >
+                ← Back to agents
+              </a>
+            </div>
             <div className="bg-bg-elevated rounded-lg shadow-lg p-6 relative">
               {/* Prev/Next controls */}
               <button
@@ -309,11 +431,11 @@ export default function AgentDetailPage() {
                 Next <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="mb-10 flex items-center justify-center">
-                <h1 className="text-xl font-semibold text-slate-900">{agentName}</h1>
-              </div>
-              {(dateRangeText || timeRangeText) && (
-              <div className="flex items-center justify-center mb-4 text-sm text-slate-600">
+              <div className="mb-10">
+                <div className="flex items-center justify-center">
+                  <h1 className="text-xl font-semibold text-slate-900">{agentName}</h1>
+                </div>
+                <div className="flex items-center justify-center mt-2 text-sm text-slate-600">
                   {dateRangeText && <span>{dateRangeText}</span>}
                   {timeRangeText && (
                     <>
@@ -321,8 +443,9 @@ export default function AgentDetailPage() {
                       <span>{timeRangeText}</span>
                     </>
                   )}
+                </div>
+                {/* Change period control moved to header controls below */}
               </div>
-              )}
 
               {loading ? (
                 <div className="text-slate-600">Loading…</div>
@@ -343,6 +466,81 @@ export default function AgentDetailPage() {
                         <option value="date">Date (recent)</option>
                         <option value="name">Name (A–Z)</option>
                       </select>
+                      <div className="relative" ref={filterRef}>
+                        <button
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-700 bg-white hover:bg-slate-50"
+                          onClick={() => setShowFilterPopover(v=>!v)}
+                        >
+                          <CalendarClock className="w-4 h-4" /> Change period
+                        </button>
+                        {showFilterPopover && (
+                          <div className="absolute right-0 z-20 mt-2 w-[560px] max-w-[92vw] bg-white border border-slate-200 rounded-lg shadow-xl p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="relative">
+                                <label className="block text-sm font-medium text-slate-700 mb-1"><Calendar className="inline w-4 h-4 mr-2" />From</label>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder="dd - mm - yyyy"
+                                  value={dateFromDisplay}
+                                  onChange={(e)=>{ const v=e.target.value; setDateFromDisplay(v) }}
+                                  onFocus={() => setShowFromCal(true)}
+                                  onBlur={() => { if (dateFrom) setDateFromDisplay(isoToDisplay(dateFrom)) }}
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-slate-500"
+                                />
+                                {showFromCal && (
+                                  <div className="absolute z-30 mt-2 w-full">
+                                    <InlineCalendar
+                                      value={dateFrom ? new Date(dateFrom) : null}
+                                      onChange={(d)=>{ const iso = dateToIsoLocal(d); setDateFromDisplay(isoToDisplay(iso)); setShowFromCal(false) }}
+                                      visibleMonth={fromMonth}
+                                      visibleYear={fromYear}
+                                      onMonthChange={setFromMonth}
+                                      onYearChange={setFromYear}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="relative">
+                                <label className="block text-sm font-medium text-slate-700 mb-1"><Calendar className="inline w-4 h-4 mr-2" />To</label>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder="dd - mm - yyyy"
+                                  value={dateToDisplay}
+                                  onChange={(e)=>{ const v=e.target.value; setDateToDisplay(v) }}
+                                  onFocus={() => setShowToCal(true)}
+                                  onBlur={() => { if (dateTo) setDateToDisplay(isoToDisplay(dateTo)) }}
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-slate-500"
+                                />
+                                {showToCal && (
+                                  <div className="absolute z-30 mt-2 w-full">
+                                    <InlineCalendar
+                                      value={dateTo ? new Date(dateTo) : null}
+                                      onChange={(d)=>{ const iso = dateToIsoLocal(d); setDateToDisplay(isoToDisplay(iso)); setShowToCal(false) }}
+                                      visibleMonth={toMonth}
+                                      visibleYear={toYear}
+                                      onMonthChange={setToMonth}
+                                      onYearChange={setToYear}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between mt-3">
+                              <div className="flex items-center gap-2">
+                                <button className="px-2 py-1.5 text-xs rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100" onClick={()=>setQuickDate('today')}>Today</button>
+                                <button className="px-2 py-1.5 text-xs rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100" onClick={()=>setQuickDate('week')}>This Week</button>
+                                <button className="px-2 py-1.5 text-xs rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100" onClick={()=>setQuickDate('month')}>This Month</button>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button className="px-3 py-1.5 text-sm rounded border border-slate-300 text-slate-700 hover:bg-slate-50" onClick={()=>{ setShowFilterPopover(false) }}>Cancel</button>
+                                <button className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700" onClick={applyFilters}>Apply</button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 

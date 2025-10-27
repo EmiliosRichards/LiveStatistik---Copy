@@ -81,6 +81,7 @@ export default function DashboardPage() {
   const goToAgent = (agentId: string) => {
     const sp = new URLSearchParams(searchParams.toString())
     sp.delete('view')
+    try { sessionStorage.setItem('dashboard:lastAgentId', agentId) } catch {}
     router.push(`/dashboard/agent/${agentId}?${sp.toString()}`)
   }
 
@@ -106,22 +107,59 @@ export default function DashboardPage() {
     }
   }, [paramsString])
 
-  // Load agents/campaigns on demand
+  // Load agents/campaigns on demand and restore persisted UI state
+  const campaignsStateLoaded = useRef(false)
   useEffect(() => {
     const load = async () => {
       if (section === 'agents') {
         const { fetchAgents } = await import('@/lib/api')
         const data = await fetchAgents()
         setAgentsList(data)
+        // Auto-return to last viewed agent unless suppressed once
+        try {
+          const suppress = sessionStorage.getItem('dashboard:suppressAutoAgentOnce')
+          if (suppress === '1') {
+            sessionStorage.removeItem('dashboard:suppressAutoAgentOnce')
+          } else {
+            const last = sessionStorage.getItem('dashboard:lastAgentId')
+            if (last) {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.delete('view')
+              router.push(`/dashboard/agent/${last}?${sp.toString()}`)
+              return
+            }
+          }
+        } catch {}
       }
       if (section === 'campaigns') {
         const { fetchProjects } = await import('@/lib/api')
         const data = await fetchProjects()
         setCampaignsList(data)
+        if (!campaignsStateLoaded.current) {
+          try {
+            const raw = sessionStorage.getItem('dashboard:campaigns:state')
+            if (raw) {
+              const s = JSON.parse(raw) as { q?: string; sort?: string; filter?: string }
+              if (typeof s.q === 'string') setCampaignSearchQuery(s.q)
+              if (s.sort === 'date_desc' || s.sort === 'date_asc' || s.sort === 'name_asc' || s.sort === 'name_desc') setCampaignSort(s.sort)
+              if (s.filter === 'all' || s.filter === 'active' || s.filter === 'new' || s.filter === 'archived') setCampaignFilter(s.filter)
+            }
+          } catch {}
+          campaignsStateLoaded.current = true
+        }
       }
     }
     load()
   }, [section])
+
+  // Persist campaign filters while viewing the campaigns section
+  useEffect(() => {
+    if (section !== 'campaigns') return
+    try {
+      const payload = JSON.stringify({ q: campaignSearchQuery, sort: campaignSort, filter: campaignFilter })
+      sessionStorage.setItem('dashboard:campaigns:state', payload)
+    } catch {}
+  }, [section, campaignSearchQuery, campaignSort, campaignFilter])
 
   // Extract date from campaign name like "... 22.04.25" or "... 22.04.2025"
   const getProjectDateFromName = (name: string): number => {
@@ -283,7 +321,7 @@ export default function DashboardPage() {
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','agents'); return sp.toString() })()}`}
-                  onClick={() => setSection('agents')}
+                  onClick={() => { sessionStorage.setItem('dashboard:suppressAutoAgentOnce','1'); setSection('agents') }}
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='agents' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-agents"
                 >
@@ -786,6 +824,7 @@ function ViewToggle({ view, onChange }: { view: 'overview' | 'details'; onChange
 
 function TimeSearchView() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [searchType, setSearchType] = useState<'agent' | 'project'>('agent')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -813,6 +852,41 @@ function TimeSearchView() {
   const toRef = useRef<HTMLDivElement | null>(null)
   const agentRef = useRef<HTMLDivElement | null>(null)
   const projectRef = useRef<HTMLDivElement | null>(null)
+
+  // Close calendars and dropdowns on outside click / Escape
+  useEffect(() => {
+    function handlePointerDown(e: MouseEvent | TouchEvent) {
+      const target = e.target as Node | null
+      if (showFromCal && fromRef.current && target && !fromRef.current.contains(target)) {
+        setShowFromCal(false)
+      }
+      if (showToCal && toRef.current && target && !toRef.current.contains(target)) {
+        setShowToCal(false)
+      }
+      if (showAgentDropdown && agentRef.current && target && !agentRef.current.contains(target)) {
+        setShowAgentDropdown(false)
+      }
+      if (showProjectDropdown && projectRef.current && target && !projectRef.current.contains(target)) {
+        setShowProjectDropdown(false)
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setShowFromCal(false)
+        setShowToCal(false)
+        setShowAgentDropdown(false)
+        setShowProjectDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [showFromCal, showToCal, showAgentDropdown, showProjectDropdown])
 
   useEffect(() => {
     loadAgents()
@@ -903,6 +977,7 @@ function TimeSearchView() {
       ...(selectedAgents.length > 0 && { agents: selectedAgents.join(',') }),
       ...(selectedProjects.length > 0 && { projects: selectedProjects.join(',') })
     })
+    try { sessionStorage.setItem('timeSearch:lastParams', params.toString()) } catch {}
     const cacheKey = `results:${Date.now()}`
     setSubmitting(true)
     try {
@@ -924,6 +999,19 @@ function TimeSearchView() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const clearFilters = () => {
+    setDateFrom(''); setDateTo('')
+    setDateFromDisplay(''); setDateToDisplay('')
+    setSelectedAgents([]); setSelectedProjects([])
+    setAgentSearch('')
+    try { sessionStorage.removeItem('timeSearch:lastParams') } catch {}
+    try {
+      const sp = new URLSearchParams(searchParams.toString())
+      sp.delete('type'); sp.delete('dateFrom'); sp.delete('dateTo'); sp.delete('agents'); sp.delete('projects')
+      router.replace(`/dashboard?${sp.toString()}`)
+    } catch {}
   }
 
   const isoToDisplay = (iso: string) => {
@@ -975,6 +1063,26 @@ function TimeSearchView() {
         break
     }
   }
+
+  // Initialize from URL or session cache
+  useEffect(() => {
+    const sp = searchParams
+    const fromUrl = !!(sp.get('dateFrom') || sp.get('dateTo') || sp.get('agents') || sp.get('projects') || sp.get('type'))
+    const params = fromUrl ? sp : (() => {
+      try { const prev = typeof window !== 'undefined' ? sessionStorage.getItem('timeSearch:lastParams') : null; return prev ? new URLSearchParams(prev) : undefined } catch { return undefined }
+    })()
+    if (!params) return
+    const t = params.get('type') as 'agent'|'project'|null
+    if (t === 'agent' || t === 'project') setSearchType(t)
+    const df = params.get('dateFrom') || ''
+    const dt = params.get('dateTo') || ''
+    if (df) { setDateFrom(df); setDateFromDisplay(isoToDisplay(df)) }
+    if (dt) { setDateTo(dt); setDateToDisplay(isoToDisplay(dt)) }
+    const a = params.get('agents')
+    if (a) setSelectedAgents(a.split(',').filter(Boolean))
+    const p = params.get('projects')
+    if (p) setSelectedProjects(p.split(',').filter(Boolean))
+  }, [searchParams])
 
   return (
     <div className="bg-bg-elevated rounded-lg shadow-lg p-8">
@@ -1163,8 +1271,14 @@ function TimeSearchView() {
         )}
       </div>
 
-      {/* Search Button */}
-      <div className="mt-8 flex justify-end">
+      {/* Search / Clear Buttons */}
+      <div className="mt-8 flex items-center justify-between">
+        <button
+          onClick={clearFilters}
+          className="px-4 py-2 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50"
+        >
+          Clear
+        </button>
         <button
           onClick={handleSearch}
           disabled={!isFormValid || submitting}

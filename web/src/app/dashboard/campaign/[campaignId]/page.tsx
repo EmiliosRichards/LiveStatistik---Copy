@@ -50,6 +50,17 @@ export default function CampaignDetailPage() {
     ? `${timeFrom || '00:00'}–${timeTo || '23:59'}`
     : 'All times'
 
+  const backCampaignsHref = useMemo(() => {
+    const p = new URLSearchParams()
+    p.set('view','campaigns')
+    const df = searchParams.get('dateFrom'); if (df) p.set('dateFrom', df)
+    const dt = searchParams.get('dateTo'); if (dt) p.set('dateTo', dt)
+    const tf = searchParams.get('timeFrom'); if (tf) p.set('timeFrom', tf)
+    const tt = searchParams.get('timeTo'); if (tt) p.set('timeTo', tt)
+    const ag = searchParams.get('agentId'); if (ag) p.set('agents', ag)
+    return `/dashboard?${p.toString()}`
+  }, [searchParams])
+
   // Header scroll behavior
   useEffect(() => {
     let lastY = 0
@@ -112,8 +123,13 @@ export default function CampaignDetailPage() {
             }))
             
             setAvailableAgents(formattedAgents)
-            // Select all agents by default
-            setSelectedAgentIds(formattedAgents.map((a: { id: string }) => a.id))
+            // If navigated from an Agent page with agentId param, preselect only that agent; else select all
+            const fromAgentId = searchParams.get('agentId')
+            if (fromAgentId && formattedAgents.some((a: any) => a.id === fromAgentId)) {
+              setSelectedAgentIds([fromAgentId])
+            } else {
+              setSelectedAgentIds(formattedAgents.map((a: { id: string }) => a.id))
+            }
           }
         }
       } catch (e) {
@@ -337,7 +353,7 @@ export default function CampaignDetailPage() {
         <div className="bg-white rounded-lg shadow-md">
           {/* Title, Toggle, and Filter Info */}
           <div className="px-6 py-4 border-b border-slate-200">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-1">
               <h1 className="text-xl font-semibold text-slate-900">{campaignName}</h1>
               <div className="flex items-center gap-3">
                 {/* Overview/Details Toggle */}
@@ -356,13 +372,17 @@ export default function CampaignDetailPage() {
                     Details
                   </button>
                 </div>
-                <button 
-                  onClick={() => router.back()} 
-                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
-                >
-                  ← Back
-                </button>
+                {/* Change period aligned with header controls? (Campaign page uses date/time from URL only) */}
               </div>
+            </div>
+            <div>
+              <a
+                href={backCampaignsHref}
+                onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
+                className="text-sm text-slate-800 hover:underline underline-offset-2"
+              >
+                ← Back to campaigns
+              </a>
             </div>
             
             {/* Agent Filter Chips */}

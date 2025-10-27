@@ -114,7 +114,15 @@ export default function ResultsPage() {
       <main className="flex-1 w-full px-6 py-8">
         <h1 className="text-2xl font-semibold text-slate-900 mb-2">Statistics Results</h1>
         <div className="flex items-center justify-between mb-4">
-          <a href="/dashboard" className="text-sm text-slate-800 hover:underline underline-offset-2">← Back to search</a>
+          {(() => {
+            const backParams = new URLSearchParams()
+            const keys = ['type','dateFrom','dateTo','timeFrom','timeTo','agents','projects'] as const
+            keys.forEach((k) => { const v = searchParams.get(k as any); if (v) backParams.set(k, v) })
+            const href = `/dashboard/search?${backParams.toString()}`
+            return (
+              <a href={href} className="text-sm text-slate-800 hover:underline underline-offset-2">← Back to search</a>
+            )
+          })()}
           <div className="flex items-center gap-2">
             <button className={`px-3 py-1 text-sm ${view==='overview'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setView('overview')}>Overview</button>
             <button className={`px-3 py-1 text-sm ${view==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setView('details')}>Details</button>

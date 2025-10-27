@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { Calendar, Users, Briefcase, ChevronDown, Search, HelpCircle, Bell, User, CalendarClock, Layers } from 'lucide-react'
 import { format } from 'date-fns'
@@ -10,6 +10,7 @@ import { InlineCalendar } from '@/components/InlineCalendar'
 
 export default function SearchPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const showHeader = useAutoHideHeader(24, 24)
   const headerRef = useRef<HTMLElement | null>(null)
   const [headerHeight, setHeaderHeight] = useState(0)
@@ -170,6 +171,7 @@ export default function SearchPage() {
       ...(selectedAgents.length > 0 && { agents: selectedAgents.join(',') }),
       ...(selectedProjects.length > 0 && { projects: selectedProjects.join(',') })
     })
+    try { sessionStorage.setItem('timeSearch:lastParams', params.toString()) } catch {}
     const cacheKey = `results:${Date.now()}`
     setSubmitting(true)
     try {
@@ -193,6 +195,15 @@ export default function SearchPage() {
       // overlay will disappear on navigation; keep it until push completes
       setSubmitting(false)
     }
+  }
+
+  const clearFilters = () => {
+    setDateFrom(''); setDateTo('')
+    setDateFromDisplay(''); setDateToDisplay('')
+    setSelectedAgents([]); setSelectedProjects([])
+    setAgentSearch('')
+    try { sessionStorage.removeItem('timeSearch:lastParams') } catch {}
+    try { router.replace('/dashboard/search') } catch {}
   }
 
   // Helpers for dd-mm-yyyy <-> ISO yyyy-mm-dd
@@ -246,6 +257,26 @@ export default function SearchPage() {
         break
     }
   }
+
+  // Initialize from URL or session cache
+  useEffect(() => {
+    const sp = searchParams
+    const fromUrl = !!(sp.get('dateFrom') || sp.get('dateTo') || sp.get('agents') || sp.get('projects') || sp.get('type'))
+    const params = fromUrl ? sp : (() => {
+      try { const prev = typeof window !== 'undefined' ? sessionStorage.getItem('timeSearch:lastParams') : null; return prev ? new URLSearchParams(prev) : undefined } catch { return undefined }
+    })()
+    if (!params) return
+    const t = params.get('type') as 'agent'|'project'|null
+    if (t === 'agent' || t === 'project') setSearchType(t)
+    const df = params.get('dateFrom') || ''
+    const dt = params.get('dateTo') || ''
+    if (df) { setDateFrom(df); setDateFromDisplay(isoToDisplay(df)) }
+    if (dt) { setDateTo(dt); setDateToDisplay(isoToDisplay(dt)) }
+    const a = params.get('agents')
+    if (a) setSelectedAgents(a.split(',').filter(Boolean))
+    const p = params.get('projects')
+    if (p) setSelectedProjects(p.split(',').filter(Boolean))
+  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -563,8 +594,15 @@ export default function SearchPage() {
             )}
           </div>
 
-          {/* Search Button */}
-          <div className="mt-8 flex justify-end">
+          {/* Search / Clear Buttons */}
+          <div className="mt-8 flex items-center justify-between">
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50"
+              data-testid="button-clear-filters"
+            >
+              Clear
+            </button>
             <button
               onClick={handleSearch}
             disabled={!isFormValid || submitting}
