@@ -403,7 +403,7 @@ export default function AgentDetailPage() {
                         <tbody className={tbodyBase}>
                           {sortedCampStats.map((row)=> (
                             <Fragment key={row.projectId}>
-                              <tr className={trBase}>
+                              <tr className={`${trBase} cursor-pointer`} onClick={() => setExpandedId(expandedId===row.projectId?null:row.projectId)}>
                                 <td className={`${tdBase} text-blue-700`}>
                                   <div className="flex items-center gap-2 min-w-0">
                                     <button className="text-slate-500 hover:text-slate-700" onClick={(e)=>{e.stopPropagation(); setExpandedId(expandedId===row.projectId?null:row.projectId)}} aria-label="Show calls">{expandedId===row.projectId? '▾' : '▸'}</button>
