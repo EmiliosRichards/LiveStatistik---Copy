@@ -21,9 +21,10 @@ export default function CampaignDetailPage() {
   // Call data state
   const [calls, setCalls] = useState<any[]>([])
   const [stats, setStats] = useState<any | null>(null)
+  const [campaignStatus, setCampaignStatus] = useState<string>('')
   const [serverTotal, setServerTotal] = useState<number | null>(null)
   const [serverGrouped, setServerGrouped] = useState<null | { negativ: Record<string, number>; positiv: Record<string, number>; offen: Record<string, number> }>(null)
-  const [view, setView] = useState<'overview'|'details'>('details')
+  const [statsView, setStatsView] = useState<'overview'|'details'>('overview')
   const [selectedCategory, setSelectedCategory] = useState<null | 'positiv' | 'negativ' | 'offen'>(null)
   const [selectedSub, setSelectedSub] = useState<string | null>(null)
   const [filterCalls, setFilterCalls] = useState<'alle' | 'mit_audio' | 'mit_transkript' | 'mit_notizen'>('alle')
@@ -60,7 +61,7 @@ export default function CampaignDetailPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Load campaign and agent names
+  // Load campaign and agent names, and fetch statistics
   useEffect(() => {
     let cancelled = false
     const loadMetadata = async () => {
@@ -80,6 +81,44 @@ export default function CampaignDetailPage() {
           
           setAgentName(agent?.name?.replace(/\./g, ' ') || agentId)
           setCampaignName(project?.name || campaignId)
+          setCampaignStatus(project?.status || '')
+        }
+
+        // Fetch statistics from API
+        if (agentId && campaignId) {
+          const params = new URLSearchParams()
+          params.append('agentIds', agentId)
+          params.append('projectIds', campaignId)
+          if (dateFrom) params.append('dateFrom', dateFrom)
+          if (dateTo) params.append('dateTo', dateTo)
+          if (timeFrom) params.append('timeFrom', timeFrom)
+          if (timeTo) params.append('timeTo', timeTo)
+
+          const statsRes = await fetch(`/api/statistics?${params.toString()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ agentIds: [agentId], projectIds: [campaignId], dateFrom, dateTo, timeFrom, timeTo })
+          })
+          
+          if (statsRes.ok && !cancelled) {
+            const statsData = await statsRes.json()
+            if (Array.isArray(statsData) && statsData.length > 0) {
+              // Aggregate stats
+              const agg = { calls: 0, completed: 0, success: 0, wz: 0, gz: 0, nbz: 0, vbz: 0, az: 0 }
+              statsData.forEach((s: any) => {
+                agg.calls += s.anzahl || 0
+                agg.completed += s.abgeschlossen || 0
+                agg.success += s.erfolgreich || 0
+                agg.wz += s.wartezeit || 0
+                agg.gz += s.gespraechszeit || 0
+                agg.nbz += s.nachbearbeitungszeit || 0
+                agg.vbz += s.vorbereitungszeit || 0
+                agg.az += s.arbeitszeit || 0
+              })
+              setStats(agg)
+            }
+          }
         }
       } catch (e) {
         console.error('Failed to load metadata:', e)
@@ -87,7 +126,7 @@ export default function CampaignDetailPage() {
     }
     loadMetadata()
     return () => { cancelled = true }
-  }, [campaignId, agentId])
+  }, [campaignId, agentId, dateFrom, dateTo, timeFrom, timeTo])
 
   // Load call details
   useEffect(() => {
@@ -120,16 +159,7 @@ export default function CampaignDetailPage() {
               map[cat][key] = (map[cat][key] || 0) + 1
             })
             setServerGrouped(map)
-            
-            const sum = (obj: Record<string, number>) => Object.values(obj || {}).reduce((acc: number, n: any) => acc + Number(n || 0), 0)
-            const total = sum(map.positiv||{}) + sum(map.negativ||{}) + sum(map.offen||{})
-            setStats({
-              anzahl: total,
-              abgeschlossen: sum(map.negativ||{}) + sum(map.positiv||{}),
-              erfolgreich: sum(map.positiv||{}),
-              gespraechszeit: 0,
-              arbeitszeit: 0
-            })
+            // Note: stats are fetched from API in metadata effect, don't overwrite here
           }
         }
       } finally {
@@ -232,20 +262,38 @@ export default function CampaignDetailPage() {
       {/* Main Content - Full Width */}
       <main className="flex-1 w-full px-6 py-8">
         <div className="bg-white rounded-lg shadow-md">
-          {/* Title and Filter Info */}
+          {/* Title, Toggle, and Filter Info */}
           <div className="px-6 py-4 border-b border-slate-200">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-semibold text-slate-900">{campaignName}</h1>
-              <button 
-                onClick={() => router.back()} 
-                className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
-              >
-                ← Back
-              </button>
+              <h1 className="text-xl font-semibold text-slate-900">{campaignName}</h1>
+              <div className="flex items-center gap-3">
+                {/* Overview/Details Toggle */}
+                <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
+                  <button
+                    className={`px-3 py-1.5 text-sm font-medium ${statsView === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+                    onClick={() => setStatsView('overview')}
+                  >
+                    Overview
+                  </button>
+                  <div className="w-px h-6 bg-slate-300" />
+                  <button
+                    className={`px-3 py-1.5 text-sm font-medium ${statsView === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+                    onClick={() => setStatsView('details')}
+                  >
+                    Details
+                  </button>
+                </div>
+                <button 
+                  onClick={() => router.back()} 
+                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                >
+                  ← Back
+                </button>
+              </div>
             </div>
             
             {/* Filter indicators */}
-            <div className="flex flex-wrap gap-3 text-sm text-slate-600">
+            <div className="flex flex-wrap gap-3 text-sm text-slate-600 mb-4">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-slate-700">Agent:</span>
                 <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200">{agentName}</span>
@@ -263,56 +311,97 @@ export default function CampaignDetailPage() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Statistics Summary */}
-          {stats && (
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div>
-                  <div className="text-sm text-slate-600">Anzahl</div>
-                  <div className="text-xl font-semibold text-slate-900 tabular-nums">{stats.anzahl?.toLocaleString?.() || 0}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">abgeschlossen</div>
-                  <div className="text-xl font-semibold text-slate-900 tabular-nums">{stats.abgeschlossen || 0}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">erfolgreich</div>
-                  <div className="text-xl font-semibold text-emerald-600 tabular-nums">{stats.erfolgreich || 0}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">GZ (h)</div>
-                  <div className="text-xl font-semibold text-slate-900 tabular-nums">{(stats.gespraechszeit || 0).toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">AZ (h)</div>
-                  <div className="text-xl font-semibold text-slate-900 tabular-nums">{(stats.arbeitszeit || 0).toFixed(2)}</div>
-                </div>
+            {/* Statistics Summary - changes based on toggle */}
+            {stats && (
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                {statsView === 'overview' ? (
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                      <div className="text-sm text-slate-600">Total Calls</div>
+                      <div className="text-lg font-semibold text-slate-900 tabular-nums">{stats.calls?.toLocaleString?.() || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-600">Reach %</div>
+                      <div className="text-lg font-semibold text-slate-900 tabular-nums">
+                        {stats.calls ? ((stats.completed / stats.calls) * 100).toFixed(1) : '0.0'}%
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-600">Positive Outcomes</div>
+                      <div className="text-lg font-semibold text-emerald-600 tabular-nums">{stats.success || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-600">Avg Duration (min)</div>
+                      <div className="text-lg font-semibold text-slate-900 tabular-nums">
+                        {stats.completed ? ((stats.gz / stats.completed) / 60).toFixed(2) : '0.00'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-600">Status</div>
+                      <div>
+                        {campaignStatus && (
+                          <span className={`text-xs px-2 py-1 rounded-full border ${campaignStatus==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': campaignStatus==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                            {campaignStatus}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-3">
+                    <div>
+                      <div className="text-xs text-slate-600">Anzahl</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{stats.calls?.toLocaleString?.() || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">abgeschlossen</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{stats.completed || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">erfolgreich</div>
+                      <div className="text-base font-semibold text-emerald-600 tabular-nums">{stats.success || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">WZ (h)</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.wz || 0).toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">GZ (h)</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.gz || 0).toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">NBZ (h)</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.nbz || 0).toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">VBZ (h)</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.vbz || 0).toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">Erfolg/h</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">
+                        {stats.az ? (stats.success / stats.az).toFixed(2) : '0.00'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">AZ (h)</div>
+                      <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.az || 0).toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600">Status</div>
+                      <div>
+                        {campaignStatus && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full border ${campaignStatus==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': campaignStatus==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                            {campaignStatus}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-
-          {/* Overview/Details Toggle */}
-          <div className="px-6 py-3 border-b border-slate-200 flex items-center justify-between">
-            <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
-              <button
-                className={`px-4 py-2 text-sm font-medium ${view === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
-                onClick={() => setView('overview')}
-              >
-                Overview
-              </button>
-              <div className="w-px h-6 bg-slate-300" />
-              <button
-                className={`px-4 py-2 text-sm font-medium ${view === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
-                onClick={() => setView('details')}
-              >
-                Details
-              </button>
-            </div>
-            <div className="text-sm text-slate-600">
-              {loading ? 'Loading...' : `${overallTotal.toLocaleString()} calls`}
-            </div>
+            )}
           </div>
 
           {/* Call Details Content */}
@@ -395,40 +484,30 @@ export default function CampaignDetailPage() {
                   </div>
                 </div>
 
-                {/* Call Details Table */}
-                {view === 'details' && (
-                  <div className="overflow-x-auto border border-slate-200 rounded-lg">
-                    <table className="w-full text-sm">
-                      <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
-                        <tr>
-                          <th className="py-3 px-4 text-left font-medium">Nr</th>
-                          <th className="py-3 px-4 text-left font-medium">Datum</th>
-                          <th className="py-3 px-4 text-left font-medium">Zeit</th>
-                          <th className="py-3 px-4 text-left font-medium">Dauer</th>
-                          <th className="py-3 px-4 text-left font-medium">Audio Download</th>
-                          <th className="py-3 px-4 text-left font-medium">Firmenname</th>
-                          <th className="py-3 px-4 text-left font-medium">Ansprechpartner</th>
-                          <th className="py-3 px-4 text-center font-medium">A</th>
-                          <th className="py-3 px-4 text-center font-medium">T</th>
-                          <th className="py-3 px-4 text-center font-medium">N</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200">
-                        {visibleCalls.map((c, idx) => (
-                          <CallRow key={c.id || (startIdx+idx)} index={startIdx+idx+1} call={c} />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {/* Overview mode */}
-                {view === 'overview' && (
-                  <div className="text-center py-12 text-slate-600">
-                    <p className="text-lg">Overview view is under development.</p>
-                    <p className="text-sm mt-2">Please use Details view to see call records.</p>
-                  </div>
-                )}
+                {/* Call Details Table - always visible */}
+                <div className="overflow-x-auto border border-slate-200 rounded-lg">
+                  <table className="w-full text-sm">
+                    <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
+                      <tr>
+                        <th className="py-3 px-4 text-left font-medium">Nr</th>
+                        <th className="py-3 px-4 text-left font-medium">Datum</th>
+                        <th className="py-3 px-4 text-left font-medium">Zeit</th>
+                        <th className="py-3 px-4 text-left font-medium">Dauer</th>
+                        <th className="py-3 px-4 text-left font-medium">Audio Download</th>
+                        <th className="py-3 px-4 text-left font-medium">Firmenname</th>
+                        <th className="py-3 px-4 text-left font-medium">Ansprechpartner</th>
+                        <th className="py-3 px-4 text-center font-medium">A</th>
+                        <th className="py-3 px-4 text-center font-medium">T</th>
+                        <th className="py-3 px-4 text-center font-medium">N</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {visibleCalls.map((c, idx) => (
+                        <CallRow key={c.id || (startIdx+idx)} index={startIdx+idx+1} call={c} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
           </div>
