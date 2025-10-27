@@ -296,7 +296,12 @@ export default function CampaignDetailPage() {
             <div className="flex flex-wrap gap-3 text-sm text-slate-600 mb-4">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-slate-700">Agent:</span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200">{agentName}</span>
+                <button
+                  onClick={() => router.push(`/dashboard/agent/${agentId}`)}
+                  className="px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-colors cursor-pointer"
+                >
+                  {agentName}
+                </button>
               </div>
               {dateRangeText !== 'All dates' && (
                 <div className="flex items-center gap-2">
