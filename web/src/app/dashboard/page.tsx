@@ -248,7 +248,8 @@ export default function DashboardPage() {
   // Do not early-return; show the new layout and an inline empty state instead
 
   return (
-    <div className="flex-1 w-full px-6 py-8 flex flex-col">
+    <div className="flex flex-col flex-1 w-full">
+      <div className="flex-1 px-6 py-8">
         {/* View state script no longer required; using React state */}
         {/* Layout: Sidebar + Content */}
         <div className="flex gap-6">
@@ -723,6 +724,7 @@ export default function DashboardPage() {
         )}
           </section>
         </div>
+      </div>
 
       {/* Footer */}
       <Footer />
