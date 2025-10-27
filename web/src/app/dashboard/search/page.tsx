@@ -271,8 +271,8 @@ export default function SearchPage() {
   }, [searchParams])
 
   return (
-    <div className="flex-1 w-full px-6 py-12" aria-busy={submitting} aria-live="polite">
-        <div className="flex gap-6">
+    <div className="flex-1 w-full px-6 py-12 flex flex-col" aria-busy={submitting} aria-live="polite">
+        <div className="flex gap-6 flex-1">
           {/* Sidebar */}
           <aside className="w-64 shrink-0 sticky self-start top-0">
             <div className="bg-bg-elevated rounded-lg shadow-md p-2">
