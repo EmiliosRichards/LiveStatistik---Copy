@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock } from 'lucide-react'
 import { Footer } from '@/components/Footer'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -11,6 +12,7 @@ function normalizeNotes(text: string): string {
 }
 
 export default function CampaignDetailPage() {
+  const { t } = useLanguage()
   const { campaignId } = useParams<{ campaignId: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -324,14 +326,14 @@ export default function CampaignDetailPage() {
                     className={`px-3 py-1.5 text-sm font-medium ${statsView === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
                     onClick={() => setStatsView('overview')}
                   >
-                    Overview
+                    {t('campaign.overview')}
                   </button>
                   <div className="w-px h-6 bg-slate-300" />
                   <button
                     className={`px-3 py-1.5 text-sm font-medium ${statsView === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
                     onClick={() => setStatsView('details')}
                   >
-                    Details
+                    {t('campaign.details')}
                   </button>
                 </div>
                 {/* Change period aligned with header controls? (Campaign page uses date/time from URL only) */}
@@ -343,14 +345,14 @@ export default function CampaignDetailPage() {
                 onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
                 className="text-sm text-slate-800 hover:underline underline-offset-2"
               >
-                ← Back to campaigns
+                ← {t('campaign.backToCampaigns')}
               </a>
             </div>
             
             {/* Agent Filter Chips */}
             {availableAgents.length > 0 && (
               <div className="mb-4">
-                <span className="text-sm font-medium text-slate-700 block mb-2">Agents:</span>
+                <span className="text-sm font-medium text-slate-700 block mb-2">{t('campaign.agents')}</span>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
@@ -366,7 +368,7 @@ export default function CampaignDetailPage() {
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    All <span className="ml-1 opacity-70">({availableAgents.length})</span>
+                    {t('campaign.all')} <span className="ml-1 opacity-70">({availableAgents.length})</span>
                   </button>
                   {availableAgents.map((agent) => (
                     <button
@@ -413,31 +415,31 @@ export default function CampaignDetailPage() {
                 {statsView === 'overview' ? (
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
-                      <div className="text-sm text-slate-600">Total Calls</div>
+                      <div className="text-sm text-slate-600">{t('campaign.totalCalls')}</div>
                       <div className="text-lg font-semibold text-slate-900 tabular-nums">{stats.calls?.toLocaleString?.() || 0}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Reach %</div>
+                      <div className="text-sm text-slate-600">{t('campaign.reachPercent')}</div>
                       <div className="text-lg font-semibold text-slate-900 tabular-nums">
                         {stats.calls ? ((stats.completed / stats.calls) * 100).toFixed(1) : '0.0'}%
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Positive Outcomes</div>
+                      <div className="text-sm text-slate-600">{t('campaign.positiveOutcomes')}</div>
                       <div className="text-lg font-semibold text-emerald-600 tabular-nums">{stats.success || 0}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Avg Duration (min)</div>
+                      <div className="text-sm text-slate-600">{t('campaign.avgDurationMin')}</div>
                       <div className="text-lg font-semibold text-slate-900 tabular-nums">
                         {stats.completed ? ((stats.gz / stats.completed) / 60).toFixed(2) : '0.00'}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Status</div>
+                      <div className="text-sm text-slate-600">{t('campaign.status')}</div>
                       <div>
                         {campaignStatus && (
                           <span className={`text-xs px-2 py-1 rounded-full border ${campaignStatus==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': campaignStatus==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>
-                            {campaignStatus}
+                            {t(`campaign.${campaignStatus}`)}
                           </span>
                         )}
                       </div>
@@ -446,49 +448,49 @@ export default function CampaignDetailPage() {
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-3">
                     <div>
-                      <div className="text-xs text-slate-600">Anzahl</div>
+                      <div className="text-xs text-slate-600">{t('campaign.anzahl')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{stats.calls?.toLocaleString?.() || 0}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">abgeschlossen</div>
+                      <div className="text-xs text-slate-600">{t('campaign.abgeschlossen')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{stats.completed || 0}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">erfolgreich</div>
+                      <div className="text-xs text-slate-600">{t('campaign.erfolgreich')}</div>
                       <div className="text-base font-semibold text-emerald-600 tabular-nums">{stats.success || 0}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">WZ (h)</div>
+                      <div className="text-xs text-slate-600">{t('campaign.wzh')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.wz || 0).toFixed(2)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">GZ (h)</div>
+                      <div className="text-xs text-slate-600">{t('campaign.gzh')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.gz || 0).toFixed(2)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">NBZ (h)</div>
+                      <div className="text-xs text-slate-600">{t('campaign.nbzh')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.nbz || 0).toFixed(2)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">VBZ (h)</div>
+                      <div className="text-xs text-slate-600">{t('campaign.vbzh')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.vbz || 0).toFixed(2)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">Erfolg/h</div>
+                      <div className="text-xs text-slate-600">{t('campaign.erfolgProStunde')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">
                         {stats.az ? (stats.success / stats.az).toFixed(2) : '0.00'}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">AZ (h)</div>
+                      <div className="text-xs text-slate-600">{t('campaign.azh')}</div>
                       <div className="text-base font-semibold text-slate-900 tabular-nums">{(stats.az || 0).toFixed(2)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-600">Status</div>
+                      <div className="text-xs text-slate-600">{t('campaign.status')}</div>
                       <div>
                         {campaignStatus && (
                           <span className={`text-xs px-2 py-0.5 rounded-full border ${campaignStatus==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': campaignStatus==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>
-                            {campaignStatus}
+                            {t(`campaign.${campaignStatus}`)}
                           </span>
                         )}
                       </div>
@@ -502,9 +504,9 @@ export default function CampaignDetailPage() {
           {/* Call Details Content */}
           <div className="p-6">
             {loading ? (
-              <div className="p-8 text-center text-slate-600">Loading call details...</div>
+              <div className="p-8 text-center text-slate-600">{t('campaign.loadingCallDetails')}</div>
             ) : calls.length === 0 ? (
-              <div className="p-8 text-center text-slate-600">No calls found for this campaign and agent combination.</div>
+              <div className="p-8 text-center text-slate-600">{t('campaign.noCallsFound')}</div>
             ) : (
               <>
                 {/* Category Filter Title */}
@@ -602,14 +604,14 @@ export default function CampaignDetailPage() {
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
                       <tr>
-                        <th className="py-3 px-4 text-left font-medium">ID</th>
-                        <th className="py-3 px-4 text-left font-medium">Agent</th>
-                        <th className="py-3 px-4 text-left font-medium">Datum</th>
-                        <th className="py-3 px-4 text-left font-medium">Zeit</th>
-                        <th className="py-3 px-4 text-left font-medium">Dauer</th>
-                        <th className="py-3 px-4 text-left font-medium">Audio Download</th>
-                        <th className="py-3 px-4 text-left font-medium">Firmenname</th>
-                        <th className="py-3 px-4 text-left font-medium">Ansprechpartner</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.id')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.agent')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.date')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.time')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.duration')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.audioDownload')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.companyName')}</th>
+                        <th className="py-3 px-4 text-left font-medium">{t('campaign.contactPerson')}</th>
                         <th className="py-3 px-4 text-center font-medium">A</th>
                         <th className="py-3 px-4 text-center font-medium">T</th>
                         <th className="py-3 px-4 text-center font-medium">N</th>
@@ -633,7 +635,7 @@ export default function CampaignDetailPage() {
                       onClick={()=>setPage(p=>Math.max(1,p-1))}
                       aria-label="Previous page"
                     >
-                      <ArrowLeft className="w-4 h-4" /> Prev
+                      <ArrowLeft className="w-4 h-4" /> {t('campaign.prev')}
                     </button>
                     <span className="px-2 tabular-nums font-medium">{startIdx+1}–{endIdx} / {overallTotal.toLocaleString()}</span>
                     <button
@@ -642,7 +644,7 @@ export default function CampaignDetailPage() {
                       onClick={()=>setPage(p=>Math.min(totalPages,p+1))}
                       aria-label="Next page"
                     >
-                      Next <ArrowRight className="w-4 h-4" />
+                      {t('campaign.next')} <ArrowRight className="w-4 h-4" />
                     </button>
                     <select className="border border-slate-400 rounded px-2 py-1 text-sm text-slate-800 ml-2" value={page} onChange={e=>setPage(parseInt(e.target.value)||1)}>
                       {Array.from({length: totalPages}, (_,i)=>i+1).slice(0,500).map(n=> (
