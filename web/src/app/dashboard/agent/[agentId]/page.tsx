@@ -327,7 +327,8 @@ export default function AgentDetailPage() {
   }, [searchParams])
 
   return (
-    <div className="flex-1 w-full px-6 py-8">
+    <div className="flex flex-col flex-1 w-full">
+      <div className="flex-1 px-6 py-8">
         <div className="flex gap-6">
           {/* Sidebar */}
           <aside className="w-64 shrink-0 sticky self-start top-0">
@@ -624,7 +625,7 @@ export default function AgentDetailPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto">
+      <footer className="bg-white border-t border-slate-200">
         <div className="w-full px-6 py-4">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-6">

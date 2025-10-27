@@ -463,7 +463,7 @@ export default function DashboardPage() {
         {section==='agents' && (
           <div className="bg-bg-elevated rounded-lg shadow-lg hover:shadow-xl p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-slate-900">Agents</h2>
+              <h2 className="text-lg font-semibold text-slate-900">{t('nav.agents')}</h2>
               <div className="relative w-full max-w-xs">
                 <SearchIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -478,7 +478,7 @@ export default function DashboardPage() {
               <table className="w-full text-sm">
                 <thead className="text-xs uppercase text-slate-700 bg-slate-50">
                   <tr>
-                    <th className="text-left py-2 px-3">Name</th>
+                    <th className="text-left py-2 px-3">{t('table.name')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -496,7 +496,7 @@ export default function DashboardPage() {
                       )
                     })}
                   {agentsList.length === 0 && (
-                    <tr><td className="py-6 px-3 text-slate-500" colSpan={1}>No agents loaded yet.</td></tr>
+                    <tr><td className="py-6 px-3 text-slate-500" colSpan={1}>{t('common.loading')}</td></tr>
                   )}
                 </tbody>
               </table>
