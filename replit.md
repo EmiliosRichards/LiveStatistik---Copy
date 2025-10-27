@@ -68,6 +68,7 @@ Optional/conditional:
   - Agents/projects discovery (unique logins/campaigns)
   - Statistics aggregation (single optimized query for selected agents/projects/date range/time filters)
   - Call details (agent+campaign with date/time filters, mapping to internal `CallDetails` and a deterministic `groupId`)
+  - Multi-agent call details (`getCallDetailsForAgents()`) for campaign-level queries
   - Project targets (kept in-memory)
   - KPI aggregation with 5-minute cache (`getAggregatedKpisWithCache()`)
 - `shared/schema.ts`: Drizzle tables and Zod schemas shared with the client; includes `statisticsFilterSchema`, outcome categorization, and types used on the frontend.
@@ -98,6 +99,7 @@ Optional/conditional:
 - Statistics & details
   - `POST /api/statistics` — body validated by `statisticsFilterSchema`
   - `GET /api/call-details/:agentId/:projectId` — query: `dateFrom`, `dateTo`, `timeFrom`, `timeTo`
+  - `POST /api/call-details-by-project` — multi-agent call details; body: `{ projectId, agentIds[], dateFrom?, dateTo?, timeFrom?, timeTo? }`
   - `GET /api/kpis` — optimized aggregated KPIs with week-over-week comparison, 5-minute cache; query param: `?refresh=true` to bypass cache
 
 - Project targets (in-memory persistence)
@@ -154,3 +156,15 @@ npm run db:push
 ## Code style
 
 - TypeScript across server and client. Shared Zod/Drizzle types in `shared`. Prefer descriptive names, early returns, and minimal deep nesting.
+
+## Recent changes (October 2025)
+
+### Multi-agent campaign detail page
+- Added `getCallDetailsForAgents()` method to `IStorage` interface and implemented across all storage classes
+- Created `POST /api/call-details-by-project` endpoint for multi-agent call queries
+- Updated campaign detail page (`web/src/app/dashboard/campaign/[campaignId]/page.tsx`) to:
+  - Discover agents using statistics API (queries all agents for the specific campaign)
+  - Display toggleable agent filter chips with counts
+  - Support selecting/deselecting agents to filter call details
+  - Load all agents by default for comprehensive campaign view
+- Agent discovery pattern: Uses `POST /api/statistics` with all known agents + the campaign ID to identify which agents have worked on the campaign, then extracts unique agent IDs from the response

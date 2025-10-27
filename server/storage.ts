@@ -334,6 +334,7 @@ export class MemStorage implements IStorage {
       agentId: insertDetail.agentId,
       projectId: insertDetail.projectId,
       contactName: insertDetail.contactName ?? null,
+      contactPerson: null,
       contactNumber: insertDetail.contactNumber ?? null,
       callStart: insertDetail.callStart,
       callEnd: insertDetail.callEnd ?? null,
@@ -342,6 +343,13 @@ export class MemStorage implements IStorage {
       outcomeCategory: insertDetail.outcomeCategory as CallDetails['outcomeCategory'],
       recordingUrl: insertDetail.recordingUrl ?? null,
       notes: insertDetail.notes ?? null,
+      wrapupTimeSeconds: null,
+      waitTimeSeconds: null,
+      editTimeSeconds: null,
+      contactsId: null,
+      contactsCampaignId: null,
+      recordingsDate: null,
+      groupId: null,
       createdAt: new Date(),
     };
     this.callDetails.set(id, detail);
@@ -711,6 +719,7 @@ export class CSVStorage implements IStorage {
       agentId: insertDetail.agentId,
       projectId: insertDetail.projectId,
       contactName: insertDetail.contactName ?? null,
+      contactPerson: null,
       contactNumber: insertDetail.contactNumber ?? null,
       callStart: insertDetail.callStart,
       callEnd: insertDetail.callEnd ?? null,
@@ -719,6 +728,13 @@ export class CSVStorage implements IStorage {
       outcomeCategory: insertDetail.outcomeCategory as CallDetails['outcomeCategory'],
       recordingUrl: insertDetail.recordingUrl ?? null,
       notes: insertDetail.notes ?? null,
+      wrapupTimeSeconds: null,
+      waitTimeSeconds: null,
+      editTimeSeconds: null,
+      contactsId: null,
+      contactsCampaignId: null,
+      recordingsDate: null,
+      groupId: null,
       createdAt: new Date(),
     };
     this.callDetails.set(id, detail);
@@ -812,6 +828,11 @@ export class DatabaseStorage implements IStorage {
       .values(insertProject)
       .returning();
     return project;
+  }
+
+  async getProjectsForAgents(agentIds: string[]): Promise<Project[]> {
+    // Stub implementation - returns all projects
+    return await this.getAllProjects();
   }
 
   // Call outcome methods
@@ -913,7 +934,7 @@ export class DatabaseStorage implements IStorage {
     const results = await db.select().from(callDetails)
       .where(and(...baseConditions));
     
-    return results.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+    return results.sort((a: CallDetails, b: CallDetails) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
   }
 
   async getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]> {
@@ -930,7 +951,7 @@ export class DatabaseStorage implements IStorage {
     const results = await db.select().from(callDetails)
       .where(and(...baseConditions));
     
-    return results.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+    return results.sort((a: CallDetails, b: CallDetails) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
   }
 
   async createCallDetail(insertDetail: InsertCallDetails): Promise<CallDetails> {

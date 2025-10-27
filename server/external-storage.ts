@@ -1361,7 +1361,7 @@ export class ExternalStorage implements IStorage {
             callEnd: record.recordings_stopped ? new Date(record.recordings_stopped) : null,
             duration: Math.round(parseInt(record.connections_duration.toString()) / 1000),
             outcome: record.transactions_status_detail || 'Unknown',
-            outcomeCategory: record.transactions_status === 'success' ? 'positive' : 'negative',
+            outcomeCategory: (record.transactions_status === 'success' ? 'positive' : 'negative') as 'positive' | 'negative' | 'offen',
             recordingUrl: record.recordings_location,
             notes: record.contacts_notiz || null,
             wrapupTimeSeconds: record.transactions_edit_time_sec || null,

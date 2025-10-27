@@ -15,8 +15,11 @@ export default function CampaignDetailPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [campaignName, setCampaignName] = useState('')
-  const [agentName, setAgentName] = useState('')
   const [showHeader, setShowHeader] = useState(true)
+  
+  // Agent selection state
+  const [availableAgents, setAvailableAgents] = useState<Array<{ id: string; name: string }>>([])
+  const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([])
   
   // Call data state
   const [calls, setCalls] = useState<any[]>([])
@@ -34,7 +37,6 @@ export default function CampaignDetailPage() {
   const pageSize = 100
 
   // Get filter params from URL
-  const agentId = searchParams.get('agentId') || ''
   const dateFrom = searchParams.get('dateFrom') || undefined
   const dateTo = searchParams.get('dateTo') || undefined
   const timeFrom = searchParams.get('timeFrom') || undefined
@@ -62,7 +64,7 @@ export default function CampaignDetailPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Load campaign and agent names, and fetch statistics
+  // Load campaign metadata and available agents
   useEffect(() => {
     let cancelled = false
     const loadMetadata = async () => {
@@ -74,51 +76,43 @@ export default function CampaignDetailPage() {
         if (cancelled) return
         
         if (agentsRes.ok && projectsRes.ok) {
-          const agents = await agentsRes.json()
+          const allAgents = await agentsRes.json()
           const projects = await projectsRes.json()
           
-          const agent = agents.find((a: any) => a.id === agentId)
           const project = projects.find((p: any) => p.id === campaignId)
-          
-          setAgentName(agent?.name?.replace(/\./g, ' ') || agentId)
           setCampaignName(project?.name || campaignId)
           setCampaignStatus(project?.status || '')
-        }
-
-        // Fetch statistics from API
-        if (agentId && campaignId) {
-          const params = new URLSearchParams()
-          params.append('agentIds', agentId)
-          params.append('projectIds', campaignId)
-          if (dateFrom) params.append('dateFrom', dateFrom)
-          if (dateTo) params.append('dateTo', dateTo)
-          if (timeFrom) params.append('timeFrom', timeFrom)
-          if (timeTo) params.append('timeTo', timeTo)
-
-          const statsRes = await fetch(`/api/statistics?${params.toString()}`, {
+          
+          // Query statistics for all agents on this campaign to find who has worked on it
+          // This is more reliable than trying to query a many-to-many relationship
+          const statsRes = await fetch(`/api/statistics`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ agentIds: [agentId], projectIds: [campaignId], dateFrom, dateTo, timeFrom, timeTo })
+            body: JSON.stringify({ 
+              agentIds: allAgents.map((a: any) => a.id),
+              projectIds: [campaignId]
+            })
           })
           
           if (statsRes.ok && !cancelled) {
             const statsData = await statsRes.json()
-            if (Array.isArray(statsData) && statsData.length > 0) {
-              // Aggregate stats
-              const agg = { calls: 0, completed: 0, success: 0, wz: 0, gz: 0, nbz: 0, vbz: 0, az: 0 }
-              statsData.forEach((s: any) => {
-                agg.calls += s.anzahl || 0
-                agg.completed += s.abgeschlossen || 0
-                agg.success += s.erfolgreich || 0
-                agg.wz += s.wartezeit || 0
-                agg.gz += s.gespraechszeit || 0
-                agg.nbz += s.nachbearbeitungszeit || 0
-                agg.vbz += s.vorbereitungszeit || 0
-                agg.az += s.arbeitszeit || 0
-              })
-              setStats(agg)
-            }
+            // Extract unique agent IDs from statistics
+            const agentIdsWithData = [...new Set(statsData.map((s: any) => s.agentId))]
+            
+            // Filter to agents that have statistics for this campaign
+            const campaignAgents = allAgents.filter((agent: any) => 
+              agentIdsWithData.includes(agent.id)
+            )
+            
+            const formattedAgents = campaignAgents.map((a: any) => ({
+              id: a.id,
+              name: a.name.replace(/\./g, ' ')
+            }))
+            
+            setAvailableAgents(formattedAgents)
+            // Select all agents by default
+            setSelectedAgentIds(formattedAgents.map((a: { id: string }) => a.id))
           }
         }
       } catch (e) {
@@ -127,23 +121,87 @@ export default function CampaignDetailPage() {
     }
     loadMetadata()
     return () => { cancelled = true }
-  }, [campaignId, agentId, dateFrom, dateTo, timeFrom, timeTo])
+  }, [campaignId])
+  
+  // Fetch statistics for selected agents
+  useEffect(() => {
+    let cancelled = false
+    const loadStats = async () => {
+      if (selectedAgentIds.length === 0) {
+        setStats(null)
+        return
+      }
+      
+      try {
+        const statsRes = await fetch(`/api/statistics`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            agentIds: selectedAgentIds, 
+            projectIds: [campaignId], 
+            dateFrom, 
+            dateTo, 
+            timeFrom, 
+            timeTo 
+          })
+        })
+        
+        if (statsRes.ok && !cancelled) {
+          const statsData = await statsRes.json()
+          if (Array.isArray(statsData) && statsData.length > 0) {
+            // Aggregate stats
+            const agg = { calls: 0, completed: 0, success: 0, wz: 0, gz: 0, nbz: 0, vbz: 0, az: 0 }
+            statsData.forEach((s: any) => {
+              agg.calls += s.anzahl || 0
+              agg.completed += s.abgeschlossen || 0
+              agg.success += s.erfolgreich || 0
+              agg.wz += s.wartezeit || 0
+              agg.gz += s.gespraechszeit || 0
+              agg.nbz += s.nachbearbeitungszeit || 0
+              agg.vbz += s.vorbereitungszeit || 0
+              agg.az += s.arbeitszeit || 0
+            })
+            setStats(agg)
+          } else {
+            setStats(null)
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load statistics:', e)
+      }
+    }
+    loadStats()
+    return () => { cancelled = true }
+  }, [campaignId, selectedAgentIds, dateFrom, dateTo, timeFrom, timeTo])
 
-  // Load call details
+  // Load call details using new multi-agent endpoint
   useEffect(() => {
     let cancelled = false
     const loadCalls = async () => {
-      if (!agentId || !campaignId) return
+      if (selectedAgentIds.length === 0 || !campaignId) {
+        setCalls([])
+        setServerTotal(0)
+        setServerGrouped({ negativ: {}, positiv: {}, offen: {} })
+        return
+      }
+      
       setLoading(true)
       try {
-        const params = new URLSearchParams()
-        if (dateFrom) params.append('dateFrom', dateFrom)
-        if (dateTo) params.append('dateTo', dateTo)
-        if (timeFrom) params.append('timeFrom', timeFrom)
-        if (timeTo) params.append('timeTo', timeTo)
+        const res = await fetch('/api/call-details-by-project', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            projectId: campaignId,
+            agentIds: selectedAgentIds,
+            dateFrom,
+            dateTo,
+            timeFrom,
+            timeTo
+          })
+        })
         
-        const url = `/api/call-details/${agentId}/${campaignId}?${params.toString()}`
-        const res = await fetch(url, { credentials: 'include' })
         if (cancelled) return
         
         if (res.ok) {
@@ -160,16 +218,17 @@ export default function CampaignDetailPage() {
               map[cat][key] = (map[cat][key] || 0) + 1
             })
             setServerGrouped(map)
-            // Note: stats are fetched from API in metadata effect, don't overwrite here
           }
         }
+      } catch (error) {
+        console.error('Error loading call details:', error)
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
     loadCalls()
     return () => { cancelled = true }
-  }, [agentId, campaignId, dateFrom, dateTo, timeFrom, timeTo])
+  }, [selectedAgentIds, campaignId, dateFrom, dateTo, timeFrom, timeTo])
 
   // Reset page when filters change
   useEffect(() => { setPage(1) }, [selectedCategory, selectedSub, filterCalls, filterTime, filterDuration])
@@ -305,17 +364,52 @@ export default function CampaignDetailPage() {
               </div>
             </div>
             
+            {/* Agent Filter Chips */}
+            {availableAgents.length > 0 && (
+              <div className="mb-4">
+                <span className="text-sm font-medium text-slate-700 block mb-2">Agents:</span>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      if (selectedAgentIds.length === availableAgents.length) {
+                        setSelectedAgentIds([])
+                      } else {
+                        setSelectedAgentIds(availableAgents.map(a => a.id))
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      selectedAgentIds.length === availableAgents.length
+                        ? 'bg-slate-900 text-white shadow-md'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    All <span className="ml-1 opacity-70">({availableAgents.length})</span>
+                  </button>
+                  {availableAgents.map((agent) => (
+                    <button
+                      key={agent.id}
+                      onClick={() => {
+                        if (selectedAgentIds.includes(agent.id)) {
+                          setSelectedAgentIds(selectedAgentIds.filter(id => id !== agent.id))
+                        } else {
+                          setSelectedAgentIds([...selectedAgentIds, agent.id])
+                        }
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        selectedAgentIds.includes(agent.id)
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                      }`}
+                    >
+                      {agent.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {/* Filter indicators */}
             <div className="flex flex-wrap gap-3 text-sm text-slate-600 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-slate-700">Agent:</span>
-                <button
-                  onClick={() => router.push(`/dashboard/agent/${agentId}`)}
-                  className="px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-colors cursor-pointer"
-                >
-                  {agentName}
-                </button>
-              </div>
               {dateRangeText !== 'All dates' && (
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-slate-700">Date Range:</span>
