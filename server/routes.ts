@@ -556,6 +556,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const apiKey = process.env.TRANSCRIPTION_API_KEY;
       if (!apiKey) {
+        console.error('❌ TRANSCRIPTION_API_KEY not set');
         return res.status(503).json({ 
           error: 'Transcription service not configured',
           message: 'TRANSCRIPTION_API_KEY is not set'
@@ -570,9 +571,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('🎙️ Transcription request for:', audioUrl);
       
       const job = await transcriptionService.submitTranscription(audioUrl);
+      console.log('📤 Sending transcription job response:', JSON.stringify(job));
       res.json(job);
     } catch (error) {
-      console.error("Error submitting transcription:", error);
+      console.error("❌ Error submitting transcription:", error);
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Invalid request", details: error.errors });
       } else {
