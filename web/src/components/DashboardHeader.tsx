@@ -1,12 +1,71 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { HelpCircle, Bell, User, ChevronDown } from 'lucide-react'
 
 export default function DashboardHeader() {
   const [showHelpModal, setShowHelpModal] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+
+  const helpButtonRef = useRef<HTMLButtonElement>(null)
+  const notificationButtonRef = useRef<HTMLButtonElement>(null)
+  const profileButtonRef = useRef<HTMLButtonElement>(null)
+  const notificationDropdownRef = useRef<HTMLDivElement>(null)
+  const profileDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdowns/modals when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node
+
+      // Check if click is outside notification dropdown
+      if (
+        showNotifications &&
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(target) &&
+        notificationButtonRef.current &&
+        !notificationButtonRef.current.contains(target)
+      ) {
+        setShowNotifications(false)
+      }
+
+      // Check if click is outside profile dropdown
+      if (
+        showProfileMenu &&
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(target) &&
+        profileButtonRef.current &&
+        !profileButtonRef.current.contains(target)
+      ) {
+        setShowProfileMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showNotifications, showProfileMenu])
+
+  // Toggle functions that close other dropdowns/modals
+  const toggleHelp = () => {
+    setShowNotifications(false)
+    setShowProfileMenu(false)
+    setShowHelpModal(prev => !prev)
+  }
+
+  const toggleNotifications = () => {
+    setShowHelpModal(false)
+    setShowProfileMenu(false)
+    setShowNotifications(prev => !prev)
+  }
+
+  const toggleProfile = () => {
+    setShowHelpModal(false)
+    setShowNotifications(false)
+    setShowProfileMenu(prev => !prev)
+  }
 
   return (
     <>
@@ -20,19 +79,32 @@ export default function DashboardHeader() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button aria-label="Help" onClick={() => setShowHelpModal(true)} className="p-2 rounded hover:bg-slate-100">
+            <button 
+              ref={helpButtonRef}
+              aria-label="Help" 
+              onClick={toggleHelp} 
+              className="p-2 rounded hover:bg-slate-100"
+            >
               <HelpCircle className="w-5 h-5 text-slate-700" />
             </button>
             
             {/* Notification Dropdown */}
             <div className="relative">
-              <button aria-label="Notifications" onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 rounded hover:bg-slate-100">
+              <button 
+                ref={notificationButtonRef}
+                aria-label="Notifications" 
+                onClick={toggleNotifications} 
+                className="relative p-2 rounded hover:bg-slate-100"
+              >
                 <Bell className="w-5 h-5 text-slate-700" />
                 <span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span>
               </button>
               
               {showNotifications && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
+                <div 
+                  ref={notificationDropdownRef}
+                  className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-lg shadow-lg z-50"
+                >
                   <div className="p-3 border-b border-slate-200 flex items-center justify-between">
                     <h3 className="font-semibold text-slate-800">Benachrichtigungen</h3>
                     <button className="text-xs text-slate-500 hover:text-slate-700">Als gelesen markieren</button>
@@ -58,8 +130,9 @@ export default function DashboardHeader() {
             {/* Profile Menu */}
             <div className="relative">
               <button 
+                ref={profileButtonRef}
                 aria-label="Account" 
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                onClick={toggleProfile}
                 className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100"
               >
                 <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
@@ -70,7 +143,10 @@ export default function DashboardHeader() {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
+                <div 
+                  ref={profileDropdownRef}
+                  className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-lg shadow-lg z-50"
+                >
                   <div className="px-4 py-3 border-b border-slate-200">
                     <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Current Account</p>
                     <p className="font-semibold text-slate-800">Emilios Richards</p>
@@ -113,7 +189,7 @@ export default function DashboardHeader() {
 
       {/* Help Modal */}
       {showHelpModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowHelpModal(false)}>
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 p-4" onClick={() => setShowHelpModal(false)}>
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-slate-800">Wie können wir helfen?</h2>
