@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig} from "next";
 
 // Only proxy specific backend API endpoints to Express.
 // Keep Next.js internal routes like /api/auth handled by NextAuth.

@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown } from 'lucide-react'
