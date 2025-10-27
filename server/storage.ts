@@ -313,6 +313,20 @@ export class MemStorage implements IStorage {
     return details.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
   }
 
+  async getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]> {
+    let details = Array.from(this.callDetails.values())
+      .filter(detail => agentIds.includes(detail.agentId) && detail.projectId === projectId);
+    
+    if (dateFrom && dateTo) {
+      details = details.filter(detail => {
+        const callDate = new Date(detail.callStart);
+        return callDate >= dateFrom && callDate <= dateTo;
+      });
+    }
+    
+    return details.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+  }
+
   async createCallDetail(insertDetail: InsertCallDetails): Promise<CallDetails> {
     const id = randomUUID();
     const detail: CallDetails = { 
@@ -676,6 +690,20 @@ export class CSVStorage implements IStorage {
     return details.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
   }
 
+  async getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]> {
+    let details = Array.from(this.callDetails.values())
+      .filter(detail => agentIds.includes(detail.agentId) && detail.projectId === projectId);
+    
+    if (dateFrom && dateTo) {
+      details = details.filter(detail => {
+        const callDate = new Date(detail.callStart);
+        return callDate >= dateFrom && callDate <= dateTo;
+      });
+    }
+    
+    return details.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+  }
+
   async createCallDetail(insertDetail: InsertCallDetails): Promise<CallDetails> {
     const id = randomUUID();
     const detail: CallDetails = { 
@@ -874,6 +902,23 @@ export class DatabaseStorage implements IStorage {
   async getCallDetails(agentId: string, projectId: string, dateFrom?: Date, dateTo?: Date): Promise<CallDetails[]> {
     const baseConditions = [
       eq(callDetails.agentId, agentId),
+      eq(callDetails.projectId, projectId)
+    ];
+    
+    if (dateFrom && dateTo) {
+      baseConditions.push(gte(callDetails.callStart, dateFrom));
+      baseConditions.push(lte(callDetails.callStart, dateTo));
+    }
+    
+    const results = await db.select().from(callDetails)
+      .where(and(...baseConditions));
+    
+    return results.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+  }
+
+  async getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]> {
+    const baseConditions = [
+      sql`${callDetails.agentId} = ANY(${agentIds})`,
       eq(callDetails.projectId, projectId)
     ];
     

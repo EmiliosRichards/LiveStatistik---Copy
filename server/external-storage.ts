@@ -1299,6 +1299,123 @@ export class ExternalStorage implements IStorage {
     }
   }
 
+  async getCallDetailsForAgents(agentIds: string[], projectId: string, dateFrom?: Date, dateTo?: Date, timeFrom?: string, timeTo?: string): Promise<CallDetails[]> {
+    await this.initializeData();
+    
+    console.log(`🔍 ExternalStorage.getCallDetailsForAgents called for ${agentIds.length} agents, project=${projectId}`);
+    
+    try {
+      const project = this.projects.get(projectId);
+      if (!project) {
+        console.log(`❌ Project not found: ${projectId}`);
+        return [];
+      }
+      
+      const projectName = project.name;
+      console.log(`📋 Project found: ${projectName}`);
+      
+      // Get all agent names
+      const agentNames = agentIds
+        .map(id => this.agents.get(id)?.name)
+        .filter(Boolean) as string[];
+      
+      if (agentNames.length === 0) {
+        console.log(`❌ No valid agent names found for IDs:`, agentIds);
+        return [];
+      }
+      
+      console.log(`📋 Agents found: ${agentNames.join(', ')}`);
+      
+      const dateFromStr = dateFrom ? dateFrom.toISOString().split('T')[0] : undefined;
+      const dateToStr = dateTo ? dateTo.toISOString().split('T')[0] : undefined;
+      
+      console.log(`🗓️ Date range: ${dateFromStr} to ${dateToStr}`);
+      console.log(`⏰ Time range: ${timeFrom || 'start'} to ${timeTo || 'end'}`);
+      
+      // Fetch call details for all agents in parallel
+      const { getAgentCallDetails } = await import('./external-db');
+      
+      const allCallDetailsPromises = agentNames.map(async (agentName, idx) => {
+        const agentId = agentIds[idx];
+        console.log(`🔍 Fetching calls for agent: ${agentName}`);
+        const filteredData = await getAgentCallDetails(agentName.trim(), projectName.trim(), dateFromStr, dateToStr, 0);
+        console.log(`📊 Found ${filteredData.length} calls for ${agentName}`);
+        
+        // Convert to CallDetails format
+        return filteredData.map((record) => {
+          const groupingKey = `${record.contacts_id}_${record.contacts_campaign_id}_${record.transactions_fired_date}`.replace(/[^a-zA-Z0-9]/g, '_');
+          const groupId = createHash('md5').update(groupingKey).digest('hex').substring(0, 8);
+          
+          const uniqueKey = `${record.transaction_id || ''}_${record.contacts_id || ''}_${record.contacts_campaign_id || ''}_${record.transactions_fired_date || ''}`;
+          const fallbackId = createHash('md5').update(uniqueKey).digest('hex');
+          const uniqueId = record.transaction_id || `row_${fallbackId}`;
+          
+          return {
+            id: uniqueId,
+            agentId,
+            projectId,
+            contactName: record.contacts_firma || null,
+            contactPerson: record.contacts_full_name || record.contacts_name || null,
+            contactNumber: record.connections_phone,
+            callStart: new Date(record.recordings_started),
+            callEnd: record.recordings_stopped ? new Date(record.recordings_stopped) : null,
+            duration: Math.round(parseInt(record.connections_duration.toString()) / 1000),
+            outcome: record.transactions_status_detail || 'Unknown',
+            outcomeCategory: record.transactions_status === 'success' ? 'positive' : 'negative',
+            recordingUrl: record.recordings_location,
+            notes: record.contacts_notiz || null,
+            wrapupTimeSeconds: record.transactions_edit_time_sec || null,
+            waitTimeSeconds: record.transactions_wait_time_sec || null,
+            editTimeSeconds: record.transactions_pause_time_sec || null,
+            contactsId: record.contacts_id || null,
+            contactsCampaignId: record.contacts_campaign_id || null,
+            recordingsDate: record.transactions_fired_date ? record.transactions_fired_date.split(' ')[0] : null,
+            groupId,
+            createdAt: new Date(),
+          };
+        });
+      });
+      
+      const allCallDetailsArrays = await Promise.all(allCallDetailsPromises);
+      let allCallDetails = allCallDetailsArrays.flat();
+      
+      console.log(`📊 Total calls across all agents: ${allCallDetails.length}`);
+      
+      // Apply time filtering if provided
+      if (timeFrom || timeTo) {
+        console.log(`⏰ Applying time filter: ${timeFrom || 'start'} to ${timeTo || 'end'}`);
+        
+        allCallDetails = allCallDetails.filter(detail => {
+          const utcTime = detail.callStart.toTimeString().slice(0, 5);
+          
+          // Convert UTC time to Cyprus time (+3 hours) for filtering
+          const [utcHours, utcMinutes] = utcTime.split(':').map(Number);
+          const utcMinutesTotal = utcHours * 60 + utcMinutes;
+          const cyprusMinutesTotal = utcMinutesTotal + 180;
+          const cyprusHours = Math.floor(cyprusMinutesTotal / 60) % 24;
+          const cyprusMinutes = cyprusMinutesTotal % 60;
+          const cyprusTime = `${String(cyprusHours).padStart(2, '0')}:${String(cyprusMinutes).padStart(2, '0')}`;
+          
+          let matchesFrom = true;
+          let matchesTo = true;
+          
+          if (timeFrom) matchesFrom = cyprusTime >= timeFrom;
+          if (timeTo) matchesTo = cyprusTime <= timeTo;
+          
+          return matchesFrom && matchesTo;
+        });
+        
+        console.log(`⏰ Time filtered: ${allCallDetails.length} calls remaining`);
+      }
+      
+      // Sort by call start time (newest first)
+      return allCallDetails.sort((a, b) => new Date(b.callStart).getTime() - new Date(a.callStart).getTime());
+    } catch (error) {
+      console.error('Error loading call details for multiple agents from external DB:', error);
+      return [];
+    }
+  }
+
   async createCallDetail(insertDetail: InsertCallDetails): Promise<CallDetails> {
     throw new Error('Create operations not allowed on external read-only database');
   }
