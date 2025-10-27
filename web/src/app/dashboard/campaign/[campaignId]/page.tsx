@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock } from 'lucide-react'
+import { Footer } from '@/components/Footer'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -656,23 +657,7 @@ export default function CampaignDetailPage() {
         </div>
       </main>
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto">
-        <div className="w-full px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Database: Connected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Dialfire API: Connected</span>
-              </div>
-            </div>
-            <span className="text-slate-400">v1.0 • Internal Preview</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   )
 }

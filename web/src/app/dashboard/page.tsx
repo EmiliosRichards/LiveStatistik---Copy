@@ -9,6 +9,7 @@ import { type Statistics, type Agent as AgentType, type Project as ProjectType }
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { CallsTimeSeriesChart } from '@/components/CallsTimeSeriesChart'
 import { OutcomesBarChart } from '@/components/OutcomesBarChart'
+import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
 import { useLanguage } from '@/contexts/LanguageContext'
 
@@ -724,23 +725,7 @@ export default function DashboardPage() {
         </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto">
-        <div className="w-full px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Database: Connected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Dialfire API: Connected</span>
-              </div>
-            </div>
-            <span className="text-slate-400">v1.0 • Internal Preview</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

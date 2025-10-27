@@ -7,6 +7,7 @@ import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } f
 import type { Project } from '@/lib/api'
 import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar } from 'lucide-react'
 import { InlineCalendar } from '@/components/InlineCalendar'
+import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
@@ -625,23 +626,7 @@ export default function AgentDetailPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200">
-        <div className="w-full px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Database: Connected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Dialfire API: Connected</span>
-              </div>
-            </div>
-            <span className="text-slate-400">v1.0 • Internal Preview</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
