@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { tableBase, thBase } from '@/components/DataTable'
+import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/DataTable'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } from '@/lib/api'
@@ -348,7 +348,7 @@ export default function AgentDetailPage() {
                   </div>
 
                   <div>
-                    <div className="overflow-x-auto">
+                    <div className={containerBase}>
                       <table className={tableBase}>
                         {campView==='overview' ? (
                           <colgroup>
@@ -373,7 +373,7 @@ export default function AgentDetailPage() {
                             <col style={{ width: '12%' }} />
                           </colgroup>
                         )}
-                        <thead className="bg-slate-50 border-b border-slate-200 font-semibold">
+                        <thead className={theadBase}>
                           {campView==='overview' ? (
                             <tr>
                               <th className={`${thBase} text-left`}>Campaign</th>
@@ -399,11 +399,11 @@ export default function AgentDetailPage() {
                             </tr>
                           )}
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className={tbodyBase}>
                           {sortedCampStats.map((row)=> (
                             <Fragment key={row.projectId}>
-                              <tr className="hover:bg-slate-50">
-                                <td className="px-4 py-2 text-sm text-blue-700">
+                              <tr className={trBase}>
+                                <td className={`${tdBase} text-blue-700`}>
                                   <div className="flex items-center gap-2 min-w-0">
                                     <button className="text-slate-500 hover:text-slate-700" onClick={(e)=>{e.stopPropagation(); setExpandedId(expandedId===row.projectId?null:row.projectId)}} aria-label="Show calls">{expandedId===row.projectId? '▾' : '▸'}</button>
                                     <span className="truncate">{row.projectName}</span>
@@ -411,11 +411,11 @@ export default function AgentDetailPage() {
                                 </td>
                                 {campView==='overview' ? (
                                   <>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCalls.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right whitespace-nowrap"><span className={`text-sm font-medium ${row.reachRate>=70?'text-green-600':'text-amber-600'}`}>{row.reachRate.toFixed(1)}%</span></td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.outcomes.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.avgDuration.toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm whitespace-nowrap">
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.totalCalls.toLocaleString()}</td>
+                                    <td className={`${tdBase} text-right`}><span className={`text-sm font-medium ${row.reachRate>=70?'text-green-600':'text-amber-600'}`}>{row.reachRate.toFixed(1)}%</span></td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.outcomes.toLocaleString()}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.avgDuration.toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right`}>
                                       {row.status && (
                                         <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
                                       )}
@@ -423,16 +423,16 @@ export default function AgentDetailPage() {
                                   </>
                                 ) : (
                                   <>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCalls.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalCompleted.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{row.totalSuccess.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.wz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.gz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.nbz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.vbz/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.erfolgProStunde/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm text-slate-900 font-semibold whitespace-nowrap">{(row.az/1).toFixed(2)}</td>
-                                    <td className="px-4 py-2 text-right text-sm whitespace-nowrap">
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.totalCalls.toLocaleString()}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.totalCompleted.toLocaleString()}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{row.totalSuccess.toLocaleString()}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.wz/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.gz/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.nbz/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.vbz/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.erfolgProStunde/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right font-semibold`}>{(row.az/1).toFixed(2)}</td>
+                                    <td className={`${tdBase} text-right`}>
                                       {row.status && (
                                         <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
                                       )}

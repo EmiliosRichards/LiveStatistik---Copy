@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { type Statistics } from '@/lib/api'
+import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/DataTable'
 
 interface AgentStats {
   agentId: string
@@ -152,8 +153,8 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full table-fixed">
+    <div className={containerBase}>
+      <table className={tableBase}>
         {view === 'overview' ? (
           <colgroup>
             <col style={{ width: '40%' }} />
@@ -176,49 +177,49 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
             <col style={{ width: '8%' }} />
           </colgroup>
         )}
-        <thead className="bg-slate-50 border-b border-slate-200 font-semibold">
+        <thead className={theadBase}>
           {view === 'overview' ? (
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Agent">
+              <th className={`${thBase} text-left truncate`} title="Agent">
                 Agent
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Total Calls">
+              <th className={`${thBase} text-right truncate`} title="Total Calls">
                 Total Calls
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Reach %">
+              <th className={`${thBase} text-right truncate`} title="Reach %">
                 Reach %
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Positive Outcomes">
+              <th className={`${thBase} text-right truncate`} title="Positive Outcomes">
                 Positive Outcomes
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Avg Duration (min)">
+              <th className={`${thBase} text-right truncate`} title="Avg Duration (min)">
                 Avg Duration (min)
               </th>
             </tr>
           ) : (
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Agent">Agent</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Anzahl">Anzahl</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="abgeschlossen">abgeschlossen</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="erfolgreich">erfolgreich</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Wartezeit (WZ)">WZ (h)</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Gesprächszeit (GZ)">GZ (h)</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Nachbearbeitungszeit (NBZ)">NBZ (h)</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Vorbereitungszeit (VBZ)">VBZ (h)</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Erfolg pro Stunde">Erfolg/h</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider whitespace-nowrap truncate" title="Arbeitszeit (AZ)">AZ (h)</th>
+              <th className={`${thBase} text-left truncate`} title="Agent">Agent</th>
+              <th className={`${thBase} text-right truncate`} title="Anzahl">Anzahl</th>
+              <th className={`${thBase} text-right truncate`} title="abgeschlossen">abgeschlossen</th>
+              <th className={`${thBase} text-right truncate`} title="erfolgreich">erfolgreich</th>
+              <th className={`${thBase} text-right truncate`} title="Wartezeit (WZ)">WZ (h)</th>
+              <th className={`${thBase} text-right truncate`} title="Gesprächszeit (GZ)">GZ (h)</th>
+              <th className={`${thBase} text-right truncate`} title="Nachbearbeitungszeit (NBZ)">NBZ (h)</th>
+              <th className={`${thBase} text-right truncate`} title="Vorbereitungszeit (VBZ)">VBZ (h)</th>
+              <th className={`${thBase} text-right truncate`} title="Erfolg pro Stunde">Erfolg/h</th>
+              <th className={`${thBase} text-right truncate`} title="Arbeitszeit (AZ)">AZ (h)</th>
             </tr>
           )}
         </thead>
-        <tbody className="divide-y divide-slate-200">
+        <tbody className={tbodyBase}>
           {agentStats.map((agent) => (
             <Fragment key={agent.agentId}>
               <tr
-                className="hover:bg-slate-50 transition-colors cursor-pointer bg-slate-50/60"
+                className={`${trBase} transition-colors cursor-pointer bg-slate-50/60`}
                 onClick={() => toggleRow(agent.agentId)}
                 data-testid={`row-agent-${agent.agentId}`}
               >
-                <td className="px-4 py-3">
+                <td className={tdBase}>
                   <div className="flex items-center">
                     {agent.projects.length > 0 && (
                       expandedRows.has(agent.agentId) ? (
@@ -237,31 +238,31 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
                 </td>
                 {view === 'overview' ? (
                   <>
-                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{agent.totalCalls.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className={`${tdBase} text-right font-semibold`}>{agent.totalCalls.toLocaleString()}</td>
+                    <td className={`${tdBase} text-right`}>
                       <span className={`text-sm font-medium ${
                         agent.reachRate >= 70 ? 'text-green-600' : 'text-amber-600'
                       }`}>
                         {agent.reachRate}%
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{agent.positiveOutcomes}</td>
-                    <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{agent.avgDuration}</td>
+                    <td className={`${tdBase} text-right font-semibold`}>{agent.positiveOutcomes}</td>
+                    <td className={`${tdBase} text-right font-semibold`}>{agent.avgDuration}</td>
                   </>
                 ) : (
                   (() => {
                     const m = (agent as any)._metrics
                     return (
                       <>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.totalCalls || 0).toLocaleString()}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.totalCompleted || 0).toLocaleString()}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.totalSuccess || 0).toLocaleString()}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.wz || 0).toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.gz || 0).toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.nbz || 0).toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.vbz || 0).toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.erfolgProStunde || 0).toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right text-sm text-slate-900 font-semibold">{(m.az || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.totalCalls || 0).toLocaleString()}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.totalCompleted || 0).toLocaleString()}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.totalSuccess || 0).toLocaleString()}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.wz || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.gz || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.nbz || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.vbz || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.erfolgProStunde || 0).toFixed(2)}</td>
+                        <td className={`${tdBase} text-right font-semibold`}>{(m.az || 0).toFixed(2)}</td>
                       </>
                     )
                   })()
@@ -272,12 +273,12 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
               {expandedRows.has(agent.agentId) && view === 'overview' && (
                 <>
                   {((agent as any)._projectMetrics as any[]).map((pm: any) => (
-                    <tr key={`${agent.agentId}-ov-${pm.projectId}`} className="bg-white hover:bg-slate-50">
-                      <td className="px-4 py-2 pl-10 text-sm text-blue-700 cursor-pointer" onClick={() => handleAgentClick(agent.agentId)}>{pm.projectName}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalCalls.toLocaleString()}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalCalls ? (pm.totalCompleted / pm.totalCalls * 100).toFixed(1) : '0.0'}%</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalSuccess.toLocaleString()}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalCompleted ? ((pm.gz / pm.totalCompleted) / 60).toFixed(2) : '0.00'}</td>
+                    <tr key={`${agent.agentId}-ov-${pm.projectId}`} className={`${trBase} bg-white`}>
+                      <td className={`${tdBase} pl-10 text-blue-700 cursor-pointer`} onClick={() => handleAgentClick(agent.agentId)}>{pm.projectName}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalCalls.toLocaleString()}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalCalls ? (pm.totalCompleted / pm.totalCalls * 100).toFixed(1) : '0.0'}%</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalSuccess.toLocaleString()}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalCompleted ? ((pm.gz / pm.totalCompleted) / 60).toFixed(2) : '0.00'}</td>
                     </tr>
                   ))}
                 </>
@@ -285,17 +286,17 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
               {expandedRows.has(agent.agentId) && view === 'details' && (
                 <>
                   {((agent as any)._projectMetrics as any[]).map((pm: any) => (
-                    <tr key={`${agent.agentId}-detail-${pm.projectId}`} className="bg-white hover:bg-slate-50">
-                      <td className="px-4 py-2 pl-10 text-sm text-blue-700 cursor-pointer" onClick={() => handleAgentClick(agent.agentId)}>{pm.projectName}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalCalls.toLocaleString()}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalCompleted.toLocaleString()}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.totalSuccess.toLocaleString()}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.wz.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.gz.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.nbz.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.vbz.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.erfolgProStunde.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right text-sm text-slate-800">{pm.az.toFixed(2)}</td>
+                    <tr key={`${agent.agentId}-detail-${pm.projectId}`} className={`${trBase} bg-white`}>
+                      <td className={`${tdBase} pl-10 text-blue-700 cursor-pointer`} onClick={() => handleAgentClick(agent.agentId)}>{pm.projectName}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalCalls.toLocaleString()}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalCompleted.toLocaleString()}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.totalSuccess.toLocaleString()}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.wz.toFixed(2)}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.gz.toFixed(2)}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.nbz.toFixed(2)}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.vbz.toFixed(2)}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.erfolgProStunde.toFixed(2)}</td>
+                      <td className={`${tdBase} text-right text-slate-800`}>{pm.az.toFixed(2)}</td>
                     </tr>
                   ))}
                 </>
