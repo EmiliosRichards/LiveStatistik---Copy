@@ -514,7 +514,7 @@ function ProjectPanel(props: ProjectPanelProps) {
   const [filterCalls, setFilterCalls] = useState<'alle' | 'mit_audio' | 'mit_transkript' | 'mit_notizen'>('alle')
   const [filterTime, setFilterTime] = useState<'alle' | 'heute' | 'woche' | 'monat'>('alle')
   const [page, setPage] = useState(1)
-  const pageSize = 200
+  const pageSize = 100
 
   const query = useMemo(() => {
     const p = new URLSearchParams()
@@ -683,21 +683,6 @@ function ProjectPanel(props: ProjectPanelProps) {
               </select>
             </div>
               <div className="flex items-center gap-3">
-              <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
-                <button
-                  className={`px-3 py-1 text-sm ${view === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
-                  onClick={() => setView('overview')}
-                >
-                  Overview
-                </button>
-                <div className="w-px h-5 bg-slate-300" />
-                <button
-                  className={`px-3 py-1 text-sm ${view === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
-                  onClick={() => setView('details')}
-                >
-                  Details
-                </button>
-              </div>
                 <div className="text-sm text-slate-800 hidden sm:block font-semibold">{overallTotal.toLocaleString()} Ergebnisse</div>
                 <div className="flex items-center gap-2 text-sm text-slate-800">
                   <button
