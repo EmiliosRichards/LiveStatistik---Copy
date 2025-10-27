@@ -9,7 +9,8 @@
     "multiAgentDesc": "You can now view and filter multiple agents simultaneously on the campaign detail page!",
     "currentAccount": "Current Account",
     "accountSettings": "Account Settings",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "member": "Member"
   },
   "help": {
     "title": "How can we help?",

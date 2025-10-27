@@ -152,7 +152,7 @@ export default function DashboardHeader() {
                   <div className="px-4 py-3 border-b border-slate-200">
                     <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">{t('header.currentAccount')}</p>
                     <p className="font-semibold text-slate-800">Emilios Richards</p>
-                    <p className="text-sm text-slate-600">Member</p>
+                    <p className="text-sm text-slate-600">{t('header.member')}</p>
                   </div>
 
                   <div className="py-2">
