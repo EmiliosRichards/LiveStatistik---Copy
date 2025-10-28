@@ -31,11 +31,11 @@
     "timeBasedSearch": "Time-based Search"
   },
   "kpi": {
-    "totalCalls": "Total Calls This Week",
-    "reachRate": "Reach Rate",
-    "positiveOutcomes": "Positive Outcomes",
-    "avgDuration": "Avg. Call Duration",
-    "vsLastWeek": "vs. last week",
+    "totalCalls": "Total Calls (Last 7 Days)",
+    "reachRate": "Reach Rate (Last 7 Days)",
+    "positiveOutcomes": "Positive Outcomes (Last 7 Days)",
+    "avgDuration": "Avg. Call Duration (Last 7 Days)",
+    "vsLastWeek": "vs. previous 7 days",
     "noData": "No data"
   },
   "dashboard": {
