@@ -20,9 +20,11 @@
     "test:db:agents": "tsx tools/tests/campaigns-for-agents.ts 5",
     "test:db:calls": "tsx tools/tests/calls-for-agent-campaign.ts",
     "test:stats": "tsx tools/tests/stats-for-agents.ts",
-    "test:agent-campaign": "tsx tools/tests/agent-campaign-calls.ts"
+    "test:agent-campaign": "tsx tools/tests/agent-campaign-calls.ts",
+    "qm:fetch": "tsx tools/fetch-qm-excel.ts"
   },
   "dependencies": {
+    "xlsx": "^0.18.5",
     "@google/genai": "^1.17.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
