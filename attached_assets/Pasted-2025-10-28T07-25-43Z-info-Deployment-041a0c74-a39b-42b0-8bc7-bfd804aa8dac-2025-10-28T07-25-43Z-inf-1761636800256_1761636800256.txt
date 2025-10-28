@@ -1,0 +1,96 @@
+2025-10-28T07:25:43Z info: Deployment: 041a0c74-a39b-42b0-8bc7-bfd804aa8dac
+2025-10-28T07:25:43Z info: Running Security Scan
+2025-10-28T07:25:50Z info: Security Scan Complete
+2025-10-28T07:25:50Z info: Connecting to builder
+2025-10-28T07:25:50Z info: Builder connected
+2025-10-28T07:25:50Z info: Installing packages
+--> npm install
+
+
+up to date, audited 513 packages in 4s
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+
+2025-10-28T07:25:55Z info: Starting Build
+🏗️  Building Express backend...
+
+
+  dist/index.js  116.8kb
+
+⚡ Done in 492ms
+
+🏗️  Building Next.js frontend...
+
+
+> web@0.1.0 build
+> next build --turbopack
+
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/runner/workspace/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/runner/workspace/web/package-lock.json
+
+
+   ▲ Next.js 15.5.5 (Turbopack)
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · proxyTimeout: 120000
+
+
+   Creating an optimized production build ...
+
+ ✓ Finished writing to disk in 19ms
+
+ ✓ Compiled successfully in 10.8s
+
+   Skipping linting
+
+   Collecting page data ...
+
+   Generating static pages (0/11) ...
+
+   Generating static pages (2/11) 
+
+   Generating static pages (8/11) 
+
+ ✓ Generating static pages (11/11)
+
+   Finalizing page optimization ...
+
+   Collecting build traces ...
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+✅ Production build complete!
+📦 Next.js built to: web/.next/
+📦 Express built to: dist/index.js
+
+2025-10-28T07:26:24Z info: Pushing pid1 binary layer...
+2025-10-28T07:26:25Z info: Pushing hosting layer...
+2025-10-28T07:26:25Z info: Pushing Repl layer...
+2025-10-28T07:26:26Z info: Created hosting layer
+2025-10-28T07:26:26Z info: Created pid1 binary layer
+2025-10-28T07:27:06Z info: Created Repl layer
+2025-10-28T07:27:08Z info: Pushed image manifest
+2025-10-28T07:27:09Z info: Pushed soci index manifest
+2025-10-28T07:27:12Z info: Creating Autoscale service
+🚀 Starting Express backend on port 5001 (internal)...
+7:27:39 AM [express] serving on port 5001
+🔥 Cache Warmer: Starting chart cache pre-warming...
+🔍 Loading agents from agent_latest_last_2_months VIEW - only active agents from last 2 months
+💾 Saved 44 agents to cache
+✅ Loaded 44 unique agents (removed duplicates)
+📊 Found 117 unique campaigns in external database
+✅ External data initialization complete: 44 agents, 117 projects
+✅ Loaded 117 unique projects (removed duplicates)
+a port configuration was specified but the required port was never opened
+7:28:34 AM [express] GET /api/monthly-call-trends 200 in 50462ms :: [{"month":"Jan","calls":25733},{…
+2025-10-28T07:29:32Z error: The deployment failed because the application failed to open a port in time. This can happen because the application takes to long to open a server, or doesn't open one at all on the expected port. Note that this doesn't mean that the application is crashing, only that it's not opening a port in time. The application must serve traffic on the first port specified as 'localPort' in the port configuration specified in the .replit file. Make sure that the application opens a port quickly and that there are no operations taking too long on startup. Check the logs for more information.

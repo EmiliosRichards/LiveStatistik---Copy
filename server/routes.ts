@@ -287,39 +287,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
       const now = new Date();
       
-      const getCurrentWeekStart = () => {
-        const d = new Date(now);
-        const dayOfWeek = d.getDay();
-        const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-        d.setDate(d.getDate() + daysToMonday);
-        return formatDate(d);
+      // Calculate rolling 7-day periods
+      const last7DaysEnd = new Date(now);
+      const last7DaysStart = new Date(now);
+      last7DaysStart.setDate(now.getDate() - 6); // Today + 6 days back = 7 days
+      
+      const previous7DaysEnd = new Date(last7DaysStart);
+      previous7DaysEnd.setDate(last7DaysStart.getDate() - 1);
+      const previous7DaysStart = new Date(previous7DaysEnd);
+      previous7DaysStart.setDate(previous7DaysEnd.getDate() - 6);
+      
+      console.log(`📊 Comparing periods:`);
+      console.log(`   Last 7 days: ${formatDate(last7DaysStart)} to ${formatDate(last7DaysEnd)}`);
+      console.log(`   Previous 7 days: ${formatDate(previous7DaysStart)} to ${formatDate(previous7DaysEnd)}`);
+      
+      // Aggregate data for each 7-day period
+      const aggregatePeriod = (startDate: Date, endDate: Date) => {
+        const start = formatDate(startDate);
+        const end = formatDate(endDate);
+        
+        const periodData = kpiData.filter(d => d.week_start >= start && d.week_start <= end);
+        
+        return {
+          total_calls: periodData.reduce((sum, d) => sum + d.total_calls, 0),
+          calls_reached: periodData.reduce((sum, d) => sum + d.calls_reached, 0),
+          positive_outcomes: periodData.reduce((sum, d) => sum + d.positive_outcomes, 0),
+          avg_call_duration_sec: periodData.length > 0 
+            ? periodData.reduce((sum, d) => sum + d.avg_call_duration_sec, 0) / periodData.length 
+            : 0
+        };
       };
       
-      const currentWeekStart = getCurrentWeekStart();
+      const last7Days = aggregatePeriod(last7DaysStart, last7DaysEnd);
+      const previous7Days = aggregatePeriod(previous7DaysStart, previous7DaysEnd);
       
-      const sortedByDate = [...kpiData].sort((a, b) => 
-        new Date(b.week_start).getTime() - new Date(a.week_start).getTime()
-      );
+      console.log(`📊 Last 7 days: ${last7Days.total_calls} calls, ${last7Days.positive_outcomes} positive`);
+      console.log(`📊 Previous 7 days: ${previous7Days.total_calls} calls, ${previous7Days.positive_outcomes} positive`);
       
-      let thisWeekData = kpiData.find(d => d.week_start === currentWeekStart);
-      let lastWeekData: typeof thisWeekData | undefined;
-      let isUsingFallback = false;
-      
-      if (!thisWeekData && sortedByDate.length > 0) {
-        console.log(`⚠️ No data for current week (${currentWeekStart}), falling back to most recent week`);
-        thisWeekData = sortedByDate[0];
-        lastWeekData = sortedByDate[1];
-        isUsingFallback = true;
-      } else if (thisWeekData) {
-        lastWeekData = kpiData.find(d => d.week_start !== currentWeekStart);
-      }
-      
-      console.log(`📊 This week (${currentWeekStart}):`, thisWeekData);
-      console.log(`📊 Last week:`, lastWeekData);
-      console.log(`📊 Using fallback:`, isUsingFallback);
-      
-      if (!thisWeekData) {
-        console.log('⚠️ No KPI data available at all');
+      if (last7Days.total_calls === 0 && previous7Days.total_calls === 0) {
+        console.log('⚠️ No KPI data available');
         return res.json({
           totalCalls: { value: 0, comparison: 0, trend: 'neutral' },
           reachRate: { value: 0, comparison: 0, trend: 'neutral' },
@@ -329,69 +335,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const dayOfWeek = now.getDay();
-      const businessDaysElapsed = dayOfWeek === 0 ? 0 : (dayOfWeek === 6 ? 5 : dayOfWeek);
-      const projectionFactor = businessDaysElapsed > 0 ? 5 / businessDaysElapsed : 1;
+      // Calculate metrics for last 7 days
+      const last7DaysReachRate = last7Days.total_calls > 0 
+        ? (last7Days.calls_reached / last7Days.total_calls) * 100 
+        : 0;
       
-      const thisWeekCalls = thisWeekData.total_calls;
-      const thisWeekReached = thisWeekData.calls_reached;
-      const thisWeekPositive = thisWeekData.positive_outcomes;
-      const thisWeekDuration = thisWeekData.avg_call_duration_sec;
+      // Calculate metrics for previous 7 days
+      const previous7DaysReachRate = previous7Days.total_calls > 0 
+        ? (previous7Days.calls_reached / previous7Days.total_calls) * 100 
+        : 0;
       
-      const thisWeekReachRate = thisWeekCalls > 0 ? (thisWeekReached / thisWeekCalls) * 100 : 0;
+      // Calculate percentage changes (fair comparison: 7 days vs 7 days)
+      const callsComparison = previous7Days.total_calls > 0 
+        ? ((last7Days.total_calls - previous7Days.total_calls) / previous7Days.total_calls) * 100 
+        : 0;
       
-      const projectedWeekCalls = Math.round(thisWeekCalls * projectionFactor);
-      const projectedWeekPositive = Math.round(thisWeekPositive * projectionFactor);
+      const reachRateComparison = previous7DaysReachRate > 0 
+        ? ((last7DaysReachRate - previous7DaysReachRate) / previous7DaysReachRate) * 100 
+        : 0;
       
-      let callsComparison = 0;
-      let reachRateComparison = 0;
-      let positiveComparison = 0;
-      let durationComparison = 0;
+      const positiveComparison = previous7Days.positive_outcomes > 0 
+        ? ((last7Days.positive_outcomes - previous7Days.positive_outcomes) / previous7Days.positive_outcomes) * 100 
+        : 0;
       
-      if (lastWeekData) {
-        const lastWeekCalls = lastWeekData.total_calls;
-        const lastWeekReached = lastWeekData.calls_reached;
-        const lastWeekPositive = lastWeekData.positive_outcomes;
-        const lastWeekDuration = lastWeekData.avg_call_duration_sec;
-        const lastWeekReachRate = lastWeekCalls > 0 ? (lastWeekReached / lastWeekCalls) * 100 : 0;
-        
-        callsComparison = lastWeekCalls > 0 ? ((projectedWeekCalls - lastWeekCalls) / lastWeekCalls) * 100 : 0;
-        reachRateComparison = lastWeekReachRate > 0 ? ((thisWeekReachRate - lastWeekReachRate) / lastWeekReachRate) * 100 : 0;
-        positiveComparison = lastWeekPositive > 0 ? ((projectedWeekPositive - lastWeekPositive) / lastWeekPositive) * 100 : 0;
-        durationComparison = lastWeekDuration > 0 ? ((thisWeekDuration - lastWeekDuration) / lastWeekDuration) * 100 : 0;
-      }
+      const durationComparison = previous7Days.avg_call_duration_sec > 0 
+        ? ((last7Days.avg_call_duration_sec - previous7Days.avg_call_duration_sec) / previous7Days.avg_call_duration_sec) * 100 
+        : 0;
       
-      console.log(`📊 This week: ${thisWeekCalls} calls (projected: ${projectedWeekCalls}), ${thisWeekPositive} positive`);
-      console.log(`📈 Week-over-week: calls ${callsComparison.toFixed(1)}%, positive ${positiveComparison.toFixed(1)}%`);
+      console.log(`📈 7-day comparison: calls ${callsComparison.toFixed(1)}%, reach rate ${reachRateComparison.toFixed(1)}%, positive ${positiveComparison.toFixed(1)}%`);
       
       res.json({
         totalCalls: {
-          value: thisWeekCalls,
+          value: last7Days.total_calls,
           comparison: parseFloat(callsComparison.toFixed(1)),
           trend: callsComparison >= 0 ? 'up' : 'down'
         },
         reachRate: {
-          value: parseFloat(thisWeekReachRate.toFixed(1)),
+          value: parseFloat(last7DaysReachRate.toFixed(1)),
           comparison: parseFloat(reachRateComparison.toFixed(1)),
           trend: reachRateComparison >= 0 ? 'up' : 'down'
         },
         positiveOutcomes: {
-          value: thisWeekPositive,
+          value: last7Days.positive_outcomes,
           comparison: parseFloat(positiveComparison.toFixed(1)),
           trend: positiveComparison >= 0 ? 'up' : 'down'
         },
         avgDuration: {
-          value: parseFloat((thisWeekDuration / 60000).toFixed(1)),
+          value: parseFloat((last7Days.avg_call_duration_sec / 60000).toFixed(1)),
           comparison: parseFloat(durationComparison.toFixed(1)),
           trend: durationComparison >= 0 ? 'up' : 'down'
         },
         metadata: {
-          currentWeekStart,
-          actualWeekStart: thisWeekData.week_start,
-          usingFallbackData: isUsingFallback,
-          businessDaysElapsed,
-          projectedWeekCalls,
-          projectedWeekPositive,
+          last7DaysStart: formatDate(last7DaysStart),
+          last7DaysEnd: formatDate(last7DaysEnd),
+          previous7DaysStart: formatDate(previous7DaysStart),
+          previous7DaysEnd: formatDate(previous7DaysEnd),
           cacheUsed: !refresh
         }
       });

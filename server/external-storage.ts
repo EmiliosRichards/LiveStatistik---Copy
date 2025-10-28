@@ -1097,21 +1097,23 @@ export class ExternalStorage implements IStorage {
     }
     
     const today = new Date();
-    const currentWeekStart = new Date(today);
-    currentWeekStart.setDate(today.getDate() - today.getDay() + 1);
-    
-    const lastWeekStart = new Date(currentWeekStart);
-    lastWeekStart.setDate(currentWeekStart.getDate() - 7);
-    
-    const lastWeekEnd = new Date(currentWeekStart);
-    lastWeekEnd.setDate(currentWeekStart.getDate() - 1);
-    
     const formatDate = (d: Date) => d.toISOString().split('T')[0];
     
-    const dateFrom = formatDate(lastWeekStart);
+    // Calculate rolling 14-day period (last 7 days + previous 7 days)
+    const last7DaysEnd = new Date(today);
+    const last7DaysStart = new Date(today);
+    last7DaysStart.setDate(today.getDate() - 6); // Today + 6 days back = 7 days
+    
+    const previous7DaysEnd = new Date(last7DaysStart);
+    previous7DaysEnd.setDate(last7DaysStart.getDate() - 1);
+    const previous7DaysStart = new Date(previous7DaysEnd);
+    previous7DaysStart.setDate(previous7DaysEnd.getDate() - 6);
+    
+    const dateFrom = formatDate(previous7DaysStart);
     const dateTo = formatDate(today);
     
-    console.log(`📊 KPI Query: Fetching 2 weeks of data (${dateFrom} to ${dateTo}) for ${allAgentLogins.length} agents`);
+    console.log(`📊 KPI Query: Fetching 14 days of rolling data (${dateFrom} to ${dateTo}) for ${allAgentLogins.length} agents`);
+    console.log(`📊 Period breakdown: Previous 7 days (${formatDate(previous7DaysStart)} to ${formatDate(previous7DaysEnd)}), Last 7 days (${formatDate(last7DaysStart)} to ${formatDate(today)})`);
     
     try {
       const kpiData = await getAggregatedKpis(allAgentLogins, dateFrom, dateTo);
