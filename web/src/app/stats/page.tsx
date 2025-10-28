@@ -1,107 +1,168 @@
-"use client";
-import { useEffect, useMemo, useState } from "react";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/dist/style.css";
-import { useSession, signOut } from "next-auth/react";
+'use client'
 
-type Agent = { id: string; name: string };
+export const dynamic = 'force-dynamic'
 
-export default function StatsPage() {
-  const { data: session } = useSession();
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { InlineCalendar } from '@/components/InlineCalendar'
 
-  // Load agents from Express backend (rewritten via next.config)
-  useEffect(() => {
-    fetch("/api/agents", { credentials: "include" })
-      .then(r => r.json())
-      .then((list: Agent[]) => setAgents(list))
-      .catch(() => setAgents([]));
-  }, []);
-
-  const userEmail = session?.user?.email ?? "";
-
-  const canSearch = selectedAgentIds.length > 0 && (dateFrom || dateTo);
-
-  const handleToggleAgent = (id: string) => {
-    setSelectedAgentIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  };
-
-  return (
-    <main className="min-h-screen flex flex-col bg-neutral-100 text-neutral-900">
-      {/* IBM-like top header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-black/10 bg-white">
-        <div className="text-2xl font-semibold tracking-tight">Statistics</div>
-        <div className="flex items-center gap-3">
-          {/* Language switcher (reuse visual style) */}
-          <button className="rounded border border-black/10 bg-white px-3 py-1.5 text-sm hover:bg-neutral-50">DE</button>
-          {/* User box */}
-          <button onClick={() => signOut({ callbackUrl: "/" })} className="rounded-full border border-black/10 bg-white px-4 py-1.5 text-sm hover:bg-neutral-50">
-            {userEmail || "Account"}
-          </button>
-        </div>
-      </header>
-
-      {/* Form block inspired by BA search panel (no ads) */}
-      <section className="px-6 py-6">
-        <div className="mx-auto max-w-6xl rounded-lg border border-black/10 bg-white p-4">
-          {/* Tabs placeholder */}
-          <div className="flex gap-2 mb-4 text-sm">
-            <button className="rounded px-3 py-1.5 bg-neutral-900 text-white">Agents</button>
-            <button className="rounded px-3 py-1.5 bg-neutral-100 text-neutral-700 border border-black/10">Projects</button>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-12">
-            {/* Trip type style → selection type */}
-            <div className="md:col-span-2">
-              <label className="block text-xs text-neutral-600 mb-1">Selection</label>
-              <div className="rounded border border-black/10 bg-white px-3 py-2 text-sm">Agents</div>
-            </div>
-
-            {/* From/To like date pickers */}
-            <div className="md:col-span-4">
-              <label className="block text-xs text-neutral-600 mb-2">Date range</label>
-              <div className="rounded border border-black/10 bg-white p-2">
-                <DayPicker
-                  mode="range"
-                  selected={dateFrom && dateTo ? { from: dateFrom, to: dateTo } : undefined}
-                  onSelect={(range: any) => { setDateFrom(range?.from); setDateTo(range?.to); }}
-                  showOutsideDays
-                  styles={{ caption: { fontWeight: 600 }, day: { borderRadius: 4 } }}
-                />
-              </div>
-            </div>
-
-            {/* Agent multi-select */}
-            <div className="md:col-span-4">
-              <label className="block text-xs text-neutral-600 mb-1">Agents</label>
-              <div className="h-28 overflow-y-auto rounded border border-black/10 bg-white p-2 text-sm">
-                {agents.map(a => (
-                  <label key={a.id} className="flex items-center gap-2 py-1">
-                    <input type="checkbox" checked={selectedAgentIds.includes(a.id)} onChange={() => handleToggleAgent(a.id)} />
-                    <span className="truncate">{a.name}</span>
-                  </label>
-                ))}
-                {agents.length === 0 && (<div className="text-neutral-500">No agents</div>)}
-              </div>
-            </div>
-
-            {/* Action */}
-            <div className="md:col-span-2 flex items-end">
-              <button disabled={!canSearch} className={`w-full rounded px-4 py-2 text-sm ${canSearch ? "bg-neutral-900 text-white" : "bg-neutral-200 text-neutral-500"}`}>Search</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Results placeholder */}
-      <section className="px-6 pb-10">
-        <div className="mx-auto max-w-6xl text-sm text-neutral-600">Results will appear here.</div>
-      </section>
-    </main>
-  );
+function formatISO(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
 }
 
+export default function StatsPage() {
+  const today = new Date()
+  const defaultTo = formatISO(today)
+  const defaultFrom = formatISO(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6))
 
+  const [dateFrom, setDateFrom] = useState<string>(defaultFrom)
+  const [dateTo, setDateTo] = useState<string>(defaultTo)
+  const [compare, setCompare] = useState<boolean>(true)
+
+  // Simple calendar popovers
+  const [openFrom, setOpenFrom] = useState(false)
+  const [openTo, setOpenTo] = useState(false)
+  const fromRef = useRef<HTMLDivElement | null>(null)
+  const toRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent | TouchEvent) {
+      const t = e.target as Node | null
+      if (openFrom && fromRef.current && t && !fromRef.current.contains(t)) setOpenFrom(false)
+      if (openTo && toRef.current && t && !toRef.current.contains(t)) setOpenTo(false)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { setOpenFrom(false); setOpenTo(false) }
+    }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('touchstart', onDoc)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('touchstart', onDoc)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [openFrom, openTo])
+
+  const qs = useMemo(() => new URLSearchParams({ dateFrom, dateTo }).toString(), [dateFrom, dateTo])
+
+  const [summary, setSummary] = useState<any>(null)
+  const [heatmap, setHeatmap] = useState<any[]>([])
+  const [positiveMix, setPositiveMix] = useState<any[]>([])
+  const [improvement, setImprovement] = useState<any[]>([])
+  const [efficiency, setEfficiency] = useState<any | null>(null)
+  const [campaigns, setCampaigns] = useState<any[]>([])
+  const [targets, setTargets] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    let alive = true
+    setLoading(true)
+    Promise.all([
+      fetch(`/api/stats/summary?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>null),
+      fetch(`/api/stats/heatmap?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>[]),
+      fetch(`/api/stats/positive-mix?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>[]),
+      fetch(`/api/stats/agent-improvement?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>[]),
+      fetch(`/api/stats/efficiency?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>null),
+      fetch(`/api/stats/campaign-effectiveness?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>[]),
+      fetch(`/api/stats/targets-progress?${qs}`, { credentials: 'include' }).then(r=>r.json()).catch(()=>[]),
+    ]).then(([s,h,pm,imp,eff,ce,tp]) => {
+      if (!alive) return
+      setSummary(s)
+      setHeatmap(Array.isArray(h)?h:[])
+      setPositiveMix(Array.isArray(pm)?pm:[])
+      setImprovement(Array.isArray(imp)?imp:[])
+      setEfficiency(eff)
+      setCampaigns(Array.isArray(ce)?ce:[])
+      setTargets(Array.isArray(tp)?tp:[])
+    }).finally(() => alive && setLoading(false))
+    return () => { alive = false }
+  }, [qs])
+
+  return (
+    <div className="px-6 py-8 space-y-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative" ref={fromRef}>
+          <label className="block text-sm text-slate-700 mb-1">From</label>
+          <button className="px-3 py-2 border border-slate-300 rounded bg-white" onClick={()=>setOpenFrom(v=>!v)}>{dateFrom}</button>
+          {openFrom && (
+            <div className="absolute z-10 mt-2 bg-white border border-slate-200 rounded shadow p-2">
+              <InlineCalendar value={new Date(dateFrom)} onChange={(d)=>{ setDateFrom(formatISO(d)); setOpenFrom(false) }} visibleMonth={new Date(dateFrom).getMonth()} visibleYear={new Date(dateFrom).getFullYear()} onMonthChange={()=>{}} onYearChange={()=>{}} />
+            </div>
+          )}
+        </div>
+        <div className="relative" ref={toRef}>
+          <label className="block text-sm text-slate-700 mb-1">To</label>
+          <button className="px-3 py-2 border border-slate-300 rounded bg-white" onClick={()=>setOpenTo(v=>!v)}>{dateTo}</button>
+          {openTo && (
+            <div className="absolute z-10 mt-2 bg-white border border-slate-200 rounded shadow p-2">
+              <InlineCalendar value={new Date(dateTo)} onChange={(d)=>{ setDateTo(formatISO(d)); setOpenTo(false) }} visibleMonth={new Date(dateTo).getMonth()} visibleYear={new Date(dateTo).getFullYear()} onMonthChange={()=>{}} onYearChange={()=>{}} />
+            </div>
+          )}
+        </div>
+        <label className="inline-flex items-center gap-2 ml-2 text-sm text-slate-700">
+          <input type="checkbox" checked={compare} onChange={e=>setCompare(e.target.checked)} />
+          Compare to previous period
+        </label>
+      </div>
+
+      {/* Row 1: KPI cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <KpiCard title="Total Calls" value={summary?.totalCalls?.value ?? 0} delta={summary?.totalCalls?.comparison} trend={summary?.totalCalls?.trend} suffix="" />
+        <KpiCard title="Reach Rate" value={summary?.reachRate?.value ?? 0} delta={summary?.reachRate?.comparison} trend={summary?.reachRate?.trend} suffix="%" />
+        <KpiCard title="Positive" value={summary?.positiveOutcomes?.value ?? 0} delta={summary?.positiveOutcomes?.comparison} trend={summary?.positiveOutcomes?.trend} suffix="" />
+        <KpiCard title="Avg Duration" value={summary?.avgDuration?.value ?? 0} delta={summary?.avgDuration?.comparison} trend={summary?.avgDuration?.trend} suffix=" min" />
+        <KpiCard title="Conversion" value={summary?.conversionRate?.value ?? 0} delta={summary?.conversionRate?.comparison} trend={summary?.conversionRate?.trend} suffix="%" />
+      </div>
+
+      {/* Placeholder sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Heatmap (weekday × hour)</div>
+          <div className="text-slate-500 text-sm">{heatmap.length ? `${heatmap.length} cells` : 'No data'}</div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Positive mix</div>
+          <div className="text-slate-500 text-sm">{positiveMix.length ? `${positiveMix.length} items` : 'No data'}</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Improvement leaderboard</div>
+          <div className="text-slate-500 text-sm">{improvement.length ? `${improvement.length} agents` : 'No data'}</div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Efficiency</div>
+          <div className="text-slate-500 text-sm">{efficiency ? 'Available' : 'No data'}</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Campaign effectiveness</div>
+          <div className="text-slate-500 text-sm">{campaigns.length ? `${campaigns.length} campaigns` : 'No data'}</div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded p-4">
+          <div className="font-medium mb-2">Targets progress</div>
+          <div className="text-slate-500 text-sm">{targets.length ? `${targets.length} items` : 'No data'}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function KpiCard({ title, value, delta, trend, suffix }: { title: string; value: number; delta?: number; trend?: 'up'|'down'|'neutral'; suffix?: string }) {
+  const display = typeof value === 'number' ? value.toLocaleString() : String(value || '')
+  const deltaStr = typeof delta === 'number' ? `${delta > 0 ? '+' : ''}${delta.toFixed(1)}%` : ''
+  const color = trend === 'up' ? 'text-emerald-600' : trend === 'down' ? 'text-red-600' : 'text-slate-500'
+  return (
+    <div className="bg-white border border-slate-200 rounded p-4">
+      <div className="text-sm text-slate-600">{title}</div>
+      <div className="text-xl font-semibold text-slate-900 tabular-nums">{display}{suffix}</div>
+      {deltaStr && <div className={`text-xs ${color}`}>{deltaStr}</div>}
+    </div>
+  )
+}

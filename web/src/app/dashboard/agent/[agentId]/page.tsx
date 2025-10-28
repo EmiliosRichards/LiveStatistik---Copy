@@ -228,7 +228,7 @@ export default function AgentDetailPage() {
             totalCalls: a.calls,
             reachRate: a.calls ? (a.completed / a.calls) * 100 : 0,
             outcomes: a.success,
-            avgDuration: a.completed ? (a.gz / a.completed) / 60 : 0,
+            avgDuration: a.completed ? (a.gz / a.completed) : 0,
             totalCompleted: a.completed,
             totalSuccess: a.success,
             wz: a.wz, gz: a.gz, nbz: a.nbz, vbz: a.vbz, az: a.az,

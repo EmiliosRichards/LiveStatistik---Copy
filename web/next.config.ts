@@ -35,6 +35,7 @@ const nextConfig: NextConfig = {
         api("/api/kpis"),
         api("/api/monthly-call-trends"),
         api("/api/outcome-distribution"),
+        { source: "/api/stats/:path*", destination: `${target}/api/stats/:path*` },
         api("/api/statistics"),
         api("/api/project-targets"),
         api("/api/cyprus-time"),

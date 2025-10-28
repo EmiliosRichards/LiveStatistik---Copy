@@ -433,7 +433,7 @@ export default function CampaignDetailPage() {
                     <div>
                       <div className="text-sm text-slate-600">{t('campaign.avgDurationMin')}</div>
                       <div className="text-lg font-semibold text-slate-900 tabular-nums">
-                        {stats.completed ? ((stats.gz / stats.completed) / 60).toFixed(2) : '0.00'}
+                        {stats.completed ? (stats.gz / stats.completed).toFixed(2) : '0.00'}
                       </div>
                     </div>
                     <div>
@@ -674,6 +674,7 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
   const [showAudio, setShowAudio] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
   const [opening, setOpening] = useState(false)
+  const [copied, setCopied] = useState(false)
   
   // Find agent name from agentId
   const agent = availableAgents.find(a => a.id === call.agentId)

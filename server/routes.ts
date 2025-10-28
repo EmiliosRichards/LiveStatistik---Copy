@@ -439,6 +439,353 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // -----------------------
+  // Stats endpoints (read-only, cached)
+  // -----------------------
+  const shortCache = new Map<string, { ts: number; data: any }>();
+  const SHORT_TTL = 60_000; // 60s TTL
+  const cacheGet = (key: string) => {
+    const entry = shortCache.get(key);
+    if (!entry) return undefined;
+    if (Date.now() - entry.ts > SHORT_TTL) { shortCache.delete(key); return undefined; }
+    return entry.data;
+  };
+  const cacheSet = (key: string, data: any) => { shortCache.set(key, { ts: Date.now(), data }); };
+
+  const parseRange = (req: any) => {
+    const now = new Date();
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    const dateTo = (req.query.dateTo as string) || fmt(now);
+    const dFrom = new Date(dateTo);
+    dFrom.setDate(dFrom.getDate() - 6);
+    const dateFrom = (req.query.dateFrom as string) || fmt(dFrom);
+    return { dateFrom, dateTo };
+  };
+
+  // GET /api/stats/summary
+  app.get('/api/stats/summary', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `summary:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+
+      // Reuse KPI aggregation source
+      const kpis = await storage.getAggregatedKpisWithCache(false);
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const toD = new Date(dateTo);
+      const fromD = new Date(dateFrom);
+      const days = Math.max(1, Math.round((toD.getTime() - fromD.getTime())/86400000) + 1);
+
+      // Build comparison period (previous window of equal length)
+      const prevEnd = new Date(fromD);
+      prevEnd.setDate(fromD.getDate() - 1);
+      const prevStart = new Date(prevEnd);
+      prevStart.setDate(prevEnd.getDate() - (days - 1));
+
+      const overlaps = (weekStartStr: string, aStart: Date, aEnd: Date) => {
+        const ws = new Date(weekStartStr);
+        const we = new Date(ws); we.setDate(ws.getDate() + 6);
+        return ws <= aEnd && we >= aStart;
+      };
+
+      const aggRange = (start: Date, end: Date) => {
+        const set = kpis.filter(k => overlaps(k.week_start, start, end));
+        const total_calls = set.reduce((s, r) => s + (r.total_calls||0), 0);
+        const calls_reached = set.reduce((s, r) => s + (r.calls_reached||0), 0);
+        const positive_outcomes = set.reduce((s, r) => s + (r.positive_outcomes||0), 0);
+        const avg_call_duration_sec = set.length>0 ? set.reduce((s,r)=>s+(r.avg_call_duration_sec||0),0)/set.length : 0;
+        return { total_calls, calls_reached, positive_outcomes, avg_call_duration_sec };
+      };
+
+      const cur = aggRange(fromD, toD);
+      const prev = aggRange(prevStart, prevEnd);
+
+      const pctDelta = (curV: number, prevV: number) => prevV>0 ? ((curV - prevV)/prevV)*100 : 0;
+      const trend = (v: number) => v>=0 ? 'up' : 'down';
+
+      const reachRateCur = cur.total_calls>0 ? (cur.calls_reached/cur.total_calls)*100 : 0;
+      const reachRatePrev = prev.total_calls>0 ? (prev.calls_reached/prev.total_calls)*100 : 0;
+      const avgDurMinCur = (cur.avg_call_duration_sec/60);
+      const avgDurMinPrev = (prev.avg_call_duration_sec/60);
+      const convCur = cur.calls_reached>0 ? (cur.positive_outcomes/cur.calls_reached)*100 : 0;
+      const convPrev = prev.calls_reached>0 ? (prev.positive_outcomes/prev.calls_reached)*100 : 0;
+
+      let payload: any = {
+        totalCalls: { value: cur.total_calls, comparison: parseFloat(pctDelta(cur.total_calls, prev.total_calls).toFixed(1)), trend: trend(pctDelta(cur.total_calls, prev.total_calls)) },
+        reachRate: { value: parseFloat(reachRateCur.toFixed(1)), comparison: parseFloat(pctDelta(reachRateCur, reachRatePrev).toFixed(1)), trend: trend(pctDelta(reachRateCur, reachRatePrev)) },
+        positiveOutcomes: { value: cur.positive_outcomes, comparison: parseFloat(pctDelta(cur.positive_outcomes, prev.positive_outcomes).toFixed(1)), trend: trend(pctDelta(cur.positive_outcomes, prev.positive_outcomes)) },
+        avgDuration: { value: parseFloat(avgDurMinCur.toFixed(1)), comparison: parseFloat(pctDelta(avgDurMinCur, avgDurMinPrev).toFixed(1)), trend: trend(pctDelta(avgDurMinCur, avgDurMinPrev)) },
+        conversionRate: { value: parseFloat(convCur.toFixed(1)), comparison: parseFloat(pctDelta(convCur, convPrev).toFixed(1)), trend: trend(pctDelta(convCur, convPrev)) },
+        metadata: { dateFrom: fmt(fromD), dateTo: fmt(toD), prevFrom: fmt(prevStart), prevTo: fmt(prevEnd) }
+      };
+
+      // If KPI source is empty or zeros, fallback to aggregating statistics
+      const kpiEmpty = !kpis || kpis.length === 0 || (payload.totalCalls.value === 0 && payload.positiveOutcomes.value === 0);
+      if (kpiEmpty) {
+        try {
+          const allAgents = await storage.getAllAgents();
+          const agentIds = allAgents.map(a => a.id);
+          const sumStats = async (start: Date, end: Date) => {
+            const list: any[] = agentIds.length ? await storage.getAgentStatistics({ agentIds, dateFrom: fmt(start), dateTo: fmt(end) } as any) : [];
+            const total_calls = Array.isArray(list) ? list.reduce((s, r) => s + (r.anzahl || 0), 0) : 0;
+            const calls_reached = Array.isArray(list) ? list.reduce((s, r) => s + (r.abgeschlossen || 0), 0) : 0;
+            const positive_outcomes = Array.isArray(list) ? list.reduce((s, r) => s + (r.erfolgreich || 0), 0) : 0;
+            // External storage uses hours for gz; convert to minutes per-call average
+            const gz_total_hours = Array.isArray(list) ? list.reduce((s, r) => s + (r.gespraechszeit || 0), 0) : 0;
+            const avg_call_duration_min = calls_reached > 0 ? (gz_total_hours / calls_reached) * 60 : 0;
+            return { total_calls, calls_reached, positive_outcomes, avg_call_duration_min };
+          };
+          const curAgg = await sumStats(fromD, toD);
+          const prevAgg = await sumStats(prevStart, prevEnd);
+          const reachCur = curAgg.total_calls > 0 ? (curAgg.calls_reached / curAgg.total_calls) * 100 : 0;
+          const reachPrev = prevAgg.total_calls > 0 ? (prevAgg.calls_reached / prevAgg.total_calls) * 100 : 0;
+          const convCur2 = curAgg.calls_reached > 0 ? (curAgg.positive_outcomes / curAgg.calls_reached) * 100 : 0;
+          const convPrev2 = prevAgg.calls_reached > 0 ? (prevAgg.positive_outcomes / prevAgg.calls_reached) * 100 : 0;
+
+          payload = {
+            totalCalls: { value: curAgg.total_calls, comparison: parseFloat(pctDelta(curAgg.total_calls, prevAgg.total_calls).toFixed(1)), trend: trend(pctDelta(curAgg.total_calls, prevAgg.total_calls)) },
+            reachRate: { value: parseFloat(reachCur.toFixed(1)), comparison: parseFloat(pctDelta(reachCur, reachPrev).toFixed(1)), trend: trend(pctDelta(reachCur, reachPrev)) },
+            positiveOutcomes: { value: curAgg.positive_outcomes, comparison: parseFloat(pctDelta(curAgg.positive_outcomes, prevAgg.positive_outcomes).toFixed(1)), trend: trend(pctDelta(curAgg.positive_outcomes, prevAgg.positive_outcomes)) },
+            avgDuration: { value: parseFloat(curAgg.avg_call_duration_min.toFixed(1)), comparison: parseFloat(pctDelta(curAgg.avg_call_duration_min, prevAgg.avg_call_duration_min).toFixed(1)), trend: trend(pctDelta(curAgg.avg_call_duration_min, prevAgg.avg_call_duration_min)) },
+            conversionRate: { value: parseFloat(convCur2.toFixed(1)), comparison: parseFloat(pctDelta(convCur2, convPrev2).toFixed(1)), trend: trend(pctDelta(convCur2, convPrev2)) },
+            metadata: { dateFrom: fmt(fromD), dateTo: fmt(toD), prevFrom: fmt(prevStart), prevTo: fmt(prevEnd), fallback: true }
+          };
+        } catch (e) {
+          console.warn('⚠️ stats/summary fallback failed:', e);
+        }
+      }
+
+      cacheSet(key, payload);
+      res.json(payload);
+    } catch (error) {
+      console.error('❌ /api/stats/summary error:', error);
+      res.status(500).json({ message: 'Failed to fetch summary' });
+    }
+  });
+
+  // GET /api/stats/heatmap
+  app.get('/api/stats/heatmap', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `heatmap:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+
+      // Load all agents and projects with calls for the period
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const projectsWithCalls = await storage.getProjectsWithCalls({ agentIds, dateFrom, dateTo });
+
+      // Aggregate call details across all agents and relevant projects
+      const detailsArrays = await Promise.all(projectsWithCalls.map(pid => 
+        storage.getCallDetailsForAgents(agentIds, pid, dateFrom ? new Date(dateFrom) : undefined, dateTo ? new Date(dateTo) : undefined)
+      ));
+      const all = detailsArrays.flat();
+
+      // Build weekday (0-6) × hour (0-23) aggregation in Cyprus time (+3h)
+      const map: Record<string, { weekday: number; hour: number; reached: number; positive: number }> = {};
+      for (const d of all) {
+        if (!d.callStart) continue;
+        const cyprus = new Date(new Date(d.callStart).getTime() + 3*60*60*1000);
+        const weekday = cyprus.getDay();
+        const hour = cyprus.getHours();
+        const keyCell = `${weekday}-${hour}`;
+        if (!map[keyCell]) map[keyCell] = { weekday, hour, reached: 0, positive: 0 };
+        const cat = String(d.outcomeCategory || '');
+        if (cat !== 'offen') map[keyCell].reached += 1;
+        if (cat === 'positive') map[keyCell].positive += 1;
+      }
+
+      const data = Object.values(map)
+        .sort((a,b)=> a.weekday===b.weekday ? a.hour-b.hour : a.weekday-b.weekday)
+        .map(c => ({ ...c, rate: c.reached>0 ? parseFloat(((c.positive/c.reached)*100).toFixed(1)) : 0 }));
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/heatmap error:', error);
+      res.status(500).json({ message: 'Failed to fetch heatmap' });
+    }
+  });
+
+  // GET /api/stats/positive-mix
+  app.get('/api/stats/positive-mix', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `positive-mix:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const projectsWithCalls = await storage.getProjectsWithCalls({ agentIds, dateFrom, dateTo });
+      const detailsArrays = await Promise.all(projectsWithCalls.map(pid => 
+        storage.getCallDetailsForAgents(agentIds, pid, dateFrom ? new Date(dateFrom) : undefined, dateTo ? new Date(dateTo) : undefined)
+      ));
+      const all = detailsArrays.flat();
+      const pos = all.filter(d => String(d.outcomeCategory||'') === 'positive');
+      const totalPos = pos.length || 0;
+      const counts = new Map<string, number>();
+      for (const d of pos) {
+        const label = d.outcome || 'Unknown';
+        counts.set(label, (counts.get(label)||0)+1);
+      }
+      const data = Array.from(counts.entries()).map(([label,count])=>({ label, count, pctOfPositive: totalPos? parseFloat(((count/totalPos)*100).toFixed(1)) : 0 }))
+        .sort((a,b)=> b.count - a.count);
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/positive-mix error:', error);
+      res.status(500).json({ message: 'Failed to fetch positive mix' });
+    }
+  });
+
+  // GET /api/stats/agent-improvement
+  app.get('/api/stats/agent-improvement', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `agent-improvement:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const toD = new Date(dateTo); const fromD = new Date(dateFrom);
+      const days = Math.max(1, Math.round((toD.getTime()-fromD.getTime())/86400000)+1);
+      const prevEnd = new Date(fromD); prevEnd.setDate(fromD.getDate()-1);
+      const prevStart = new Date(prevEnd); prevStart.setDate(prevEnd.getDate()-(days-1));
+
+      const listCur: any[] = agentIds.length ? await storage.getAgentStatistics({ agentIds, dateFrom, dateTo } as any) : [];
+      const listPrev: any[] = agentIds.length ? await storage.getAgentStatistics({ agentIds, dateFrom: fmt(prevStart), dateTo: fmt(prevEnd) } as any) : [];
+
+      const groupByAgent = (list: any[]) => {
+        const m = new Map<string, { reached:number; positive:number }>();
+        list.forEach(r => {
+          const a = m.get(r.agentId) || { reached:0, positive:0 };
+          a.reached += r.abgeschlossen || 0; a.positive += r.erfolgreich || 0; m.set(r.agentId, a);
+        });
+        return m;
+      };
+      const curM = groupByAgent(listCur);
+      const prevM = groupByAgent(listPrev);
+      const data = allAgents.map(a => {
+        const cur = curM.get(a.id) || { reached:0, positive:0 };
+        const prev = prevM.get(a.id) || { reached:0, positive:0 };
+        const lastRate = cur.reached>0 ? (cur.positive/cur.reached)*100 : 0;
+        const prevRate = prev.reached>0 ? (prev.positive/prev.reached)*100 : 0;
+        return { agentId: a.id, agentName: a.name, lastRate: parseFloat(lastRate.toFixed(1)), prevRate: parseFloat(prevRate.toFixed(1)), delta: parseFloat((lastRate - prevRate).toFixed(1)) };
+      }).sort((a,b)=> b.delta - a.delta);
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/agent-improvement error:', error);
+      res.status(500).json({ message: 'Failed to fetch agent improvement' });
+    }
+  });
+
+  // GET /api/stats/efficiency
+  app.get('/api/stats/efficiency', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `efficiency:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const projectsWithCalls = await storage.getProjectsWithCalls({ agentIds, dateFrom, dateTo });
+      const detailsArrays = await Promise.all(projectsWithCalls.map(pid => 
+        storage.getCallDetailsForAgents(agentIds, pid, dateFrom ? new Date(dateFrom) : undefined, dateTo ? new Date(dateTo) : undefined)
+      ));
+      const all = detailsArrays.flat();
+      let posDurS = 0, posCnt = 0, othDurS = 0, othCnt = 0;
+      let withNotesPos = 0, withNotesReached = 0, withoutNotesPos = 0, withoutNotesReached = 0;
+      for (const d of all) {
+        const sec = Math.max(0, Math.round(d.duration || 0));
+        const cat = String(d.outcomeCategory || '');
+        const hasNotes = !!d.notes && String(d.notes).trim() !== '';
+        if (cat === 'positive') { posDurS += sec; posCnt += 1; }
+        else if (cat && cat !== 'offen') { othDurS += sec; othCnt += 1; }
+        if (cat && cat !== 'offen') {
+          if (hasNotes) { withNotesReached += 1; if (cat === 'positive') withNotesPos += 1; }
+          else { withoutNotesReached += 1; if (cat === 'positive') withoutNotesPos += 1; }
+        }
+      }
+      const positiveMin = posCnt>0 ? (posDurS/posCnt)/60 : 0;
+      const otherMin = othCnt>0 ? (othDurS/othCnt)/60 : 0;
+      const withNotesRate = withNotesReached>0 ? (withNotesPos/withNotesReached)*100 : 0;
+      const withoutNotesRate = withoutNotesReached>0 ? (withoutNotesPos/withoutNotesReached)*100 : 0;
+      const lift = withNotesRate - withoutNotesRate;
+      const data = { avgDuration: { positiveMin: parseFloat(positiveMin.toFixed(1)), otherMin: parseFloat(otherMin.toFixed(1)) }, notesEffect: { withNotesRate: parseFloat(withNotesRate.toFixed(1)), withoutNotesRate: parseFloat(withoutNotesRate.toFixed(1)), lift: parseFloat(lift.toFixed(1)) } };
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/efficiency error:', error);
+      res.status(500).json({ message: 'Failed to fetch efficiency' });
+    }
+  });
+
+  // GET /api/stats/campaign-effectiveness
+  app.get('/api/stats/campaign-effectiveness', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `campaign-effectiveness:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const stats: any[] = agentIds.length ? await storage.getAgentStatistics({ agentIds, dateFrom, dateTo } as any) : [];
+      const byProject = new Map<string, { projectId: string; calls:number; reached:number; positive:number }>();
+      stats.forEach(s => {
+        const p = byProject.get(s.projectId) || { projectId: s.projectId, calls:0, reached:0, positive:0 };
+        p.calls += s.anzahl || 0; p.reached += s.abgeschlossen || 0; p.positive += s.erfolgreich || 0; byProject.set(s.projectId, p);
+      });
+      const overall = Array.from(byProject.values()).reduce((acc, p)=>{ acc.reached += p.reached; acc.positive += p.positive; return acc; }, { reached:0, positive:0 });
+      const overallRate = overall.reached>0 ? (overall.positive/overall.reached)*100 : 0;
+      const projects = await storage.getAllProjects();
+      const nameById = new Map(projects.map(p=>[p.id, p.name] as const));
+      const data = Array.from(byProject.values()).map(p => {
+        const rate = p.reached>0 ? (p.positive/p.reached)*100 : 0;
+        return { projectId: p.projectId, projectName: nameById.get(p.projectId) || p.projectId, rate: parseFloat(rate.toFixed(1)), lift: parseFloat((rate - overallRate).toFixed(1)) };
+      }).sort((a,b)=> b.lift - a.lift);
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/campaign-effectiveness error:', error);
+      res.status(500).json({ message: 'Failed to fetch campaign effectiveness' });
+    }
+  });
+
+  // GET /api/stats/targets-progress
+  app.get('/api/stats/targets-progress', async (req, res) => {
+    try {
+      const { dateFrom, dateTo } = parseRange(req);
+      const key = `targets-progress:${dateFrom}:${dateTo}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') return res.json(cached);
+      const targets = await storage.getAllProjectTargets?.()
+        .catch?.(()=>[]) as any[] || [];
+      if (!targets || targets.length === 0) { cacheSet(key, []); return res.json([]); }
+      const allAgents = await storage.getAllAgents();
+      const agentIds = allAgents.map(a => a.id);
+      const stats: any[] = agentIds.length ? await storage.getAgentStatistics({ agentIds, dateFrom, dateTo } as any) : [];
+      const posByProject = new Map<string, number>();
+      stats.forEach(s => { posByProject.set(s.projectId, (posByProject.get(s.projectId)||0) + (s.erfolgreich || 0)); });
+      const projects = await storage.getAllProjects();
+      const nameById = new Map(projects.map(p=>[p.id, p.name] as const));
+      const data = targets.map(t => {
+        const projectId = t.projectId || t.project_id || t.id;
+        const target = t.targetValue ?? t.target ?? 0;
+        const actualPositives = posByProject.get(projectId) || 0;
+        const pct = target>0 ? (actualPositives/target)*100 : 0;
+        return { projectId, projectName: nameById.get(projectId) || projectId, target, actualPositives, pct: parseFloat(pct.toFixed(1)), projectedPct: parseFloat(pct.toFixed(1)) };
+      }).sort((a,b)=> (b.pct - a.pct));
+      cacheSet(key, data);
+      res.json(data);
+    } catch (error) {
+      console.error('❌ /api/stats/targets-progress error:', error);
+      res.status(500).json({ message: 'Failed to fetch targets progress' });
+    }
+  });
+
   // Get agent statistics with filters
   // Simple in-memory cache for statistics to speed up repeated queries
   const statsCache = new Map<string, { ts: number; data: any }>();

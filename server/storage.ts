@@ -494,7 +494,8 @@ export class CSVStorage implements IStorage {
           abgeschlossen: row.abgeschlossen,
           erfolgreich: row.erfolgreich,
           wartezeit: row['WZ/h'],
-          gespraechszeit: row['GZ/h'],
+          // Convert hours to minutes for internal consistency if frontend expects minutes
+          gespraechszeit: Math.round((row['GZ/h'] || 0) * 60),
           nachbearbeitungszeit: row['NBZ/h'],
           vorbereitungszeit: row['VBZ/h'],
           erfolgProStunde: row['Erfolg/h'],
