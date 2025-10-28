@@ -31,10 +31,10 @@ export default function SignIn() {
         {/* Sign-in Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Email and Password Fields */}
-          <div className="space-y-4 mb-6">
+          <div className="space-y-4 mb-6" suppressHydrationWarning>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-              <div className="relative">
+              <div className="relative" suppressHydrationWarning>
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="w-5 h-5 text-slate-400" />
                 </div>
@@ -50,7 +50,7 @@ export default function SignIn() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
-              <div className="relative">
+              <div className="relative" suppressHydrationWarning>
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="w-5 h-5 text-slate-400" />
                 </div>
