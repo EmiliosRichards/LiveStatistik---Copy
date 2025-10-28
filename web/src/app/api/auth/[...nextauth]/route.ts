@@ -5,28 +5,49 @@ import Credentials from 'next-auth/providers/credentials';
 const GROUP_ID_USERS = process.env.GROUP_ID_USERS;
 const GROUP_ID_ADMINS = process.env.GROUP_ID_ADMINS;
 
+// Build providers array conditionally
+const providers: any[] = [];
+
+// Only add Azure AD if credentials are properly configured
+if (
+  process.env.AZURE_AD_CLIENT_ID && 
+  process.env.AZURE_AD_CLIENT_SECRET && 
+  process.env.AZURE_AD_TENANT_ID &&
+  process.env.AZURE_AD_CLIENT_ID !== 'NA' &&
+  process.env.AZURE_AD_CLIENT_SECRET !== 'NA' &&
+  process.env.AZURE_AD_TENANT_ID !== 'NA'
+) {
+  providers.push(AzureAD({
+    clientId: process.env.AZURE_AD_CLIENT_ID!,
+    clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+    tenantId: process.env.AZURE_AD_TENANT_ID!,
+  }));
+  console.log('✅ Azure AD authentication enabled');
+} else {
+  console.log('⚠️ Azure AD credentials not configured - skipping Azure AD provider');
+}
+
+// Always add Guest credentials if enabled
+if (process.env.ALLOW_GUEST === 'true') {
+  providers.push(Credentials({
+    name: 'Guest',
+    credentials: {
+      username: { label: 'Username', type: 'text' },
+      password: { label: 'Password', type: 'password' }
+    },
+    async authorize(creds) {
+      if (creds?.username === 'guest') {
+        return { id: 'guest', name: 'Guest', email: 'guest@local' } as any;
+      }
+      return null;
+    }
+  }));
+  console.log('✅ Guest authentication enabled');
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    AzureAD({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID!,
-    }),
-    Credentials({
-      name: 'Guest',
-      credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' }
-      },
-      async authorize(creds) {
-        if (process.env.ALLOW_GUEST === 'true' && creds?.username === 'guest') {
-          return { id: 'guest', name: 'Guest', email: 'guest@local' } as any;
-        }
-        return null;
-      }
-    })
-  ],
+  providers,
   session: { strategy: 'jwt' as const, maxAge: 60 * 60 * 8 },
   pages: { signIn: '/signin' },
   callbacks: {
