@@ -109,10 +109,12 @@ app.get("/healthz", (_req, res) => {
     log(`serving on port ${port}`);
     
     // Pre-warm chart cache in background (don't block startup)
+    // In production, delay significantly to ensure Next.js starts first
+    const cacheWarmerDelay = process.env.NODE_ENV === 'production' ? 90000 : 5000;
     setTimeout(() => {
       warmChartCache().catch(err => {
         console.error('Cache warmer failed:', err);
       });
-    }, 5000); // Wait 5s for database initialization to complete
+    }, cacheWarmerDelay); // Wait for servers to be fully ready
   });
 })();

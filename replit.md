@@ -173,6 +173,13 @@ npm run db:push
 
 ## Recent changes (October 2025)
 
+### Deployment optimization (October 28)
+- **Cache warmer delay**: Changed cache warmer to wait 90 seconds in production (vs 5 seconds in dev)
+  - **Problem**: Cache warmer consuming CPU/memory during startup prevented Next.js from opening port 5000 in time, causing Replit Autoscale deployment timeouts
+  - **Solution**: Delay cache warming until after both Express and Next.js are fully started and serving requests
+  - **Trade-off**: First chart load in production takes 2-5 seconds (database query), subsequent loads are instant (cached)
+  - **Dev behavior**: Still pre-warms after 5 seconds for fast local testing
+
 ### Authentication infrastructure (October 28)
 - **Profile menu**: DashboardHeader now uses NextAuth `useSession` to display current user's name and role
 - **Sign-out**: Enabled sign-out button that redirects to `/signin` page after logout
