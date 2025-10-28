@@ -23,7 +23,7 @@ export default function SignIn() {
               alt="Manuav" 
               width={150}
               height={48}
-              style={{ height: 'auto', width: 'auto', maxHeight: '48px', filter: 'invert(0)' }}
+              style={{ height: 'auto', width: 'auto', maxHeight: '48px', filter: 'invert(1)' }}
               priority
               unoptimized
             />
