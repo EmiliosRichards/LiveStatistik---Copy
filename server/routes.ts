@@ -302,11 +302,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`   Previous 7 days: ${formatDate(previous7DaysStart)} to ${formatDate(previous7DaysEnd)}`);
       
       // Aggregate data for each 7-day period
+      // Note: kpiData has week_start (Monday), but we need to check if the week overlaps with our period
       const aggregatePeriod = (startDate: Date, endDate: Date) => {
         const start = formatDate(startDate);
         const end = formatDate(endDate);
         
-        const periodData = kpiData.filter(d => d.week_start >= start && d.week_start <= end);
+        // A week starting on date X contains data from X to X+6 days
+        // We include a week if it overlaps with our target period
+        const periodData = kpiData.filter(d => {
+          const weekStart = new Date(d.week_start);
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 6); // Week covers 7 days (start + 6)
+          
+          const targetStart = new Date(start);
+          const targetEnd = new Date(end);
+          
+          // Check if week overlaps with target period
+          return weekStart <= targetEnd && weekEnd >= targetStart;
+        });
+        
+        console.log(`   📅 Found ${periodData.length} week(s) overlapping ${start} to ${end}:`, periodData.map(d => d.week_start));
         
         return {
           total_calls: periodData.reduce((sum, d) => sum + d.total_calls, 0),
