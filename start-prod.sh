@@ -40,5 +40,8 @@ done
 
 echo "🚀 Starting Next.js app on port 5000 (external)..."
 # Start Next.js in foreground to keep the process alive
-# Pass PORT via environment variable (Next.js respects this)
-cd web && exec PORT=5000 NODE_ENV=production npm start
+# Set environment variables before exec
+cd web
+export PORT=5000
+export NODE_ENV=production
+exec npm start

@@ -62,15 +62,16 @@ PREVIEW_PASS="<password>"
 ---
 
 ### ❌ Issue: Deployment times out waiting for port
-**Cause:** Next.js taking too long to start or crashing
+**Cause:** Multiple issues can cause this
 
-**Fix:**
-1. **CRITICAL:** Set these secrets BEFORE deploying:
+**Common Fixes:**
+1. **Multiple ports in .replit** - Remove all port configs except port 5000
+2. **Missing secrets:**
    - `NEXTAUTH_SECRET` (generate with `openssl rand -base64 32`)
    - `NEXTAUTH_URL` (your deployed URL, e.g., `https://your-app.replit.app`)
-2. Check deployment logs for specific Next.js startup errors
-3. Verify all required database secrets are set
-4. If Next.js is crashing, look for "Error:" messages in deployment logs
+3. **Shell syntax errors** - Ensure `start-prod.sh` exports env vars before `exec`
+4. **Cache warmer timing** - Should delay 90s in production
+5. Check deployment logs for specific errors
 
 ---
 
