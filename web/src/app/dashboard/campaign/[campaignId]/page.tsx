@@ -617,6 +617,7 @@ export default function CampaignDetailPage() {
                         <th className="py-3 px-4 text-center font-medium">A</th>
                         <th className="py-3 px-4 text-center font-medium">T</th>
                         <th className="py-3 px-4 text-center font-medium">N</th>
+                        <th className="py-3 px-4 text-center font-medium">Details</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
@@ -672,7 +673,7 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
   const [error, setError] = useState<string | null>(null)
   const [showAudio, setShowAudio] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [opening, setOpening] = useState(false)
   
   // Find agent name from agentId
   const agent = availableAgents.find(a => a.id === call.agentId)
@@ -766,6 +767,29 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
     }
   }
 
+  const openDetails = async () => {
+    try {
+      setOpening(true)
+      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+      const agentId = String(call.agentId || '')
+      const projectId = String(call.projectId || '')
+      const dateFrom = params.get('dateFrom') || ''
+      const dateTo = params.get('dateTo') || ''
+      const timeFrom = params.get('timeFrom') || ''
+      const timeTo = params.get('timeTo') || ''
+      const sp = new URLSearchParams()
+      if (agentId) sp.set('agentId', agentId)
+      if (projectId) sp.set('projectId', projectId)
+      if (dateFrom) sp.set('dateFrom', dateFrom)
+      if (dateTo) sp.set('dateTo', dateTo)
+      if (timeFrom) sp.set('timeFrom', timeFrom)
+      if (timeTo) sp.set('timeTo', timeTo)
+      window.location.href = `/call/${encodeURIComponent(call.id)}?${sp.toString()}`
+    } finally {
+      setOpening(false)
+    }
+  }
+
   const dt = new Date(call.callStart)
   const datum = isNaN(dt.getTime()) ? '—' : dt.toLocaleDateString()
   const zeit = isNaN(dt.getTime()) ? '—' : dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -780,7 +804,7 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
 
   return (
     <>
-      <tr className="hover:bg-slate-50">
+      <tr className="hover:bg-slate-50 align-middle">
         <td 
           className="py-3 px-4 text-slate-700 tabular-nums font-mono text-xs cursor-pointer hover:bg-blue-50 hover:text-blue-700 transition-colors relative group" 
           title={copied ? 'Copied!' : `Click to copy: ${fullId}`}
@@ -824,10 +848,19 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
           <button className={`p-1 rounded ${call.recordingUrl ? 'hover:bg-slate-100 text-slate-700' : 'text-slate-300 cursor-not-allowed'}`} onClick={() => call.recordingUrl && setShowAudio(v=>!v)}><Volume2 className="w-4 h-4" /></button>
         </td>
         <td className="py-3 px-4 text-center">
-          <button className={`p-1 rounded hover:bg-slate-100 ${transcribing ? 'text-slate-300' : 'text-slate-700'}`} onClick={startTranscription} disabled={transcribing}><FileText className="w-4 h-4" /></button>
+          <button className={`inline-flex items-center gap-1 px-2 py-1 rounded border ${transcribing ? 'text-slate-300 border-slate-200' : 'text-slate-700 border-slate-300 hover:bg-slate-50'}`} onClick={startTranscription} disabled={transcribing}>
+            {transcribing ? (
+              <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded-full border-2 border-current border-t-transparent animate-spin" aria-hidden></span><span className="text-xs">Transcribing…</span></span>
+            ) : (
+              <span className="inline-flex items-center gap-1"><FileText className="w-4 h-4" /><span className="text-xs">Transcribe</span></span>
+            )}
+          </button>
         </td>
         <td className="py-3 px-4 text-center">
           <button className={`p-1 rounded ${call.notes ? 'hover:bg-slate-100 text-slate-700' : 'text-slate-300 cursor-not-allowed'}`} onClick={() => call.notes && setShowNotes(v=>!v)}><StickyNote className="w-4 h-4" /></button>
+        </td>
+        <td className="py-3 px-4 text-center">
+          <button className="px-2 py-1 text-xs rounded border border-slate-300 hover:bg-slate-50" onClick={openDetails} disabled={opening}>View</button>
         </td>
       </tr>
       {(showAudio && call.recordingUrl) && (
