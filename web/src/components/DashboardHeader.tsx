@@ -3,9 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { HelpCircle, Bell, User, ChevronDown } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function DashboardHeader() {
   const { language, setLanguage, t } = useLanguage()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [showHelpModal, setShowHelpModal] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -68,6 +72,40 @@ export default function DashboardHeader() {
     setShowNotifications(false)
     setShowProfileMenu(prev => !prev)
   }
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/signin' })
+  }
+
+  // Get user info from session
+  const getUserInfo = () => {
+    if (status === 'loading') {
+      return { name: '...', fullName: 'Loading...', role: '' }
+    }
+    
+    if (!session?.user) {
+      return { name: 'Guest', fullName: 'Guest User', role: 'Guest' }
+    }
+
+    const userWithRoles = session.user as { name?: string; email?: string; roles?: string[] }
+    const roles = userWithRoles.roles || []
+    
+    // Determine role display
+    let role = 'Member'
+    if (roles.includes('guest')) {
+      role = 'Guest'
+    } else if (roles.includes('admin')) {
+      role = 'Admin'
+    }
+    
+    // Extract first name from full name or email
+    const fullName = userWithRoles.name || userWithRoles.email || 'User'
+    const firstName = fullName.split(' ')[0] || fullName.split('@')[0]
+    
+    return { name: firstName, fullName, role }
+  }
+
+  const userInfo = getUserInfo()
 
   return (
     <>
@@ -136,11 +174,12 @@ export default function DashboardHeader() {
                 aria-label={t('header.account')} 
                 onClick={toggleProfile}
                 className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100"
+                data-testid="button-profile-menu"
               >
                 <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
                   <User className="w-4 h-4 text-slate-600" />
                 </div>
-                <span className="hidden sm:inline text-sm text-slate-700">Emilios</span>
+                <span className="hidden sm:inline text-sm text-slate-700" data-testid="text-profile-name">{userInfo.name}</span>
                 <ChevronDown className="w-4 h-4 text-slate-500" />
               </button>
 
@@ -151,14 +190,15 @@ export default function DashboardHeader() {
                 >
                   <div className="px-4 py-3 border-b border-slate-200">
                     <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">{t('header.currentAccount')}</p>
-                    <p className="font-semibold text-slate-800">Emilios Richards</p>
-                    <p className="text-sm text-slate-600">{t('header.member')}</p>
+                    <p className="font-semibold text-slate-800" data-testid="text-profile-fullname">{userInfo.fullName}</p>
+                    <p className="text-sm text-slate-600" data-testid="text-profile-role">{userInfo.role}</p>
                   </div>
 
                   <div className="py-2">
                     <button 
                       disabled
                       className="w-full px-4 py-2.5 text-left flex items-center gap-3 text-slate-400 cursor-not-allowed"
+                      data-testid="button-account-settings"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -168,8 +208,9 @@ export default function DashboardHeader() {
                     </button>
 
                     <button 
-                      disabled
-                      className="w-full px-4 py-2.5 text-left flex items-center gap-3 text-slate-400 cursor-not-allowed border-t border-slate-100"
+                      onClick={handleSignOut}
+                      className="w-full px-4 py-2.5 text-left flex items-center gap-3 text-slate-700 hover:bg-slate-50 border-t border-slate-100 transition-colors"
+                      data-testid="button-signout"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

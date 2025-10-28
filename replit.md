@@ -4,11 +4,14 @@
 
 A full-stack, real-time(ish) dashboard for team leaders to monitor call-center performance. The **Next.js app** (`web/`) serves as the main frontend on port 5000, proxying API requests to the **Express backend** (`server/`) running on port 5001. The backend aggregates live data from a read-only external Postgres database. The UI supports agent/project filtering, date and time windows (Cyprus time), call outcome drill-downs, campaign management, and detailed analytics.
 
+**Authentication:** NextAuth with Azure AD (Microsoft) and optional guest access. User roles (Admin, Member, Guest) control access and are displayed in the header.
+
 **Note:** The `client/` directory contains the legacy React SPA and is no longer actively developed.
 
 ## Stack at a glance
 
-- **Frontend**: Next.js 15 (Turbopack) + TypeScript, React 19, Tailwind CSS, NextAuth
+- **Frontend**: Next.js 15 (Turbopack) + TypeScript, React 19, Tailwind CSS
+- **Authentication**: NextAuth (Azure AD + optional guest credentials)
 - **Backend**: Express + TypeScript on port 5001, serves API endpoints
 - **Architecture**: Next.js proxies `/api/*` requests to Express backend via rewrites in `next.config.ts`
 - **Data model**: Shared types and Zod validation in `shared/schema.ts`
@@ -46,10 +49,21 @@ Required for external read-only database:
 - `EXTERNAL_DB_USER`
 - `EXTERNAL_DB_PASSWORD`
 
+Required for authentication:
+- `NEXTAUTH_SECRET`: Secret for NextAuth JWT encryption (generate with `openssl rand -base64 32`)
+- `NEXTAUTH_URL`: Full URL of deployed app (e.g., `https://your-app.replit.app`)
+- `AZURE_AD_CLIENT_ID`: Azure AD application (client) ID
+- `AZURE_AD_CLIENT_SECRET`: Azure AD client secret
+- `AZURE_AD_TENANT_ID`: Azure AD tenant ID
+- `GROUP_ID_ADMINS`: Azure AD group ID for admin users
+- `GROUP_ID_USERS`: Azure AD group ID for regular users
+
 Optional/conditional:
 - `PORT`: Server port (defaults to 5000)
 - `DIALFIRE_API_TOKEN`: Enables Dialfire campaign title mapping/connectivity checks
 - `TRANSCRIPTION_API_KEY`: Enables transcription endpoints
+- `ALLOW_GUEST=true`: Enables guest sign-in (for development/testing)
+- `NEXT_PUBLIC_ALLOW_GUEST=true`: Shows guest sign-in button on UI
 - `PREVIEW_BASIC_AUTH=1`, `PREVIEW_USER`, `PREVIEW_PASS`: Basic Auth gate for preview environments
 - `DATABASE_URL`: Neon/Drizzle (only used if switching to internal DB mode)
 
@@ -158,6 +172,13 @@ npm run db:push
 - TypeScript across server and client. Shared Zod/Drizzle types in `shared`. Prefer descriptive names, early returns, and minimal deep nesting.
 
 ## Recent changes (October 2025)
+
+### Authentication infrastructure (October 28)
+- **Profile menu**: DashboardHeader now uses NextAuth `useSession` to display current user's name and role
+- **Sign-out**: Enabled sign-out button that redirects to `/signin` page after logout
+- **User roles**: Displays "Admin", "Member", or "Guest" based on Azure AD group membership
+- **Guest users**: When signed in as guest, profile shows "Guest" name with "Guest" role
+- **Account Settings**: Remains disabled for now (future enhancement)
 
 ### Production build fixes (October 28)
 - **Fixed hydration errors**: Added `suppressHydrationWarning` to signin page input fields to prevent errors caused by browser extensions (LastPass, etc.) injecting DOM elements
