@@ -1,0 +1,301 @@
+Preview your app here
+The app is currently not running.
+
+Run
+to see the results of your app.
+Results of your code will appear here when you run
+Default
+Workflows
+Secrets are accessible to anyone who has access to this App. To restrict secret access, you must update App invite permissions. For more information, visit our documentation.
+SESSION_SECRET
+9F9+y8WwVZGI4vMKhIcKbdG63ITdEsxwWzjIqtKKYcg7PVtfJFtv6bEQxBsSrGjrhKQaBW04h2Pamsty2s/fJg==
+AZURE_AD_CLIENT_ID
+NA
+AZURE_AD_CLIENT_SECRET
+NA
+AZURE_AD_TENANT_ID
+NA
+DIALFIRE_API_TOKEN
+UM9hxZfn03ARlzLr7PGLwtc-CNoOtVoqld0Peq3DO_0SEFnUKSdGPEdQWiu26B8K-mP7NGqflfWyd4JCSRACZ_qKxJ_-dTB1k8co7u4fu1
+EXTERNAL_DB_DATABASE
+dialfire
+EXTERNAL_DB_HOST
+185.216.75.247
+EXTERNAL_DB_PASSWORD
+Kii366
+EXTERNAL_DB_USER
+kubrakiv
+GROUP_ID_ADMINS
+NA
+GROUP_ID_USERS
+NA
+NEXTAUTH_SECRET
+development_only_32_char_secret_1
+GOOGLE_SHEETS_ID
+1X0RibWG91l3P9UwD6HIDI8U3_PDA4LhQkVs494SpnIc
+GOOGLE_SHEETS_TAB_NEW
+campaigns_new
+GOOGLE_SHEETS_TAB_ACTIVE
+campaigns_active
+GOOGLE_SHEETS_TAB_ARCHIVED
+campaigns_archived
+TRANSCRIPTION_API_KEY
+6f3183adee8b8e296a1101dd414d4c0cc5c26d35411747a5
+ALLOW_GUEST
+••••••••
+NEXT_PUBLIC_ALLOW_GUEST
+••••••••
+NEXTAUTH_URL
+https://live-statistik-v2-ls120.replit.app
+Enable "Accessible Terminal" in Workspace Settings to use a screen reader with the shell.
+Remote Updates
+origin/main•upstream
+last fetched 27 min ago
+2 commits to push
+Commit
+There are no changes to commit.
+Search
+Time
+Deployment
+Source
+Log
+2025-10-28 09:05:36.71
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:40.14
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:40.14
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:40.14
+5c5a535a
+User
+}
+2025-10-28 09:05:40.14
+5c5a535a
+User
+Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:40.14
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:40.14
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:40.14
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:40.14
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:40.14
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:40.14
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:40.14
+5c5a535a
+User
+}
+2025-10-28 09:05:44.32
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:44.32
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:44.32
+5c5a535a
+User
+}
+2025-10-28 09:05:44.34
+5c5a535a
+User
+Failed to proxy http://127.0.0.1:5001/api/outcome-distribution?dateFrom=2024-12-31&dateTo=2025-10-28 Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:44.34
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:44.34
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:44.34
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:44.34
+5c5a535a
+User
+}
+2025-10-28 09:05:44.34
+5c5a535a
+User
+Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:44.34
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:44.34
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:44.34
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:44.34
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:44.34
+5c5a535a
+User
+}
+2025-10-28 09:05:45.71
+5c5a535a
+User
+Failed to proxy http://127.0.0.1:5001/api/agents Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:45.71
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:45.71
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:45.71
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:45.71
+5c5a535a
+User
+}
+2025-10-28 09:05:45.71
+5c5a535a
+User
+Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:45.71
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:45.71
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:45.71
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:45.71
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:45.71
+5c5a535a
+User
+}
+2025-10-28 09:05:46.95
+3a719b13
+System
+system: received signal terminated
+2025-10-28 09:05:47.55
+5c5a535a
+User
+Failed to proxy http://127.0.0.1:5001/api/projects Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:47.55
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:47.55
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:47.55
+5c5a535a
+User
+code: 'ECONNREFUSED',
+2025-10-28 09:05:47.55
+5c5a535a
+User
+syscall: 'connect',
+2025-10-28 09:05:47.55
+5c5a535a
+User
+address: '127.0.0.1',
+2025-10-28 09:05:47.55
+5c5a535a
+User
+port: 5001
+2025-10-28 09:05:47.55
+5c5a535a
+User
+}
+2025-10-28 09:05:47.55
+5c5a535a
+User
+Error: connect ECONNREFUSED 127.0.0.1:5001
+2025-10-28 09:05:47.55
+5c5a535a
+User
+at (Error: connect ECONNREFUSED 127.0.0.1:5001) {
+2025-10-28 09:05:47.55
+5c5a535a
+User
+errno: -111,
+2025-10-28 09:05:47.55
+5c5a535a
+User
+code: 'ECONNREFUSED',
