@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureAD from 'next-auth/providers/azure-ad';
 import Credentials from 'next-auth/providers/credentials';
 
 const GROUP_ID_USERS = process.env.GROUP_ID_USERS;
 const GROUP_ID_ADMINS = process.env.GROUP_ID_ADMINS;
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     AzureAD({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
@@ -26,7 +26,7 @@ export const authOptions = {
       }
     })
   ],
-  session: { strategy: 'jwt', maxAge: 60 * 60 * 8 },
+  session: { strategy: 'jwt' as const, maxAge: 60 * 60 * 8 },
   pages: { signIn: '/signin' },
   callbacks: {
     async jwt({ token, account, user }) {
@@ -62,7 +62,7 @@ export const authOptions = {
       return true;
     }
   }
-} as const;
+};
 
-const handler = NextAuth(authOptions as any);
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

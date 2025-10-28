@@ -1,10 +1,13 @@
 'use client'
 
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { fetchStatistics, fetchAgents, fetchProjects, type Statistics } from '@/lib/api'
-import { HelpCircle, Bell, User, ChevronDown, AlertTriangle } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 
 export default function ResultsPage() {
   const searchParams = useSearchParams()
@@ -76,30 +79,7 @@ export default function ResultsPage() {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-slate-100">
-      {/* Header (same style as dashboard) */}
-      <header className="bg-white border-b border-border app-header sticky top-0 z-10">
-        <div className="w-full px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-baseline gap-3">
-              <a href="/dashboard" className="inline-flex items-center" aria-label="Manuav Internal App">
-                <img src="/Manuav-web-site-LOGO.png" alt="Manuav" className="h-8 w-auto invert" />
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button aria-label="Help" className="p-2 rounded hover:bg-slate-100"><HelpCircle className="w-5 h-5 text-slate-700" /></button>
-            <button aria-label="Notifications" className="relative p-2 rounded hover:bg-slate-100"><Bell className="w-5 h-5 text-slate-700" /><span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span></button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100"><div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center"><User className="w-4 h-4 text-slate-600" /></div><span className="hidden sm:inline text-sm text-slate-700">Emilios</span><ChevronDown className="w-4 h-4 text-slate-500" /></button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button className="text-sm text-slate-600 hover:text-slate-900">DE</button>
-            <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900">EN</button>
-          </div>
-        </div>
-      </header>
-
+    <>
       {/* Warning banner for missing agents */}
       {missingAgents.length > 0 && (
         <div className="mx-6 mt-4">
@@ -138,7 +118,7 @@ export default function ResultsPage() {
           )}
         </div>
       </main>
-    </div>
+    </>
   )
 }
 

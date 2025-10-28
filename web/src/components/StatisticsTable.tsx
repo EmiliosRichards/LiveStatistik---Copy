@@ -2,6 +2,7 @@ import { useState, Fragment } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { type Statistics } from '@/lib/api'
 import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/table-styles'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface AgentStats {
   agentId: string
@@ -30,6 +31,7 @@ interface StatisticsTableProps {
 }
 
 export function StatisticsTable({ statistics, agents, projects, view = 'overview' }: StatisticsTableProps) {
+  const { t } = useLanguage()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
   const toggleRow = (agentId: string) => {
@@ -180,34 +182,34 @@ export function StatisticsTable({ statistics, agents, projects, view = 'overview
         <thead className={theadBase}>
           {view === 'overview' ? (
             <tr>
-              <th className={`${thBase} text-left truncate`} title="Agent">
-                Agent
+              <th className={`${thBase} text-left truncate`} title={t('table.agent')}>
+                {t('table.agent')}
               </th>
-              <th className={`${thBase} text-right truncate`} title="Total Calls">
-                Total Calls
+              <th className={`${thBase} text-right truncate`} title={t('table.totalCalls')}>
+                {t('table.totalCalls')}
               </th>
-              <th className={`${thBase} text-right truncate`} title="Reach %">
-                Reach %
+              <th className={`${thBase} text-right truncate`} title={t('table.reachRate')}>
+                {t('table.reachRate')}
               </th>
-              <th className={`${thBase} text-right truncate`} title="Positive Outcomes">
-                Positive Outcomes
+              <th className={`${thBase} text-right truncate`} title={t('table.positiveOutcomes')}>
+                {t('table.positiveOutcomes')}
               </th>
-              <th className={`${thBase} text-right truncate`} title="Avg Duration (min)">
-                Avg Duration (min)
+              <th className={`${thBase} text-right truncate`} title={t('table.avgDuration')}>
+                {t('table.avgDuration')}
               </th>
             </tr>
           ) : (
             <tr>
-              <th className={`${thBase} text-left truncate`} title="Agent">Agent</th>
-              <th className={`${thBase} text-right truncate`} title="Anzahl">Anzahl</th>
-              <th className={`${thBase} text-right truncate`} title="abgeschlossen">abgeschlossen</th>
-              <th className={`${thBase} text-right truncate`} title="erfolgreich">erfolgreich</th>
-              <th className={`${thBase} text-right truncate`} title="Wartezeit (WZ)">WZ (h)</th>
-              <th className={`${thBase} text-right truncate`} title="Gesprächszeit (GZ)">GZ (h)</th>
-              <th className={`${thBase} text-right truncate`} title="Nachbearbeitungszeit (NBZ)">NBZ (h)</th>
-              <th className={`${thBase} text-right truncate`} title="Vorbereitungszeit (VBZ)">VBZ (h)</th>
-              <th className={`${thBase} text-right truncate`} title="Erfolg pro Stunde">Erfolg/h</th>
-              <th className={`${thBase} text-right truncate`} title="Arbeitszeit (AZ)">AZ (h)</th>
+              <th className={`${thBase} text-left truncate`} title={t('table.agent')}>{t('table.agent')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.anzahl')}>{t('table.anzahl')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.abgeschlossen')}>{t('table.abgeschlossen')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.erfolgreich')}>{t('table.erfolgreich')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.waitTime')}>{t('table.waitTimeShort')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.callTime')}>{t('table.callTimeShort')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.postCallTime')}>{t('table.postCallTimeShort')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.prepTime')}>{t('table.prepTimeShort')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.successPerHour')}>{t('table.successPerHour')}</th>
+              <th className={`${thBase} text-right truncate`} title={t('table.workTime')}>{t('table.workTimeShort')}</th>
             </tr>
           )}
         </thead>

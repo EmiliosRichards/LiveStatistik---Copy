@@ -1,14 +1,18 @@
 'use client'
 
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
+
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase } from '@/components/table-styles'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
-import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
 import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } from '@/lib/api'
 import type { Project } from '@/lib/api'
-import { Users, Layers, HelpCircle, Bell, User, ChevronDown, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar } from 'lucide-react'
+import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar } from 'lucide-react'
 import { InlineCalendar } from '@/components/InlineCalendar'
+import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -19,6 +23,7 @@ type AgentMap = Record<string, string>
 type ProjectMap = Record<string, string>
 
 export default function AgentDetailPage() {
+  const { t } = useLanguage()
   const { agentId } = useParams<{ agentId: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -37,13 +42,6 @@ export default function AgentDetailPage() {
   const [campStats, setCampStats] = useState<any[]>([])
   const [campView, setCampView] = useState<'overview'|'details'>('overview')
   const [sortMode, setSortMode] = useState<'date'|'name'>('date')
-  const showHeader = useAutoHideHeader(24, 24)
-  const headerRef = useRef<HTMLElement | null>(null)
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const recalc = () => { if (headerRef.current) setHeaderHeight(headerRef.current.offsetHeight || 0) }
-    recalc(); window.addEventListener('resize', recalc); return () => window.removeEventListener('resize', recalc)
-  }, [])
   const formatAgentName = (name: string) => name.replace(/\./g, ' ')
 
   const dateFrom = searchParams.get('dateFrom') || undefined
@@ -335,71 +333,36 @@ export default function AgentDetailPage() {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-text">
-      {/* Header */}
-      <header ref={headerRef} className={`bg-white border-b border-border app-header sticky top-0 z-10 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-baseline gap-3">
-              <a href="/dashboard" className="inline-flex items-center" aria-label="Manuav Internal App">
-                <img src="/Manuav-web-site-LOGO.png" alt="Manuav" className="h-8 w-auto invert" />
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button aria-label="Help" className="p-2 rounded hover:bg-slate-100" data-testid="button-help">
-              <HelpCircle className="w-5 h-5 text-slate-700" />
-            </button>
-            <button aria-label="Notifications" className="relative p-2 rounded hover:bg-slate-100" data-testid="button-notifications">
-              <Bell className="w-5 h-5 text-slate-700" />
-              <span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span>
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100" data-testid="button-account">
-              <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
-                <User className="w-4 h-4 text-slate-600" />
-              </div>
-              <span className="hidden sm:inline text-sm text-slate-700">Emilios</span>
-              <ChevronDown className="w-4 h-4 text-slate-500" />
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-de">DE</button>
-            <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-en">EN</button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main */}
-      <main className="flex-1 w-full px-6 py-8">
+    <div className="flex flex-col flex-1 w-full">
+      <div className="flex-1 px-6 py-8">
         <div className="flex gap-6">
           {/* Sidebar */}
-          <aside className="w-64 shrink-0 sticky self-start" style={{ top: showHeader ? headerHeight : 0, marginTop: showHeader ? 0 : -headerHeight }}>
+          <aside className="w-64 shrink-0 sticky self-start top-0">
             <div className="bg-bg-elevated rounded-lg shadow-md p-2">
               <nav className="space-y-1 text-slate-800">
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
                   onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; const sp = new URLSearchParams(); sp.set('view','dashboard'); router.push(`/dashboard?${sp.toString()}`) }}
                 >
-                  <Layers className="w-4 h-4" /> Dashboard
+                  <Layers className="w-4 h-4" /> {t('nav.dashboard')}
                 </button>
                 <button
                   className={`w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 bg-slate-100 font-semibold border-l-4 border-blue-600`}
                   onClick={() => { try { sessionStorage.setItem('dashboard:forceAgentsListOnce','1') } catch {}; router.push(`/dashboard?view=agents`) }}
                 >
-                  <Users className="w-4 h-4" /> Agents
+                  <Users className="w-4 h-4" /> {t('nav.agents')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
                   onClick={() => { router.push(`/dashboard?view=campaigns`) }}
                 >
-                  <Layers className="w-4 h-4" /> Campaigns
+                  <Layers className="w-4 h-4" /> {t('nav.campaigns')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-50 text-slate-800"
                   onClick={() => router.push('/dashboard/search')}
                 >
-                  <span className="inline-flex items-center gap-2"><CalendarClock className="w-4 h-4" /> Time-based Search</span>
+                  <span className="inline-flex items-center gap-2"><CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}</span>
                 </button>
               </nav>
             </div>
@@ -413,7 +376,7 @@ export default function AgentDetailPage() {
                 onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
                 className="text-sm text-slate-800 hover:underline underline-offset-2"
               >
-                ← Back to agents
+                ← {t('agent.backToAgents')}
               </a>
             </div>
             <div className="bg-bg-elevated rounded-lg shadow-lg p-6 relative">
@@ -422,13 +385,13 @@ export default function AgentDetailPage() {
                 className="absolute left-4 top-4 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white/90 hover:bg-slate-50 text-slate-700 shadow-sm"
                 onClick={() => navigateRelative(-1)}
               >
-                <ArrowLeft className="w-4 h-4" /> Prev
+                <ArrowLeft className="w-4 h-4" /> {t('agent.prev')}
               </button>
               <button
                 className="absolute right-4 top-4 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white/90 hover:bg-slate-50 text-slate-700 shadow-sm"
                 onClick={() => navigateRelative(1)}
               >
-                Next <ArrowRight className="w-4 h-4" />
+                {t('agent.next')} <ArrowRight className="w-4 h-4" />
               </button>
 
               <div className="mb-10">
@@ -454,24 +417,24 @@ export default function AgentDetailPage() {
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-900">Campaigns</h2>
+                    <h2 className="text-lg font-semibold text-slate-900">{t('agent.campaigns')}</h2>
                     <div className="flex items-center gap-3">
                       <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
-                        <button className={`px-3 py-1 text-sm ${campView==='overview'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('overview')}>Overview</button>
+                        <button className={`px-3 py-1 text-sm ${campView==='overview'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('overview')}>{t('agent.overview')}</button>
                         <div className="w-px h-5 bg-slate-300" />
-                        <button className={`px-3 py-1 text-sm ${campView==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('details')}>Details</button>
+                        <button className={`px-3 py-1 text-sm ${campView==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('details')}>{t('agent.details')}</button>
                       </div>
-                      <label className="text-sm text-slate-700">Sort</label>
+                      <label className="text-sm text-slate-700">{t('agent.sort')}</label>
                       <select value={sortMode} onChange={e=>setSortMode(e.target.value as any)} className="border border-slate-300 rounded px-2 py-1 text-sm">
-                        <option value="date">Date (recent)</option>
-                        <option value="name">Name (A–Z)</option>
+                        <option value="date">{t('agent.dateRecent')}</option>
+                        <option value="name">{t('agent.nameAZ')}</option>
                       </select>
                       <div className="relative" ref={filterRef}>
                         <button
                           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-700 bg-white hover:bg-slate-50"
                           onClick={() => setShowFilterPopover(v=>!v)}
                         >
-                          <CalendarClock className="w-4 h-4" /> Change period
+                          <CalendarClock className="w-4 h-4" /> {t('agent.changePeriod')}
                         </button>
                         {showFilterPopover && (
                           <div className="absolute right-0 z-20 mt-2 w-[560px] max-w-[92vw] bg-white border border-slate-200 rounded-lg shadow-xl p-4">
@@ -574,26 +537,26 @@ export default function AgentDetailPage() {
                         <thead className={theadBase}>
                           {campView==='overview' ? (
                             <tr>
-                              <th className={`${thBase} text-left`}>Campaign</th>
-                              <th className={`${thBase} text-right`}>Total Calls</th>
-                              <th className={`${thBase} text-right`}>Reach %</th>
-                              <th className={`${thBase} text-right`}>Positive Outcomes</th>
-                              <th className={`${thBase} text-right`}>Avg Duration (min)</th>
-                              <th className={`${thBase} text-right`}>Status</th>
+                              <th className={`${thBase} text-left`}>{t('agent.campaign')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.totalCalls')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.reachPercent')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.positiveOutcomes')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.avgDurationMin')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.status')}</th>
                             </tr>
                           ) : (
                             <tr>
-                              <th className={`${thBase} text-left`}>Campaign</th>
-                              <th className={`${thBase} text-right`}>Anzahl</th>
-                              <th className={`${thBase} text-right`}>abgeschlossen</th>
-                              <th className={`${thBase} text-right`}>erfolgreich</th>
-                              <th className={`${thBase} text-right`}>WZ (h)</th>
-                              <th className={`${thBase} text-right`}>GZ (h)</th>
-                              <th className={`${thBase} text-right`}>NBZ (h)</th>
-                              <th className={`${thBase} text-right`}>VBZ (h)</th>
-                              <th className={`${thBase} text-right`}>Erfolg/h</th>
-                              <th className={`${thBase} text-right`}>AZ (h)</th>
-                              <th className={`${thBase} text-right`}>Status</th>
+                              <th className={`${thBase} text-left`}>{t('agent.campaign')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.anzahl')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.abgeschlossen')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.erfolgreich')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.wzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.gzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.nbzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.vbzh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.erfolgProStunde')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.azh')}</th>
+                              <th className={`${thBase} text-right`}>{t('agent.status')}</th>
                             </tr>
                           )}
                         </thead>
@@ -626,7 +589,7 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase}`}>
                                       <div className="flex justify-end">
                                         {row.status && (
-                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{t(`agent.${row.status}`)}</span>
                                         )}
                                       </div>
                                     </td>
@@ -645,7 +608,7 @@ export default function AgentDetailPage() {
                                     <td className={`${tdBase}`}>
                                       <div className="flex justify-end">
                                         {row.status && (
-                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{row.status}</span>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full border ${row.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200': row.status==='new'?'bg-blue-50 text-blue-700 border-blue-200':'bg-slate-50 text-slate-600 border-slate-200'}`}>{t(`agent.${row.status}`)}</span>
                                         )}
                                       </div>
                                     </td>
@@ -665,26 +628,10 @@ export default function AgentDetailPage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto">
-        <div className="w-full px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Database: Connected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Dialfire API: Connected</span>
-              </div>
-            </div>
-            <span className="text-slate-400">v1.0 • Internal Preview</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
@@ -1018,15 +965,50 @@ function CallRow({ call, index }: { call: any; index: number }) {
         credentials: 'include',
         body: JSON.stringify({ audioUrl: call.recordingUrl })
       })
-      if (!submit.ok) throw new Error('Failed to submit transcription')
-      const { audioFileId } = await submit.json()
+      
+      if (!submit.ok) {
+        let errorMessage = 'Failed to submit transcription'
+        try {
+          const errorData = await submit.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+        } catch {
+          // If response is not JSON, use default error message
+          errorMessage = `Server error: ${submit.status} ${submit.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+      
+      let submitData
+      try {
+        submitData = await submit.json()
+      } catch {
+        throw new Error('Invalid response from server')
+      }
+      
+      if (!submitData.audio_file_id) {
+        throw new Error('No transcription job ID returned')
+      }
+      
+      const audioFileId = submitData.audio_file_id
+      
       // poll status briefly here for UX; production could offload
       const max = 6
       for (let i = 0; i < max; i++) {
         await new Promise(r => setTimeout(r, 5000))
         const statusRes = await fetch(`/api/transcribe/${audioFileId}/status`, { credentials: 'include' })
-        if (!statusRes.ok) continue
-        const status = await statusRes.json()
+        if (!statusRes.ok) {
+          console.warn('Status check failed, retrying...')
+          continue
+        }
+        
+        let status
+        try {
+          status = await statusRes.json()
+        } catch {
+          console.warn('Invalid JSON from status endpoint, retrying...')
+          continue
+        }
+        
         if (status.status === 'completed' && status.transcript) {
           setTranscript(status.transcript)
           break
@@ -1037,6 +1019,7 @@ function CallRow({ call, index }: { call: any; index: number }) {
         }
       }
     } catch (e: any) {
+      console.error('Transcription error:', e)
       setError(e?.message || 'Transcription error')
     } finally {
       setTranscribing(false)

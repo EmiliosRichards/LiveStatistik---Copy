@@ -21,7 +21,7 @@ export default function StatsPage() {
       .catch(() => setAgents([]));
   }, []);
 
-  const userEmail = (session?.user as any)?.email ?? "";
+  const userEmail = session?.user?.email ?? "";
 
   const canSearch = selectedAgentIds.length > 0 && (dateFrom || dateTo);
 

@@ -159,6 +159,15 @@ npm run db:push
 
 ## Recent changes (October 2025)
 
+### Deployment configuration (October 27)
+- Fixed Replit Autoscale deployment health check failures:
+  - Created fast `/` root route handler (`web/src/app/route.ts`) that responds immediately to health checks
+  - Moved status dashboard from `/` to `/status`
+  - Root `/` now redirects browsers to `/dashboard` while returning JSON for health checkers
+  - Separated build from startup: `start-prod.sh` now only starts servers (build happens in `build-prod.sh`)
+  - Added readiness checks in startup script to ensure both Express (5001) and Next.js (5000) are ready before accepting traffic
+- Disabled ESLint during production builds (TypeScript checks still run)
+
 ### Multi-agent campaign detail page
 - Added `getCallDetailsForAgents()` method to `IStorage` interface and implemented across all storage classes
 - Created `POST /api/call-details-by-project` endpoint for multi-agent call queries

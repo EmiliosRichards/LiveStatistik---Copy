@@ -1,16 +1,20 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+
+// Force dynamic rendering for this page (uses useSearchParams)
+export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useAutoHideHeader } from '@/lib/useAutoHideHeader'
-import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, HelpCircle, Bell, User, ChevronDown, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle } from 'lucide-react'
+import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { CallsTimeSeriesChart } from '@/components/CallsTimeSeriesChart'
 import { OutcomesBarChart } from '@/components/OutcomesBarChart'
+import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface KPIData {
   totalCalls: number
@@ -20,20 +24,10 @@ interface KPIData {
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const showHeader = useAutoHideHeader(24, 24)
-  const headerRef = useRef<HTMLElement | null>(null)
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const recalc = () => {
-      if (headerRef.current) setHeaderHeight(headerRef.current.offsetHeight || 0)
-    }
-    recalc()
-    window.addEventListener('resize', recalc)
-    return () => window.removeEventListener('resize', recalc)
-  }, [])
   const [statsView, setStatsView] = useState<'overview' | 'details'>('overview')
   const initialSection = (searchParams.get('view') as 'dashboard' | 'agents' | 'campaigns' | 'search') || 'dashboard'
   const [section, setSection] = useState<'dashboard' | 'agents' | 'campaigns' | 'search'>(initialSection)
@@ -257,58 +251,13 @@ export default function DashboardPage() {
   // Do not early-return; show the new layout and an inline empty state instead
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-text">
-      {/* Header */}
-      <header ref={headerRef} className={`bg-bg-elevated border-b border-border app-header sticky top-0 z-10 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-baseline gap-3">
-              <a href="/dashboard" className="inline-flex items-center" aria-label="Manuav Internal App">
-                <img src="/Manuav-web-site-LOGO.png" alt="Manuav" className="h-8 w-auto invert" />
-              </a>
-              {(() => {
-                const df = searchParams.get('dateFrom') || undefined
-                const dt = searchParams.get('dateTo') || undefined
-                const tf = searchParams.get('timeFrom') || undefined
-                const tt = searchParams.get('timeTo') || undefined
-                const datePart = df && dt && df !== dt ? `${df} - ${dt}` : (df || dt)
-                const timePart = (tf || tt) ? ` · ${tf || '00:00'}–${tt || '23:59'}` : ''
-                const label = datePart ? `${datePart}${timePart}` : ''
-                return label ? <span className="text-sm text-slate-500">Period: {label}</span> : null
-              })()}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button aria-label="Help" className="p-2 rounded hover:bg-slate-100" data-testid="button-help">
-              <HelpCircle className="w-5 h-5 text-slate-700" />
-            </button>
-            <button aria-label="Notifications" className="relative p-2 rounded hover:bg-slate-100" data-testid="button-notifications">
-              <Bell className="w-5 h-5 text-slate-700" />
-              <span className="absolute -top-0.5 -right-0.5 text-[10px] leading-none px-1.5 py-0.5 rounded-full bg-red-500 text-white">1</span>
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button aria-label="Account" className="flex items-center gap-2 p-1.5 rounded hover:bg-slate-100" data-testid="button-account">
-              <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
-                <User className="w-4 h-4 text-slate-600" />
-              </div>
-              <span className="hidden sm:inline text-sm text-slate-700">Emilios</span>
-              <ChevronDown className="w-4 h-4 text-slate-500" />
-            </button>
-            <div className="h-6 w-px bg-slate-200 mx-1" />
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-de">DE</button>
-            <span className="text-slate-300">|</span>
-            <button className="text-sm text-slate-600 hover:text-slate-900" data-testid="button-language-en">EN</button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 w-full px-6 py-8">
+    <div className="flex flex-col flex-1 w-full">
+      <div className="flex-1 px-6 py-8">
         {/* View state script no longer required; using React state */}
         {/* Layout: Sidebar + Content */}
         <div className="flex gap-6">
           {/* Sidebar */}
-          <aside className="w-64 shrink-0 sticky self-start" style={{ top: showHeader ? headerHeight : 0, marginTop: showHeader ? 0 : -headerHeight }}>
+          <aside className="w-64 shrink-0 sticky self-start top-0">
             <div className="bg-bg-elevated rounded-lg shadow-md p-2">
               <nav className="space-y-1 text-slate-800">
                 <Link
@@ -317,7 +266,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='dashboard' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-dashboard"
                 >
-                  <Layers className="w-4 h-4" /> Dashboard
+                  <Layers className="w-4 h-4" /> {t('nav.dashboard')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','agents'); return sp.toString() })()}`}
@@ -325,7 +274,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='agents' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-agents"
                 >
-                  <Users className="w-4 h-4" /> Agents
+                  <Users className="w-4 h-4" /> {t('nav.agents')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','campaigns'); return sp.toString() })()}`}
@@ -333,7 +282,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='campaigns' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-campaigns"
                 >
-                  <Layers className="w-4 h-4" /> Campaigns
+                  <Layers className="w-4 h-4" /> {t('nav.campaigns')}
                 </Link>
                 <Link
                   href={`/dashboard?${(() => { const sp = new URLSearchParams(searchParams.toString()); sp.set('view','search'); return sp.toString() })()}`}
@@ -341,7 +290,7 @@ export default function DashboardPage() {
                   className={`block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2 ${section==='search' ? 'bg-slate-100 font-semibold border-l-4 border-blue-600' : ''}`}
                   data-testid="link-search"
                 >
-                  <CalendarClock className="w-4 h-4" /> Time-based Search
+                  <CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}
                 </Link>
               </nav>
             </div>
@@ -354,15 +303,15 @@ export default function DashboardPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/30" onClick={() => setShowMissingModal(false)} />
             <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
-              <div className="text-lg font-semibold mb-2">No projects found</div>
-              <div className="text-sm text-slate-600 mb-4">No projects found for the specified time frame for the following agents:</div>
+              <div className="text-lg font-semibold mb-2">{t('common.noProjectsFound')}</div>
+              <div className="text-sm text-slate-600 mb-4">{t('common.noProjectsForAgents')}</div>
               <ul className="list-disc pl-5 text-sm text-slate-700 max-h-48 overflow-auto mb-4">
                 {missingAgents.map(name => (
                   <li key={name}>{name}</li>
                 ))}
               </ul>
               <div className="flex justify-end gap-2">
-                <button className="px-4 py-2 text-sm rounded bg-slate-100 hover:bg-slate-200" onClick={() => setShowMissingModal(false)}>Close</button>
+                <button className="px-4 py-2 text-sm rounded bg-slate-100 hover:bg-slate-200" onClick={() => setShowMissingModal(false)}>{t('common.close')}</button>
               </div>
             </div>
           </div>
@@ -383,7 +332,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-total-calls">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Total Calls This Week</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.totalCalls')}</span>
                   <Phone className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -395,20 +344,20 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.totalCalls.value.toLocaleString()}</div>
                     <div className={`text-xs ${globalKpis.totalCalls.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% vs. last week
+                      {globalKpis.totalCalls.trend === 'up' ? '+' : ''}{globalKpis.totalCalls.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-reach-rate">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Reach Rate</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.reachRate')}</span>
                   <TrendingUp className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -420,20 +369,20 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.reachRate.value}%</div>
                     <div className={`text-xs ${globalKpis.reachRate.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% vs. last week
+                      {globalKpis.reachRate.trend === 'up' ? '+' : ''}{globalKpis.reachRate.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0%</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-positive-outcomes">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Positive Outcomes</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.positiveOutcomes')}</span>
                   <CheckCircle className="w-5 h-5 text-green-500" />
                 </div>
                 {kpiLoading ? (
@@ -445,20 +394,20 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.positiveOutcomes.value}</div>
                     <div className={`text-xs ${globalKpis.positiveOutcomes.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% vs. last week
+                      {globalKpis.positiveOutcomes.trend === 'up' ? '+' : ''}{globalKpis.positiveOutcomes.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
 
               <div className="bg-bg-elevated rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow" data-testid="card-avg-duration">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-700">Avg. Call Duration</span>
+                  <span className="text-base font-semibold text-slate-700">{t('kpi.avgDuration')}</span>
                   <Clock className="w-5 h-5 text-blue-500" />
                 </div>
                 {kpiLoading ? (
@@ -470,13 +419,13 @@ export default function DashboardPage() {
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">{globalKpis.avgDuration.value} min</div>
                     <div className={`text-xs ${globalKpis.avgDuration.trend === 'up' ? 'text-green-600' : 'text-orange-600'}`}>
-                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% vs. last week
+                      {globalKpis.avgDuration.trend === 'up' ? '+' : ''}{globalKpis.avgDuration.comparison}% {t('kpi.vsLastWeek')}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-3xl font-bold text-slate-900 mb-1">0 min</div>
-                    <div className="text-xs text-slate-500">No data</div>
+                    <div className="text-xs text-slate-500">{t('kpi.noData')}</div>
                   </>
                 )}
               </div>
@@ -500,9 +449,9 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {/* View toggle */}
-                  <ViewToggle view={statsView} onChange={setStatsView} />
+                  <ViewToggle view={statsView} onChange={setStatsView} t={t} />
                   <button className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" data-testid="button-export-csv">
-                    Export CSV
+                    {t('dashboard.exportCsv')}
                   </button>
                 </div>
               </div>
@@ -519,13 +468,13 @@ export default function DashboardPage() {
         {section==='agents' && (
           <div className="bg-bg-elevated rounded-lg shadow-lg hover:shadow-xl p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-slate-900">Agents</h2>
+              <h2 className="text-lg font-semibold text-slate-900">{t('nav.agents')}</h2>
               <div className="relative w-full max-w-xs">
                 <SearchIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   value={agentSearchQuery}
                   onChange={(e)=>setAgentSearchQuery(e.target.value)}
-                  placeholder="Search agents..."
+                  placeholder={t('dashboard.searchAgents')}
                   className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 />
               </div>
@@ -534,7 +483,7 @@ export default function DashboardPage() {
               <table className="w-full text-sm">
                 <thead className="text-xs uppercase text-slate-700 bg-slate-50">
                   <tr>
-                    <th className="text-left py-2 px-3">Name</th>
+                    <th className="text-left py-2 px-3">{t('table.name')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -552,7 +501,7 @@ export default function DashboardPage() {
                       )
                     })}
                   {agentsList.length === 0 && (
-                    <tr><td className="py-6 px-3 text-slate-500" colSpan={1}>No agents loaded yet.</td></tr>
+                    <tr><td className="py-6 px-3 text-slate-500" colSpan={1}>{t('common.loading')}</td></tr>
                   )}
                 </tbody>
               </table>
@@ -567,8 +516,8 @@ export default function DashboardPage() {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Campaigns</h2>
-                  <p className="text-sm text-slate-600 mt-1">{campaignsList.length} total campaigns</p>
+                  <h2 className="text-2xl font-bold text-slate-900">{t('dashboard.campaigns')}</h2>
+                  <p className="text-sm text-slate-600 mt-1">{campaignsList.length} {t('dashboard.totalCampaigns')}</p>
                 </div>
                 
                 {/* Filter Chips */}
@@ -581,7 +530,7 @@ export default function DashboardPage() {
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    All <span className="ml-1 opacity-70">({campaignsList.length})</span>
+                    {t('dashboard.filterAll')} <span className="ml-1 opacity-70">({campaignsList.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('new')}
@@ -592,7 +541,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    New <span className="ml-0.5 opacity-70">({groupedCampaigns.new.length})</span>
+                    {t('dashboard.filterNew')} <span className="ml-0.5 opacity-70">({groupedCampaigns.new.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('active')}
@@ -603,7 +552,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Activity className="w-3.5 h-3.5" />
-                    Active <span className="ml-0.5 opacity-70">({groupedCampaigns.active.length})</span>
+                    {t('dashboard.filterActive')} <span className="ml-0.5 opacity-70">({groupedCampaigns.active.length})</span>
                   </button>
                   <button
                     onClick={() => setCampaignFilter('archived')}
@@ -614,7 +563,7 @@ export default function DashboardPage() {
                     }`}
                   >
                     <Archive className="w-3.5 h-3.5" />
-                    Archived <span className="ml-0.5 opacity-70">({groupedCampaigns.archived.length})</span>
+                    {t('dashboard.filterArchived')} <span className="ml-0.5 opacity-70">({groupedCampaigns.archived.length})</span>
                   </button>
                 </div>
               </div>
@@ -626,7 +575,7 @@ export default function DashboardPage() {
                   <input
                     value={campaignSearchQuery}
                     onChange={(e)=>setCampaignSearchQuery(e.target.value)}
-                    placeholder="Search campaigns..."
+                    placeholder={t('dashboard.searchAgents')}
                     className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                 </div>
@@ -635,10 +584,10 @@ export default function DashboardPage() {
                   onChange={(e)=>setCampaignSort(e.target.value as any)}
                   className="border border-slate-300 rounded-lg text-sm px-3 py-2.5 text-slate-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
                 >
-                  <option value="date_desc">📅 Newest First</option>
-                  <option value="date_asc">📅 Oldest First</option>
-                  <option value="name_asc">🔤 A → Z</option>
-                  <option value="name_desc">🔤 Z → A</option>
+                  <option value="date_desc">{t('dashboard.sortNewestFirst')}</option>
+                  <option value="date_asc">{t('dashboard.sortOldestFirst')}</option>
+                  <option value="name_asc">{t('dashboard.sortAZ')}</option>
+                  <option value="name_desc">{t('dashboard.sortZA')}</option>
                 </select>
               </div>
             </div>
@@ -660,12 +609,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 shrink-0">
                         <Sparkles className="w-3 h-3" />
-                        New
+                        {t('dashboard.filterNew')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <Circle className="w-2 h-2 fill-blue-500 text-blue-500" />
-                      <span>Recently added</span>
+                      <span>{t('dashboard.recentlyAdded')}</span>
                     </div>
                   </div>
                 </button>
@@ -686,12 +635,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shrink-0">
                         <Activity className="w-3 h-3" />
-                        Active
+                        {t('dashboard.filterActive')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
-                      <span>Running</span>
+                      <span>{t('dashboard.running')}</span>
                     </div>
                   </div>
                 </button>
@@ -712,12 +661,12 @@ export default function DashboardPage() {
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-300 shrink-0">
                         <Archive className="w-3 h-3" />
-                        Archived
+                        {t('dashboard.filterArchived')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                       <Circle className="w-2 h-2 fill-slate-400 text-slate-400" />
-                      <span>Inactive</span>
+                      <span>{t('dashboard.inactive')}</span>
                     </div>
                   </div>
                 </button>
@@ -735,7 +684,7 @@ export default function DashboardPage() {
                   </h3>
                   <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-2">
                     <Circle className="w-2 h-2 fill-slate-300 text-slate-300" />
-                    <span>Status unknown</span>
+                    <span>{t('dashboard.statusUnknown')}</span>
                   </div>
                 </button>
               ))}
@@ -745,7 +694,7 @@ export default function DashboardPage() {
             {campaignsList.length === 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
                 <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 text-lg">No campaigns loaded yet.</p>
+                <p className="text-slate-500 text-lg">{t('dashboard.noCampaignsLoaded')}</p>
               </div>
             )}
 
@@ -757,7 +706,7 @@ export default function DashboardPage() {
              groupedCampaigns.unknown.length === 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
                 <SearchIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 text-lg">No campaigns match your filters.</p>
+                <p className="text-slate-500 text-lg">{t('dashboard.noCampaignsMatch')}</p>
                 <button
                   onClick={() => {
                     setCampaignFilter('all')
@@ -765,7 +714,7 @@ export default function DashboardPage() {
                   }}
                   className="mt-4 text-blue-600 hover:text-blue-700 font-medium text-sm"
                 >
-                  Clear filters
+                  {t('dashboard.clearFilters')}
                 </button>
               </div>
             )}
@@ -778,51 +727,36 @@ export default function DashboardPage() {
         )}
           </section>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto">
-        <div className="w-full px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Database: Connected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-slate-600">Dialfire API: Connected</span>
-              </div>
-            </div>
-            <span className="text-slate-400">v1.0 • Internal Preview</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
 
-function ViewToggle({ view, onChange }: { view: 'overview' | 'details'; onChange: (v: 'overview' | 'details') => void }) {
+function ViewToggle({ view, onChange, t }: { view: 'overview' | 'details'; onChange: (v: 'overview' | 'details') => void; t: (key: string) => string }) {
   return (
     <div className="inline-flex items-center rounded border border-slate-300 overflow-hidden">
       <button
         className={`px-3 py-1 text-sm ${view === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
         onClick={() => onChange('overview')}
       >
-        Overview
+        {t('dashboard.overview')}
       </button>
       <div className="w-px h-5 bg-slate-300" />
       <button
         className={`px-3 py-1 text-sm ${view === 'details' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
         onClick={() => onChange('details')}
       >
-        Details
+        {t('dashboard.details')}
       </button>
     </div>
   )
 }
 
 function TimeSearchView() {
+  const { t } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchType, setSearchType] = useState<'agent' | 'project'>('agent')
@@ -1086,27 +1020,27 @@ function TimeSearchView() {
 
   return (
     <div className="bg-bg-elevated rounded-lg shadow-lg p-8">
-      {/* Tabs */}
-      <div className="flex gap-4 mb-8 border-b border-slate-200">
-        <button
-          onClick={() => setSearchType('agent')}
-          className={`pb-3 px-4 font-medium transition-colors relative ${
-            searchType === 'agent' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Agent Data
-          {searchType === 'agent' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
-        </button>
-        <button
-          onClick={() => setSearchType('project')}
-          className={`pb-3 px-4 font-medium transition-colors relative ${
-            searchType === 'project' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Project Data
-          {searchType === 'project' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
-        </button>
-      </div>
+        {/* Tabs */}
+        <div className="flex gap-4 mb-8 border-b border-slate-200">
+          <button
+            onClick={() => setSearchType('agent')}
+            className={`pb-3 px-4 font-medium transition-colors relative ${
+              searchType === 'agent' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {t('search.agentData')}
+            {searchType === 'agent' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
+          </button>
+          <button
+            onClick={() => setSearchType('project')}
+            className={`pb-3 px-4 font-medium transition-colors relative ${
+              searchType === 'project' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {t('search.projectData')}
+            {searchType === 'project' && (<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />)}
+          </button>
+        </div>
 
       {/* Form Fields */}
       <div className="space-y-6">
@@ -1114,7 +1048,7 @@ function TimeSearchView() {
           <div className="relative" ref={fromRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Calendar className="inline w-4 h-4 mr-2" />
-              From
+              {t('search.from')}
             </label>
             <input
               type="text"
@@ -1142,7 +1076,7 @@ function TimeSearchView() {
           <div className="relative" ref={toRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Calendar className="inline w-4 h-4 mr-2" />
-              To
+              {t('search.to')}
             </label>
             <input
               type="text"
@@ -1171,9 +1105,9 @@ function TimeSearchView() {
 
         {/* Quick Date Shortcuts */}
         <div className="flex gap-2">
-          <button onClick={() => setQuickDate('today')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">Today</button>
-          <button onClick={() => setQuickDate('week')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">This Week</button>
-          <button onClick={() => setQuickDate('month')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">This Month</button>
+          <button onClick={() => setQuickDate('today')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.today')}</button>
+          <button onClick={() => setQuickDate('week')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.thisWeek')}</button>
+          <button onClick={() => setQuickDate('month')} className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">{t('search.thisMonth')}</button>
         </div>
 
         {/* Agent Selector */}
@@ -1181,13 +1115,13 @@ function TimeSearchView() {
           <div className="relative" ref={agentRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Users className="inline w-4 h-4 mr-2" />
-              Select Agents
+              {t('search.selectAgents')}
             </label>
             <button
               onClick={() => setShowAgentDropdown(!showAgentDropdown)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between hover:border-slate-400 transition-colors"
             >
-              <span className="text-slate-700">{selectedAgents.length === 0 ? 'Choose agents...' : `${selectedAgents.length} agent${selectedAgents.length > 1 ? 's' : ''} selected`}</span>
+              <span className="text-slate-700">{selectedAgents.length === 0 ? t('search.chooseAgents') : `${selectedAgents.length} ${selectedAgents.length > 1 ? t('search.agentsSelected') : t('search.agentSelected')}`}</span>
               <ChevronDown className="w-5 h-5 text-slate-400" />
             </button>
             {showAgentDropdown && (
@@ -1199,16 +1133,16 @@ function TimeSearchView() {
                       type="text"
                       value={agentSearch}
                       onChange={(e) => setAgentSearch(e.target.value)}
-                      placeholder="Search agents..."
+                      placeholder={t('dashboard.searchAgents')}
                       className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
                 <div className="overflow-y-auto max-h-60">
                   {loadingAgents ? (
-                    <div className="p-4 text-sm text-slate-500 text-center">Loading agents...</div>
+                    <div className="p-4 text-sm text-slate-500 text-center">{t('search.loadingAgents')}</div>
                   ) : filteredAgents.length === 0 ? (
-                    <div className="p-4 text-sm text-slate-500 text-center">No agents found</div>
+                    <div className="p-4 text-sm text-slate-500 text-center">{t('search.noAgentsFound')}</div>
                   ) : (
                     filteredAgents.map((agent) => (
                       <label key={agent.id} className="flex items-center px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors">
@@ -1228,28 +1162,28 @@ function TimeSearchView() {
           <div className="relative" ref={projectRef}>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               <Briefcase className="inline w-4 h-4 mr-2" />
-              Select Projects
+              {t('search.selectProjects')}
             </label>
             <button
               onClick={() => setShowProjectDropdown(!showProjectDropdown)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between transition-colors hover:border-slate-400"
             >
-              <span className="text-slate-700">{selectedProjects.length === 0 ? 'Choose projects...' : `${selectedProjects.length} project${selectedProjects.length > 1 ? 's' : ''} selected`}</span>
+              <span className="text-slate-700">{selectedProjects.length === 0 ? t('search.chooseProjects') : `${selectedProjects.length} ${selectedProjects.length > 1 ? t('search.projectsSelected') : t('search.projectSelected')}`}</span>
               <ChevronDown className="w-5 h-5 text-slate-400" />
             </button>
             {showProjectDropdown && (
               <div className="absolute z-10 mt-2 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
                 <div className="sticky top-0 z-10 bg-white p-2 border-b border-slate-200 flex items-center gap-2 text-xs">
-                  <span className="text-slate-600">Filter:</span>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='all'?'bg-slate-900 text-white':'hover:bg-slate-50'}`} onClick={()=>setProjectFilter('all')}>All</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='active'?'bg-emerald-600 text-white':'hover:bg-slate-50 text-emerald-700'}`} onClick={()=>setProjectFilter('active')}>Active</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='new'?'bg-blue-600 text-white':'hover:bg-slate-50 text-blue-700'}`} onClick={()=>setProjectFilter('new')}>New</button>
-                  <button className={`px-2 py-1 rounded ${projectFilter==='archived'?'bg-slate-700 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setProjectFilter('archived')}>Archived</button>
+                  <span className="text-slate-600">{t('search.filter')}</span>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='all'?'bg-slate-900 text-white':'hover:bg-slate-50'}`} onClick={()=>setProjectFilter('all')}>{t('dashboard.filterAll')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='active'?'bg-emerald-600 text-white':'hover:bg-slate-50 text-emerald-700'}`} onClick={()=>setProjectFilter('active')}>{t('dashboard.filterActive')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='new'?'bg-blue-600 text-white':'hover:bg-slate-50 text-blue-700'}`} onClick={()=>setProjectFilter('new')}>{t('dashboard.filterNew')}</button>
+                  <button className={`px-2 py-1 rounded ${projectFilter==='archived'?'bg-slate-700 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setProjectFilter('archived')}>{t('dashboard.filterArchived')}</button>
                 </div>
                 {loadingProjects ? (
-                  <div className="p-4 text-sm text-slate-500 text-center">Loading projects...</div>
+                  <div className="p-4 text-sm text-slate-500 text-center">{t('search.loadingProjects')}</div>
                 ) : filteredProjects.length === 0 ? (
-                  <div className="p-4 text-sm text-slate-500 text-center">No projects available</div>
+                  <div className="p-4 text-sm text-slate-500 text-center">{t('search.noProjectsAvailable')}</div>
                 ) : (
                   filteredProjects.map((project: any) => (
                     <label key={project.id} className="flex items-center px-4 py-2.5 hover:bg-slate-50 cursor-pointer transition-colors">
@@ -1277,7 +1211,7 @@ function TimeSearchView() {
           onClick={clearFilters}
           className="px-4 py-2 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Clear
+          {t('search.clear')}
         </button>
         <button
           onClick={handleSearch}
@@ -1291,10 +1225,10 @@ function TimeSearchView() {
           {submitting ? (
             <span className="inline-flex items-center gap-2">
               <span className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" aria-hidden />
-              Searching…
+              {t('search.searching')}
             </span>
           ) : (
-            'Search Statistics'
+            t('search.searchStatistics')
           )}
         </button>
       </div>
@@ -1302,8 +1236,8 @@ function TimeSearchView() {
       {/* Help Text */}
       <p className="text-center text-sm text-slate-500 mt-6">
         {searchType === 'agent' 
-          ? 'Select at least one agent and a date range to view statistics'
-          : 'Select at least one project and a date range to view statistics'}
+          ? t('search.helpText')
+          : t('search.helpTextProject')}
       </p>
     </div>
   )
