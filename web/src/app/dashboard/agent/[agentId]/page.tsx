@@ -173,7 +173,7 @@ export default function AgentDetailPage() {
         setProjectsMap(pMap)
         setAgentName(formatAgentName(aMap[agentId] || agentId))
         const selected = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('agents')
-        const list = selected ? selected.split(',') : [agentId]
+        const list = selected ? selected.split(',') : agents.map(a => a.id)
         setAllAgentIds(list)
         setCurrentIdx(list.findIndex(id => id === agentId))
 
