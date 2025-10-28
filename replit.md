@@ -39,3 +39,17 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 - **Dialfire API:** Optional integration for campaign title mapping and connectivity checks (requires `DIALFIRE_API_TOKEN`).
 - **Transcription API:** Optional integration for audio transcription (requires `TRANSCRIPTION_API_KEY`).
 - **Drizzle (Optional):** Configured for potential future use with an internal database, specifically with Neon.
+
+## Recent Changes (October 28, 2025)
+
+### Logo Rendering Fix
+- **Issue**: Manuav logo not rendering on signin page in production deployment (broken image icon)
+- **Solution**: Replaced regular `<img>` tag with Next.js `<Image>` component for reliable production asset loading
+- **Benefits**: Automatic image optimization, better caching, consistent rendering across development and production
+- **File**: `web/src/app/signin/page.tsx`
+
+### Deployment Fixes
+- **Port configuration**: Removed extra port definition from `.replit` (Autoscale requires single external port)
+- **Shell script**: Fixed `start-prod.sh` to properly export environment variables before `exec` command
+- **Cache warmer**: Delayed cache warming to 90 seconds in production to prevent startup timeout
+- **Azure AD**: Made authentication provider conditional to handle "NA" placeholder credentials gracefully

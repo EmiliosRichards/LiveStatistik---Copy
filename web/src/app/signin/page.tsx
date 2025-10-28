@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { User, Lock, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 // Use build-time public env only to avoid SSR/CSR mismatches
 const ALLOW_GUEST_UI = process.env.NEXT_PUBLIC_ALLOW_GUEST === 'true'
@@ -17,11 +18,13 @@ export default function SignIn() {
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-6">
-            <img 
+            <Image 
               src="/Manuav-web-site-LOGO.png" 
               alt="Manuav" 
-              className="h-12 w-auto"
-              style={{ filter: 'invert(0)' }}
+              width={150}
+              height={48}
+              style={{ height: 'auto', width: 'auto', maxHeight: '48px', filter: 'invert(0)' }}
+              priority
             />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
