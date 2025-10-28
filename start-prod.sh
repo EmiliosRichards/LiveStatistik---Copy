@@ -40,4 +40,5 @@ done
 
 echo "🚀 Starting Next.js app on port 5000 (external)..."
 # Start Next.js in foreground to keep the process alive
-cd web && exec PORT=5000 NODE_ENV=production npm start
+# Use -p flag to explicitly set port (PORT env var is not reliable in Next.js start)
+cd web && exec NODE_ENV=production npm start -- -p 5000
