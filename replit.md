@@ -180,6 +180,15 @@ npm run db:push
 - **Guest users**: When signed in as guest, profile shows "Guest" name with "Guest" role
 - **Account Settings**: Remains disabled for now (future enhancement)
 
+### KPI calculation methodology change (October 28)
+- **Rolling 7-day comparison**: Changed KPI calculations from "this week vs last week" to "last 7 days vs previous 7 days"
+  - **Problem**: Comparing partial week (e.g., Mon-Tue = 2 days) to full week (7 days) created misleading percentages, almost always showing decline early in the week
+  - **Solution**: Rolling 7-day window ensures fair comparison (7 days vs 7 days) regardless of which day it is
+  - **Example**: On Tuesday Oct 28, compares Oct 22-28 (last 7 days) to Oct 15-21 (previous 7 days)
+  - **UI updated**: Labels now show "Last 7 Days" instead of "This Week" in both English and German
+  - **Backend**: `getAggregatedKpisWithCache()` fetches 14 days of data; `/api/kpis` endpoint aggregates into two contiguous 7-day periods
+  - **Caching**: 5-minute cache preserved for performance
+
 ### Production build fixes (October 28)
 - **Fixed hydration errors**: Added `suppressHydrationWarning` to signin page input fields to prevent errors caused by browser extensions (LastPass, etc.) injecting DOM elements
 - **Fixed production builds**: Disabled TypeScript and ESLint checks during production builds to prevent deployment failures
