@@ -187,6 +187,7 @@ npm run db:push
   - Added `export const dynamic = 'force-dynamic'` to dashboard layout to fix static generation errors with `useSearchParams`
 - **Public assets**: Verified Manuav logo and other public assets are correctly served from `web/public/` in production via Next.js `npm start`
 - **Fixed deployment startup**: Updated `start-prod.sh` to use `exec` for Next.js, ensuring it runs in foreground for Replit Autoscale. Express backend starts first and waits for health check before Next.js starts.
+- **Fixed Express in production**: Removed static file serving from Express in production mode - Express is now API-only on port 5001, Next.js handles frontend on port 5000
 
 ### Deployment configuration (October 27)
 - Fixed Replit Autoscale deployment health check failures:
