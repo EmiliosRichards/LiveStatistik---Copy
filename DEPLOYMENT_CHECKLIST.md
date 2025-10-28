@@ -65,9 +65,12 @@ PREVIEW_PASS="<password>"
 **Cause:** Next.js taking too long to start or crashing
 
 **Fix:**
-1. Check deployment logs for errors
-2. Verify all required secrets are set
-3. Ensure `NEXTAUTH_SECRET` and `NEXTAUTH_URL` are configured
+1. **CRITICAL:** Set these secrets BEFORE deploying:
+   - `NEXTAUTH_SECRET` (generate with `openssl rand -base64 32`)
+   - `NEXTAUTH_URL` (your deployed URL, e.g., `https://your-app.replit.app`)
+2. Check deployment logs for specific Next.js startup errors
+3. Verify all required database secrets are set
+4. If Next.js is crashing, look for "Error:" messages in deployment logs
 
 ---
 
