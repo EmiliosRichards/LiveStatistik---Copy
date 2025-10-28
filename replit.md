@@ -165,6 +165,7 @@ npm run db:push
   - Checks still run in development mode
   - Added `export const dynamic = 'force-dynamic'` to dashboard layout to fix static generation errors with `useSearchParams`
 - **Public assets**: Verified Manuav logo and other public assets are correctly served from `web/public/` in production via Next.js `npm start`
+- **Fixed deployment startup**: Updated `start-prod.sh` to use `exec` for Next.js, ensuring it runs in foreground for Replit Autoscale. Express backend starts first and waits for health check before Next.js starts.
 
 ### Deployment configuration (October 27)
 - Fixed Replit Autoscale deployment health check failures:
