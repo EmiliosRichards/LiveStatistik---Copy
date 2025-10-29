@@ -279,5 +279,27 @@
     "noProjectsForAgents": "Keine Projekte für den angegebenen Zeitraum für folgende Agenten gefunden:",
     "running": "Läuft",
     "inactive": "Inaktiv"
+  },
+  "qm": {
+    "title": "Qualitätsmanagement",
+    "subtitle": "Monatliche Ziele und Leistungsverfolgung für Agenten und Kampagnen",
+    "month": "Monat",
+    "filterAgent": "Nach Agent filtern",
+    "filterAgentPlaceholder": "Agent suchen...",
+    "filterCampaign": "Nach Kampagne filtern",
+    "filterCampaignPlaceholder": "Kampagne suchen...",
+    "refresh": "Aktualisieren",
+    "error": "Fehler",
+    "loading": "QM-Daten werden geladen...",
+    "noData": "Keine QM-Daten für diesen Monat verfügbar",
+    "agent": "Agent",
+    "campaign": "Kampagne",
+    "target": "Ziel (Soll)",
+    "achieved": "Erreicht",
+    "perf": "Leistung",
+    "attainment": "Zielerreichung %",
+    "notes": "Notizen",
+    "dailyBreakdown": "Tägliche Aufschlüsselung",
+    "day": "Tag"
   }
 }
