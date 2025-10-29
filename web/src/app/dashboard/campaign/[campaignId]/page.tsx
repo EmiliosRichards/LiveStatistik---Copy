@@ -579,14 +579,6 @@ export default function CampaignDetailPage() {
               >
                 ← {t('campaign.backToCampaigns')}
               </a>
-              {(dateFrom || dateTo) && (
-                <div className="text-sm text-slate-600">
-                  <span className="font-medium">{t('campaign.dateRange')}:</span>{' '}
-                  <span className="px-2 py-1 bg-slate-50 text-slate-700 rounded border border-slate-200">
-                    {dateRangeText}
-                  </span>
-                </div>
-              )}
             </div>
             
             {/* Agent Filter Chips */}

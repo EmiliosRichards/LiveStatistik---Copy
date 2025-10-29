@@ -60,6 +60,10 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
   - Ensured clean loading state is enforced when waiting for data to appear
   - Loading state now initialized to `true` to prevent flash of empty state
   - Proper loading state management when no agents are selected
+  - Comprehensive error handling prevents infinite loading on API failures
+- **UI Cleanup**:
+  - Removed duplicate date range display from campaign detail page header
+  - Date range now only shown in filter indicators section for cleaner layout
 - **Files Modified**: `web/src/app/dashboard/agent/[agentId]/page.tsx`, `web/src/app/dashboard/campaign/[campaignId]/page.tsx`, `web/src/locales/en.json`, `web/src/locales/de.json`
 
 ### QM (Quality Management) Feature (October 29, 2025)
