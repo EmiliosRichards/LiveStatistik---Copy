@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { Sparkles, CheckCircle2, Archive } from 'lucide-react'
 
 type SheetRow = {
   campaign: string
@@ -17,7 +18,7 @@ export default function CampaignsAdminPage() {
   const [rows, setRows] = useState<SheetRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [filter, setFilter] = useState<'all'|'active'|'new'|'archived'>('all')
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['new', 'active', 'archived'])
   const [q, setQ] = useState('')
 
   useEffect(() => {
@@ -37,8 +38,36 @@ export default function CampaignsAdminPage() {
     fetchData()
   }, [])
 
+  // Calculate counts for each status
+  const counts = useMemo(() => {
+    return {
+      all: rows.length,
+      new: rows.filter(r => r.status === 'new').length,
+      active: rows.filter(r => r.status === 'active').length,
+      archived: rows.filter(r => r.status === 'archived').length
+    }
+  }, [rows])
+
+  // Toggle status selection
+  const toggleStatus = (status: string) => {
+    if (selectedStatuses.includes(status)) {
+      setSelectedStatuses(selectedStatuses.filter(s => s !== status))
+    } else {
+      setSelectedStatuses([...selectedStatuses, status])
+    }
+  }
+
+  // Toggle all statuses
+  const toggleAll = () => {
+    if (selectedStatuses.length === 3) {
+      setSelectedStatuses([])
+    } else {
+      setSelectedStatuses(['new', 'active', 'archived'])
+    }
+  }
+
   const filtered = rows
-    .filter(r => filter==='all' ? true : (r.status === filter || (filter==='active' && (r.status==='active' || r.status==='new'))))
+    .filter(r => selectedStatuses.length === 0 ? false : selectedStatuses.includes(r.status || ''))
     .filter(r => q.trim()==='' ? true : (r.campaign?.toLowerCase().includes(q.toLowerCase()) || r.campaign_id?.toLowerCase().includes(q.toLowerCase())))
 
   return (
@@ -48,15 +77,69 @@ export default function CampaignsAdminPage() {
           <div className="mb-4 flex items-center justify-between gap-3">
             <h1 className="text-lg font-semibold text-slate-900">Campaigns Admin</h1>
             <div className="flex items-center gap-2">
-              <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search name or ID" className="px-3 py-2 border border-slate-300 rounded-lg text-sm" />
-              <select value={filter} onChange={e=>setFilter(e.target.value as any)} className="px-2 py-2 border border-slate-300 rounded-lg text-sm">
-                <option value="all">All</option>
-                <option value="active">Active (incl. New)</option>
-                <option value="new">New</option>
-                <option value="archived">Archived</option>
-              </select>
+              <input 
+                value={q} 
+                onChange={e=>setQ(e.target.value)} 
+                placeholder="Search name or ID" 
+                className="px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                data-testid="input-search-campaigns"
+              />
             </div>
           </div>
+          
+          {/* Status Filter Chips */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={toggleAll}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  selectedStatuses.length === 3
+                    ? 'bg-slate-900 text-white shadow-md'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+                data-testid="button-filter-all"
+              >
+                All <span className="ml-1 opacity-70">({counts.all})</span>
+              </button>
+              <button
+                onClick={() => toggleStatus('new')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  selectedStatuses.includes('new')
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                }`}
+                data-testid="button-filter-new"
+              >
+                <Sparkles className="w-3 h-3" />
+                New <span className="ml-1 opacity-70">({counts.new})</span>
+              </button>
+              <button
+                onClick={() => toggleStatus('active')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  selectedStatuses.includes('active')
+                    ? 'bg-emerald-600 text-white shadow-md'
+                    : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                }`}
+                data-testid="button-filter-active"
+              >
+                <CheckCircle2 className="w-3 h-3" />
+                Active <span className="ml-1 opacity-70">({counts.active})</span>
+              </button>
+              <button
+                onClick={() => toggleStatus('archived')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  selectedStatuses.includes('archived')
+                    ? 'bg-slate-600 text-white shadow-md'
+                    : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+                data-testid="button-filter-archived"
+              >
+                <Archive className="w-3 h-3" />
+                Archived <span className="ml-1 opacity-70">({counts.archived})</span>
+              </button>
+            </div>
+          </div>
+
           {loading ? (
             <div className="text-slate-600">Loading…</div>
           ) : error ? (

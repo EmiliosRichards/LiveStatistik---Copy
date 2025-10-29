@@ -42,6 +42,15 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 
 ## Recent Changes
 
+### Campaign Admin Page Filter UX (October 29, 2025)
+- **Accurate Count Display**: Status filter buttons now always show actual campaign counts (e.g., Active (69), Archived (20), New (0)) instead of showing 0 when unselected
+- **Multi-Select Filters**: Users can now select multiple status filters simultaneously (similar to agent selection on campaign detail page)
+  - Click individual status buttons to toggle them on/off
+  - "All" button to quickly select/deselect all statuses
+  - Buttons show selected state with darker background and white text
+- **Visual Design**: Added icons for each status (Sparkles for New, CheckCircle for Active, Archive icon for Archived)
+- **Files Modified**: `web/src/app/dashboard/campaigns-admin/page.tsx`
+
 ### Google Sheets Campaign Categorization Update (October 29, 2025)
 - **Phased Out "New" Tab**: Stopped fetching campaigns from GOOGLE_SHEETS_TAB_NEW sheet
 - **Active Sources Only**: Now only pulls campaigns from "active" and "archived" Google Sheets tabs
