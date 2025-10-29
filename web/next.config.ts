@@ -47,6 +47,7 @@ const nextConfig: NextConfig = {
         { source: "/api/campaign-categories/:path*", destination: `${target}/api/campaign-categories/:path*` },
         { source: "/api/outcome-status/:path*", destination: `${target}/api/outcome-status/:path*` },
         { source: "/api/debug/:path*", destination: `${target}/api/debug/:path*` },
+        api("/api/qm"),
         { source: "/healthz", destination: `${target}/healthz` },
       ],
       fallback: [],
