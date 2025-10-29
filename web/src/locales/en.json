@@ -28,7 +28,8 @@
     "dashboard": "Dashboard",
     "agents": "Agents",
     "campaigns": "Campaigns",
-    "timeBasedSearch": "Time-based Search"
+    "timeBasedSearch": "Time-based Search",
+    "qm": "QM"
   },
   "kpi": {
     "totalCalls": "Total Calls (Last 7 Days)",

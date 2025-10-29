@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown } from 'lucide-react'
+import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown, ClipboardCheck } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
@@ -291,6 +291,13 @@ export default function DashboardPage() {
                   data-testid="link-search"
                 >
                   <CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}
+                </Link>
+                <Link
+                  href="/dashboard/qm"
+                  className="block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
+                  data-testid="link-qm"
+                >
+                  <ClipboardCheck className="w-4 h-4" /> QM
                 </Link>
               </nav>
             </div>
