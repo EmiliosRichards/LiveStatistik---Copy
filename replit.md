@@ -40,15 +40,30 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 - **Transcription API:** Optional integration for audio transcription (requires `TRANSCRIPTION_API_KEY`).
 - **Drizzle (Optional):** Configured for potential future use with an internal database, specifically with Neon.
 
-## Recent Changes (October 28, 2025)
+## Recent Changes
 
-### Logo Rendering Fix
+### QM (Quality Management) Feature (October 29, 2025)
+- **New Feature**: Added comprehensive Quality Management dashboard for monthly target tracking
+- **Backend**: 
+  - Created `server/qm-parser.ts` to parse Excel workbooks with monthly performance data (supports SharePoint URLs and local files)
+  - Added `/api/qm` endpoint with caching (configurable via `QM_EXCEL_PATH` or `QM_EXCEL_URL` environment variables)
+  - Handles numeric values and status codes (K/U/F) with daily breakdowns (days 1-31)
+- **Frontend**:
+  - Created `/dashboard/qm` page with filterable table showing agent/campaign performance vs. targets
+  - Features: month selector, agent/campaign filters, expandable rows for daily breakdown
+  - Color-coded attainment percentages (green ≥100%, yellow ≥80%, red <80%)
+  - Added navigation link in dashboard sidebar with clipboard icon
+- **Types**: Added `QmRow` and `QmDailyCell` types to `shared/schema.ts`
+- **Translations**: Full English and German support for all QM interface elements
+- **Files**: `server/qm-parser.ts`, `server/routes.ts`, `web/src/app/dashboard/qm/page.tsx`, `shared/schema.ts`
+
+### Logo Rendering Fix (October 28, 2025)
 - **Issue**: Manuav logo not rendering on signin page in production deployment (broken image icon)
 - **Solution**: Replaced regular `<img>` tag with Next.js `<Image>` component for reliable production asset loading
 - **Benefits**: Automatic image optimization, better caching, consistent rendering across development and production
 - **File**: `web/src/app/signin/page.tsx`
 
-### Deployment Fixes
+### Deployment Fixes (October 28, 2025)
 - **Port configuration**: Removed extra port definition from `.replit` (Autoscale requires single external port)
 - **Shell script**: Fixed `start-prod.sh` to properly export environment variables before `exec` command
 - **Cache warmer**: Delayed cache warming to 90 seconds in production to prevent startup timeout
