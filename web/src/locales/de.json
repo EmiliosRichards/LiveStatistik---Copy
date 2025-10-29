@@ -187,7 +187,8 @@
     "active": "Aktiv",
     "archived": "Archiviert",
     "positiveOutcomes": "Positive Ergebnisse",
-    "results": "Ergebnisse"
+    "results": "Ergebnisse",
+    "dateRange": "Datumsbereich"
   },
   "agent": {
     "title": "Agentendetails",
@@ -223,7 +224,8 @@
     "azh": "AZ (h)",
     "new": "Neu",
     "active": "Aktiv",
-    "archived": "Archiviert"
+    "archived": "Archiviert",
+    "showArchived": "Archivierte anzeigen"
   },
   "footer": {
     "database": "Datenbank",

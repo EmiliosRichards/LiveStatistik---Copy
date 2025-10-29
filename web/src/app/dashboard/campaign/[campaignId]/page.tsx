@@ -3,11 +3,13 @@
 // Force dynamic rendering for this page (uses useSearchParams)
 export const dynamic = 'force-dynamic'
 
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter, Clock, Calendar, CalendarClock } from 'lucide-react'
 import { Footer } from '@/components/Footer'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { InlineCalendar } from '@/components/InlineCalendar'
+import { format } from 'date-fns'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
 function normalizeNotes(text: string): string {
@@ -35,17 +37,29 @@ export default function CampaignDetailPage() {
   const [statsView, setStatsView] = useState<'overview'|'details'>('overview')
   const [selectedCategory, setSelectedCategory] = useState<null | 'positiv' | 'negativ' | 'offen'>(null)
   const [selectedSub, setSelectedSub] = useState<string | null>(null)
+  // Get filter params from URL (must be declared before state that uses them)
+  const dateFrom = searchParams.get('dateFrom') || undefined
+  const dateTo = searchParams.get('dateTo') || undefined
+  const timeFrom = searchParams.get('timeFrom') || undefined
+  const timeTo = searchParams.get('timeTo') || undefined
+
   const [filterCalls, setFilterCalls] = useState<'alle' | 'mit_audio' | 'mit_transkript' | 'mit_notizen'>('alle')
   const [filterTime, setFilterTime] = useState<'alle' | 'heute' | 'woche' | 'monat'>('alle')
   const [filterDuration, setFilterDuration] = useState<'alle' | '0-30s' | '30-60s' | '1-5min' | '5-10min' | '10+min'>('alle')
   const [page, setPage] = useState(1)
   const pageSize = 100
 
-  // Get filter params from URL
-  const dateFrom = searchParams.get('dateFrom') || undefined
-  const dateTo = searchParams.get('dateTo') || undefined
-  const timeFrom = searchParams.get('timeFrom') || undefined
-  const timeTo = searchParams.get('timeTo') || undefined
+  // Date filter popover state
+  const [showFilterPopover, setShowFilterPopover] = useState(false)
+  const filterRef = useRef<HTMLDivElement | null>(null)
+  const [dateFromDisplay, setDateFromDisplay] = useState<string>(dateFrom || '')
+  const [dateToDisplay, setDateToDisplay] = useState<string>(dateTo || '')
+  const [showFromCal, setShowFromCal] = useState(false)
+  const [showToCal, setShowToCal] = useState(false)
+  const [fromMonth, setFromMonth] = useState<number>(new Date().getMonth())
+  const [fromYear, setFromYear] = useState<number>(new Date().getFullYear())
+  const [toMonth, setToMonth] = useState<number>(new Date().getMonth())
+  const [toYear, setToYear] = useState<number>(new Date().getFullYear())
 
   // Build display strings for filters
   const dateRangeText = (dateFrom && dateTo)
@@ -65,6 +79,96 @@ export default function CampaignDetailPage() {
     const ag = searchParams.get('agentId'); if (ag) p.set('agents', ag)
     return `/dashboard?${p.toString()}`
   }, [searchParams])
+
+  // Date filter helper functions
+  useEffect(() => {
+    setDateFromDisplay(dateFrom || '')
+    setDateToDisplay(dateTo || '')
+  }, [dateFrom, dateTo])
+
+  useEffect(() => {
+    function onPointer(e: MouseEvent | TouchEvent) {
+      const t = e.target as Node | null
+      if (showFilterPopover && filterRef.current && t && !filterRef.current.contains(t)) {
+        setShowFilterPopover(false)
+        setShowFromCal(false)
+        setShowToCal(false)
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setShowFilterPopover(false)
+        setShowFromCal(false)
+        setShowToCal(false)
+      }
+    }
+    document.addEventListener('mousedown', onPointer)
+    document.addEventListener('touchstart', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onPointer)
+      document.removeEventListener('touchstart', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [showFilterPopover])
+
+  const isoToDisplay = (iso: string) => {
+    if (!iso) return ''
+    const [y, m, d] = iso.split('-')
+    return `${d.padStart(2,'0')} - ${m.padStart(2,'0')} - ${y}`
+  }
+  const displayToIso = (display: string): string => {
+    const compact = display.replace(/\s+/g, '')
+    const parts = compact.split('-')
+    if (parts.length !== 3) return ''
+    const [dd, mm, yyyy] = parts
+    if (dd.length !== 2 || mm.length !== 2 || yyyy.length !== 4) return ''
+    const day = parseInt(dd, 10), mon = parseInt(mm, 10)
+    if (isNaN(day) || isNaN(mon) || day < 1 || day > 31 || mon < 1 || mon > 12) return ''
+    return `${yyyy}-${mm}-${dd}`
+  }
+  const dateToIsoLocal = (d: Date) => {
+    const y = d.getFullYear()
+    const m = (d.getMonth() + 1).toString().padStart(2, '0')
+    const day = d.getDate().toString().padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const setQuickDate = (range: 'today'|'week'|'month') => {
+    const today = new Date()
+    const formatted = format(today, 'yyyy-MM-dd')
+    if (range === 'today') {
+      setDateFromDisplay(isoToDisplay(formatted))
+      setDateToDisplay(isoToDisplay(formatted))
+      return
+    }
+    if (range === 'week') {
+      const weekStart = new Date(today)
+      weekStart.setDate(today.getDate() - today.getDay())
+      const fromIso = format(weekStart, 'yyyy-MM-dd')
+      setDateFromDisplay(isoToDisplay(fromIso))
+      setDateToDisplay(isoToDisplay(formatted))
+      return
+    }
+    if (range === 'month') {
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+      const fromIso = format(monthStart, 'yyyy-MM-dd')
+      setDateFromDisplay(isoToDisplay(fromIso))
+      setDateToDisplay(isoToDisplay(formatted))
+    }
+  }
+
+  const applyFilters = () => {
+    const df = displayToIso(dateFromDisplay)
+    const dt = displayToIso(dateToDisplay)
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    if (df) params.set('dateFrom', df)
+    else params.delete('dateFrom')
+    if (dt) params.set('dateTo', dt)
+    else params.delete('dateTo')
+    router.push(`?${params.toString()}`)
+    setShowFilterPopover(false)
+  }
 
   // Load campaign metadata and available agents
   useEffect(() => {
@@ -338,10 +442,116 @@ export default function CampaignDetailPage() {
                     {t('campaign.details')}
                   </button>
                 </div>
-                {/* Change period aligned with header controls? (Campaign page uses date/time from URL only) */}
+                {/* Change Period Button */}
+                <div className="relative" ref={filterRef}>
+                  <button
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-700 bg-white hover:bg-slate-50"
+                    onClick={() => setShowFilterPopover(v=>!v)}
+                    data-testid="button-change-period"
+                  >
+                    <CalendarClock className="w-4 h-4" /> {t('agent.changePeriod')}
+                  </button>
+                  {showFilterPopover && (
+                    <div className="absolute right-0 z-20 mt-2 w-[560px] max-w-[92vw] bg-white border border-slate-200 rounded-lg shadow-xl p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="relative">
+                          <label className="block text-sm font-medium text-slate-700 mb-1"><Calendar className="inline w-4 h-4 mr-2" />{t('search.from')}</label>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="dd - mm - yyyy"
+                            value={dateFromDisplay}
+                            onChange={(e)=>{ const v=e.target.value; setDateFromDisplay(v) }}
+                            onFocus={() => setShowFromCal(true)}
+                            onBlur={() => { if (dateFrom) setDateFromDisplay(isoToDisplay(dateFrom)) }}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-slate-500"
+                          />
+                          {showFromCal && (
+                            <div className="absolute z-30 mt-2 w-full">
+                              <InlineCalendar
+                                value={dateFrom ? new Date(dateFrom) : null}
+                                onChange={(d)=>{ const iso = dateToIsoLocal(d); setDateFromDisplay(isoToDisplay(iso)); setShowFromCal(false) }}
+                                visibleMonth={fromMonth}
+                                visibleYear={fromYear}
+                                onMonthChange={setFromMonth}
+                                onYearChange={setFromYear}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="relative">
+                          <label className="block text-sm font-medium text-slate-700 mb-1"><Calendar className="inline w-4 h-4 mr-2" />{t('search.to')}</label>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="dd - mm - yyyy"
+                            value={dateToDisplay}
+                            onChange={(e)=>{ const v=e.target.value; setDateToDisplay(v) }}
+                            onFocus={() => setShowToCal(true)}
+                            onBlur={() => { if (dateTo) setDateToDisplay(isoToDisplay(dateTo)) }}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-slate-500"
+                          />
+                          {showToCal && (
+                            <div className="absolute z-30 mt-2 w-full">
+                              <InlineCalendar
+                                value={dateTo ? new Date(dateTo) : null}
+                                onChange={(d)=>{ const iso = dateToIsoLocal(d); setDateToDisplay(isoToDisplay(iso)); setShowToCal(false) }}
+                                visibleMonth={toMonth}
+                                visibleYear={toYear}
+                                onMonthChange={setToMonth}
+                                onYearChange={setToYear}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={() => setQuickDate('today')}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50"
+                        >
+                          {t('search.today')}
+                        </button>
+                        <button
+                          onClick={() => setQuickDate('week')}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50"
+                        >
+                          {t('search.thisWeek')}
+                        </button>
+                        <button
+                          onClick={() => setQuickDate('month')}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50"
+                        >
+                          {t('search.thisMonth')}
+                        </button>
+                        <div className="flex-1" />
+                        <button
+                          onClick={() => {
+                            setDateFromDisplay('')
+                            setDateToDisplay('')
+                            const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+                            params.delete('dateFrom')
+                            params.delete('dateTo')
+                            router.push(`?${params.toString()}`)
+                            setShowFilterPopover(false)
+                          }}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50"
+                        >
+                          {t('search.clear')}
+                        </button>
+                        <button
+                          onClick={applyFilters}
+                          className="px-4 py-1.5 text-sm rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+                        >
+                          {t('search.searchStatistics')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div>
+            <div className="flex items-center justify-between">
               <a
                 href={backCampaignsHref}
                 onClick={(e)=>{ try { if (document.referrer && new URL(document.referrer).origin === window.location.origin) { e.preventDefault(); window.history.back(); } } catch {} }}
@@ -349,6 +559,14 @@ export default function CampaignDetailPage() {
               >
                 ← {t('campaign.backToCampaigns')}
               </a>
+              {(dateFrom || dateTo) && (
+                <div className="text-sm text-slate-600">
+                  <span className="font-medium">{t('campaign.dateRange')}:</span>{' '}
+                  <span className="px-2 py-1 bg-slate-50 text-slate-700 rounded border border-slate-200">
+                    {dateRangeText}
+                  </span>
+                </div>
+              )}
             </div>
             
             {/* Agent Filter Chips */}

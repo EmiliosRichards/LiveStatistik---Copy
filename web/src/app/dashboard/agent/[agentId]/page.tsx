@@ -8,7 +8,7 @@ import { tableBase, theadBase, tbodyBase, thBase, tdBase, trBase, containerBase 
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { fetchAgents, fetchProjects, fetchProjectsForAgents, fetchStatistics } from '@/lib/api'
 import type { Project } from '@/lib/api'
-import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar } from 'lucide-react'
+import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar, Archive } from 'lucide-react'
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { Footer } from '@/components/Footer'
 import { format } from 'date-fns'
@@ -42,6 +42,7 @@ export default function AgentDetailPage() {
   const [campStats, setCampStats] = useState<any[]>([])
   const [campView, setCampView] = useState<'overview'|'details'>('overview')
   const [sortMode, setSortMode] = useState<'date'|'name'>('date')
+  const [showArchived, setShowArchived] = useState(false)
   const formatAgentName = (name: string) => name.replace(/\./g, ' ')
 
   const dateFrom = searchParams.get('dateFrom') || undefined
@@ -299,7 +300,12 @@ export default function AgentDetailPage() {
 
   const sortedCampStats = useMemo(() => {
     const statusOrder: Record<string, number> = { new: 0, active: 1, archived: 2 }
-    const list = campStats.slice()
+    let list = campStats.slice()
+    
+    if (!showArchived) {
+      list = list.filter(camp => camp.status !== 'archived')
+    }
+    
     list.sort((a,b) => {
       const sa = statusOrder[String(a.status||'')] ?? 3
       const sb = statusOrder[String(b.status||'')] ?? 3
@@ -312,7 +318,7 @@ export default function AgentDetailPage() {
       return db - da // recent first
     })
     return list
-  }, [campStats, sortMode])
+  }, [campStats, sortMode, showArchived])
 
   const navigateRelative = (delta: number) => {
     if (currentIdx < 0 || allAgentIds.length === 0) return
@@ -424,6 +430,23 @@ export default function AgentDetailPage() {
                         <div className="w-px h-5 bg-slate-300" />
                         <button className={`px-3 py-1 text-sm ${campView==='details'?'bg-slate-900 text-white':'hover:bg-slate-50 text-slate-700'}`} onClick={()=>setCampView('details')}>{t('agent.details')}</button>
                       </div>
+                      <button
+                        onClick={() => setShowArchived(prev => !prev)}
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ${
+                          showArchived 
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                        }`}
+                        data-testid="button-toggle-archived"
+                      >
+                        <Archive className="w-4 h-4" />
+                        {t('agent.showArchived')}
+                        {campStats.filter(c => c.status === 'archived').length > 0 && (
+                          <span className={`ml-1 px-1.5 py-0.5 rounded text-xs ${showArchived ? 'bg-white/20' : 'bg-slate-100'}`}>
+                            {campStats.filter(c => c.status === 'archived').length}
+                          </span>
+                        )}
+                      </button>
                       <label className="text-sm text-slate-700">{t('agent.sort')}</label>
                       <select value={sortMode} onChange={e=>setSortMode(e.target.value as any)} className="border border-slate-300 rounded px-2 py-1 text-sm">
                         <option value="date">{t('agent.dateRecent')}</option>

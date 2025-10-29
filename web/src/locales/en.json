@@ -187,7 +187,8 @@
     "active": "Active",
     "archived": "Archived",
     "positiveOutcomes": "Positive Outcomes",
-    "results": "Results"
+    "results": "Results",
+    "dateRange": "Date Range"
   },
   "agent": {
     "title": "Agent Details",
@@ -223,7 +224,8 @@
     "azh": "Work T. (h)",
     "new": "New",
     "active": "Active",
-    "archived": "Archived"
+    "archived": "Archived",
+    "showArchived": "Show Archived"
   },
   "footer": {
     "database": "Database",
