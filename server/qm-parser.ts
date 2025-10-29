@@ -16,7 +16,13 @@ async function downloadFile(url: string, headers: Record<string, string> = {}): 
     
     const req = protocol.get(url, { headers }, (res) => {
       if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return resolve(downloadFile(res.headers.location, headers));
+        // Handle relative redirects by constructing absolute URL
+        let redirectUrl = res.headers.location;
+        if (redirectUrl.startsWith('/')) {
+          const parsedUrl = new URL(url);
+          redirectUrl = `${parsedUrl.protocol}//${parsedUrl.host}${redirectUrl}`;
+        }
+        return resolve(downloadFile(redirectUrl, headers));
       }
       if ((res.statusCode || 0) >= 400) {
         return reject(new Error(`HTTP ${res.statusCode}`));
