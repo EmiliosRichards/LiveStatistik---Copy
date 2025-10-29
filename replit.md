@@ -42,6 +42,13 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 
 ## Recent Changes
 
+### Google Sheets Campaign Categorization Update (October 29, 2025)
+- **Phased Out "New" Tab**: Stopped fetching campaigns from GOOGLE_SHEETS_TAB_NEW sheet
+- **Active Sources Only**: Now only pulls campaigns from "active" and "archived" Google Sheets tabs
+- **UI Infrastructure Preserved**: "New" campaign UI elements remain in place for future use when new campaign logic is defined
+- **Deduplication Updated**: Campaign priority now: active (2) > archived (1)
+- **Files Modified**: `server/google-sheets.ts`
+
 ### Agent & Campaign Page UI Improvements (October 29, 2025)
 - **Archive Toggle on Agent Detail Page**:
   - Added toggle button to show/hide archived campaigns (hidden by default)
