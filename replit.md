@@ -42,6 +42,21 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 
 ## Recent Changes
 
+### Agent & Campaign Page UI Improvements (October 29, 2025)
+- **Archive Toggle on Agent Detail Page**:
+  - Added toggle button to show/hide archived campaigns (hidden by default)
+  - Displays count badge showing number of archived campaigns
+  - Aesthetic design with Archive icon and state-based styling
+  - Filters campaign list based on toggle state
+  - Full English/German translation support
+- **Date Range Filter on Campaign Detail Page**:
+  - Added consistent date range filter using same components as agent page
+  - Includes InlineCalendar component with quick date selection (Today, This Week, This Month)
+  - Displays selected date range below "Back to Campaigns" link
+  - Full German translation support for all labels
+  - Maintains consistency across agent and campaign views
+- **Files Modified**: `web/src/app/dashboard/agent/[agentId]/page.tsx`, `web/src/app/dashboard/campaign/[campaignId]/page.tsx`, `web/src/locales/en.json`, `web/src/locales/de.json`
+
 ### QM (Quality Management) Feature (October 29, 2025)
 - **New Feature**: Added comprehensive Quality Management dashboard for monthly target tracking
 - **Backend**: 
