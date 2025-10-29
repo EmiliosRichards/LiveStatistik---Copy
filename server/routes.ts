@@ -969,6 +969,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // QM (Quality Management) endpoint
+  app.get("/api/qm", async (req, res) => {
+    try {
+      const month = req.query.month as string | undefined;
+      const sheet = req.query.sheet as string | undefined;
+      
+      const key = `qm:${month || 'latest'}:${sheet || 'auto'}`;
+      const cached = cacheGet(key);
+      if (cached && req.query.refresh !== 'true') {
+        console.log(`📊 QM Cache hit: ${key}`);
+        return res.json(cached);
+      }
+
+      const qmSource = process.env.QM_EXCEL_PATH || process.env.QM_EXCEL_URL;
+      if (!qmSource) {
+        return res.status(503).json({ 
+          error: 'QM data not configured',
+          message: 'Set QM_EXCEL_PATH or QM_EXCEL_URL environment variable'
+        });
+      }
+
+      const { parseQmExcel } = await import('./qm-parser');
+      const cookie = process.env.SHAREPOINT_COOKIE;
+      
+      console.log(`📊 QM: Loading data from ${qmSource.substring(0, 50)}...`);
+      const rows = await parseQmExcel(qmSource, { month, sheet, cookie });
+      
+      console.log(`✅ QM: Loaded ${rows.length} rows from sheet`);
+      cacheSet(key, rows);
+      res.json(rows);
+    } catch (error) {
+      console.error("❌ QM Error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: "Failed to load QM data", message: errorMessage });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
