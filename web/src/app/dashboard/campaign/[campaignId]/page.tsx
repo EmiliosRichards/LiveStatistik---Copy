@@ -21,7 +21,8 @@ export default function CampaignDetailPage() {
   const { campaignId } = useParams<{ campaignId: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [agentsInitialized, setAgentsInitialized] = useState(false)
   const [campaignName, setCampaignName] = useState('')
   
   // Agent selection state
@@ -181,6 +182,12 @@ export default function CampaignDetailPage() {
         ])
         if (cancelled) return
         
+        if (!agentsRes.ok || !projectsRes.ok) {
+          console.error('Failed to fetch metadata:', !agentsRes.ok ? 'agents' : 'projects')
+          setAgentsInitialized(true)
+          return
+        }
+        
         if (agentsRes.ok && projectsRes.ok) {
           const allAgents = await agentsRes.json()
           const projects = await projectsRes.json()
@@ -200,6 +207,12 @@ export default function CampaignDetailPage() {
               projectIds: [campaignId]
             })
           })
+          
+          if (!statsRes.ok) {
+            console.error('Failed to fetch statistics for campaign agents')
+            setAgentsInitialized(true)
+            return
+          }
           
           if (statsRes.ok && !cancelled) {
             const statsData = await statsRes.json()
@@ -225,10 +238,12 @@ export default function CampaignDetailPage() {
             } else {
               setSelectedAgentIds(formattedAgents.map((a: { id: string }) => a.id))
             }
+            setAgentsInitialized(true)
           }
         }
       } catch (e) {
         console.error('Failed to load metadata:', e)
+        setAgentsInitialized(true)
       }
     }
     loadMetadata()
@@ -295,6 +310,11 @@ export default function CampaignDetailPage() {
         setCalls([])
         setServerTotal(0)
         setServerGrouped({ negativ: {}, positiv: {}, offen: {} })
+        // Only set loading to false if agents have been initialized
+        // This prevents showing "no calls found" while waiting for initial metadata load
+        if (agentsInitialized) {
+          setLoading(false)
+        }
         return
       }
       
@@ -340,7 +360,7 @@ export default function CampaignDetailPage() {
     }
     loadCalls()
     return () => { cancelled = true }
-  }, [selectedAgentIds, campaignId, dateFrom, dateTo, timeFrom, timeTo])
+  }, [selectedAgentIds, campaignId, dateFrom, dateTo, timeFrom, timeTo, agentsInitialized])
 
   // Reset page when filters change
   useEffect(() => { setPage(1) }, [selectedCategory, selectedSub, filterCalls, filterTime, filterDuration])
