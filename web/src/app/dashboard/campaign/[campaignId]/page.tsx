@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowRight, Volume2, FileText, StickyNote, Download, Filter,
 import { Footer } from '@/components/Footer'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { InlineCalendar } from '@/components/InlineCalendar'
+import { AudioPlayer } from '@/components/AudioPlayer'
 import { format } from 'date-fns'
 
 // Normalize notes text: convert literal "\\n" (and "\\r\\n") sequences into real line breaks
@@ -1097,7 +1098,7 @@ function CallRow({ call, index, availableAgents }: { call: any; index: number; a
       {(showAudio && call.recordingUrl) && (
         <tr>
           <td colSpan={10} className="px-4 pb-3">
-            <audio controls src={call.recordingUrl} className="h-8" />
+            <AudioPlayer src={call.recordingUrl} />
           </td>
         </tr>
       )}

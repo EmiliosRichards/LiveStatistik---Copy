@@ -42,6 +42,22 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 
 ## Recent Changes
 
+### Audio Player Enhancement (October 30, 2025)
+- **Custom Audio Player Component**: Replaced basic HTML5 audio controls with a fully-featured custom audio player
+- **Functional Improvements**:
+  - Working seek bar with visual progress indicator
+  - Skip forward/backward buttons (10-second jumps)
+  - Volume control slider with mute toggle
+  - Loading and error states
+- **Visual Improvements**:
+  - Modern gradient background design
+  - Blue theme with smooth transitions and hover effects
+  - Large play/pause button with loading spinner
+  - Time display (current/total) with tabular numbers
+  - Custom styled sliders with hover animations
+- **Applied To**: Campaign detail page, Agent detail page, and Call detail page
+- **Files Modified**: `web/src/components/AudioPlayer.tsx` (new), `web/src/app/dashboard/campaign/[campaignId]/page.tsx`, `web/src/app/dashboard/agent/[agentId]/page.tsx`, `web/src/app/call/[callId]/page.tsx`
+
 ### Time-Based Search Agent Selection UX (October 30, 2025)
 - **Select All Button**: Added "Select All" / "Deselect All" button to agent dropdown on the time-based search page
 - **Smart Toggle**: Button text changes based on current selection state and shows count of filtered agents

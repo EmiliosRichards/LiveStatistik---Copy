@@ -11,6 +11,7 @@ import type { Project } from '@/lib/api'
 import { Users, Layers, Volume2, FileText, StickyNote, Copy, ArrowLeft, ArrowRight, CalendarClock, Download, Calendar, Archive } from 'lucide-react'
 import { InlineCalendar } from '@/components/InlineCalendar'
 import { Footer } from '@/components/Footer'
+import { AudioPlayer } from '@/components/AudioPlayer'
 import { format } from 'date-fns'
 import { useLanguage } from '@/contexts/LanguageContext'
 
@@ -1098,7 +1099,7 @@ function CallRow({ call, index }: { call: any; index: number }) {
       {(showAudio && call.recordingUrl) && (
         <tr>
           <td colSpan={10} className="px-3 pb-3">
-            <audio controls src={call.recordingUrl} className="h-8" />
+            <AudioPlayer src={call.recordingUrl} />
           </td>
         </tr>
       )}
