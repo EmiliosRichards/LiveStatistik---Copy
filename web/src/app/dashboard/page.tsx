@@ -1133,7 +1133,7 @@ function TimeSearchView() {
             </button>
             {showAgentDropdown && (
               <div className="absolute z-10 mt-2 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-80 overflow-hidden flex flex-col">
-                <div className="p-3 border-b border-slate-200">
+                <div className="p-3 border-b border-slate-200 space-y-2">
                   <div className="relative">
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -1144,6 +1144,19 @@ function TimeSearchView() {
                       className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
+                  <button
+                    onClick={() => {
+                      if (selectedAgents.length === filteredAgents.length) {
+                        setSelectedAgents([])
+                      } else {
+                        setSelectedAgents(filteredAgents.map(a => a.id))
+                      }
+                    }}
+                    className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    data-testid="button-select-all-agents"
+                  >
+                    {selectedAgents.length === filteredAgents.length ? t('search.deselectAll') : t('search.selectAll')} ({filteredAgents.length})
+                  </button>
                 </div>
                 <div className="overflow-y-auto max-h-60">
                   {loadingAgents ? (

@@ -42,6 +42,13 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 
 ## Recent Changes
 
+### Time-Based Search Agent Selection UX (October 30, 2025)
+- **Select All Button**: Added "Select All" / "Deselect All" button to agent dropdown on the time-based search page
+- **Smart Toggle**: Button text changes based on current selection state and shows count of filtered agents
+- **User-Friendly**: Makes it easy to quickly select or deselect all agents with one click
+- **Full Translation Support**: Added English and German translations for the new button labels
+- **Files Modified**: `web/src/app/dashboard/page.tsx`, `web/src/locales/en.json`, `web/src/locales/de.json`
+
 ### Campaign Admin Page Filter UX (October 29, 2025)
 - **Accurate Count Display**: Status filter buttons now always show actual campaign counts (e.g., Active (69), Archived (20), New (0)) instead of showing 0 when unselected
 - **Multi-Select Filters**: Users can now select multiple status filters simultaneously (similar to agent selection on campaign detail page)

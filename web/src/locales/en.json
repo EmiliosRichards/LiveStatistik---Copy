@@ -130,6 +130,8 @@
     "agentSelected": "agent selected",
     "projectsSelected": "projects selected",
     "projectSelected": "project selected",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
     "filter": "Filter:"
   },
   "campaign": {
