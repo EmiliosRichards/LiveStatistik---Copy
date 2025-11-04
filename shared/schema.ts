@@ -121,6 +121,32 @@ export type InsertCallOutcome = z.infer<typeof insertCallOutcomeSchema>;
 export type InsertAgentStatistics = z.infer<typeof insertAgentStatisticsSchema>;
 export type InsertCallDetails = z.infer<typeof insertCallDetailsSchema>;
 
+// QM (Quality Management) types - Excel-based monthly targets
+export type QmDailyCell = {
+  day: number;
+  value?: number;
+  code?: string;
+};
+
+export type QmRow = {
+  sheet: string;
+  projectName: string;
+  agentName: string;
+  targetSoll: number | null;
+  perfScore: number | null;
+  attainmentProvided: number | null;
+  achievedSum: number;
+  notes?: string | null;
+  daily: QmDailyCell[];
+};
+
+export const qmQuerySchema = z.object({
+  month: z.string().optional(),
+  sheet: z.string().optional(),
+});
+
+export type QmQuery = z.infer<typeof qmQuerySchema>;
+
 // Additional types for the frontend
 export const statisticsFilterSchema = z.object({
   date: z.string().optional(),

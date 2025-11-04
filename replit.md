@@ -40,15 +40,93 @@ The application uses a micro-frontend-like architecture with a **Next.js 15 (Tur
 - **Transcription API:** Optional integration for audio transcription (requires `TRANSCRIPTION_API_KEY`).
 - **Drizzle (Optional):** Configured for potential future use with an internal database, specifically with Neon.
 
-## Recent Changes (October 28, 2025)
+## Recent Changes
 
-### Logo Rendering Fix
+### Audio Player Enhancement (October 30, 2025)
+- **Custom Audio Player Component**: Replaced basic HTML5 audio controls with a fully-featured custom audio player
+- **Functional Improvements**:
+  - Working seek bar with visual progress indicator
+  - Skip forward/backward buttons (10-second jumps)
+  - Volume control slider with mute toggle
+  - Loading and error states
+- **Visual Improvements**:
+  - Modern gradient background design
+  - Blue theme with smooth transitions and hover effects
+  - Large play/pause button with loading spinner
+  - Time display (current/total) with tabular numbers
+  - Custom styled sliders with hover animations
+- **Applied To**: Campaign detail page, Agent detail page, and Call detail page
+- **Files Modified**: `web/src/components/AudioPlayer.tsx` (new), `web/src/app/dashboard/campaign/[campaignId]/page.tsx`, `web/src/app/dashboard/agent/[agentId]/page.tsx`, `web/src/app/call/[callId]/page.tsx`
+
+### Time-Based Search Agent Selection UX (October 30, 2025)
+- **Select All Button**: Added "Select All" / "Deselect All" button to agent dropdown on the time-based search page
+- **Smart Toggle**: Button text changes based on current selection state and shows count of filtered agents
+- **User-Friendly**: Makes it easy to quickly select or deselect all agents with one click
+- **Full Translation Support**: Added English and German translations for the new button labels
+- **Files Modified**: `web/src/app/dashboard/page.tsx`, `web/src/locales/en.json`, `web/src/locales/de.json`
+
+### Campaign Admin Page Filter UX (October 29, 2025)
+- **Accurate Count Display**: Status filter buttons now always show actual campaign counts (e.g., Active (69), Archived (20), New (0)) instead of showing 0 when unselected
+- **Multi-Select Filters**: Users can now select multiple status filters simultaneously (similar to agent selection on campaign detail page)
+  - Click individual status buttons to toggle them on/off
+  - "All" button to quickly select/deselect all statuses
+  - Buttons show selected state with darker background and white text
+- **Visual Design**: Added icons for each status (Sparkles for New, CheckCircle for Active, Archive icon for Archived)
+- **Files Modified**: `web/src/app/dashboard/campaigns-admin/page.tsx`
+
+### Google Sheets Campaign Categorization Update (October 29, 2025)
+- **Phased Out "New" Tab**: Stopped fetching campaigns from GOOGLE_SHEETS_TAB_NEW sheet
+- **Active Sources Only**: Now only pulls campaigns from "active" and "archived" Google Sheets tabs
+- **UI Infrastructure Preserved**: "New" campaign UI elements remain in place for future use when new campaign logic is defined
+- **Deduplication Updated**: Campaign priority now: active (2) > archived (1)
+- **Files Modified**: `server/google-sheets.ts`
+
+### Agent & Campaign Page UI Improvements (October 29, 2025)
+- **Archive Toggle on Agent Detail Page**:
+  - Added toggle button to show/hide archived campaigns (hidden by default)
+  - Displays count badge showing number of archived campaigns
+  - Aesthetic design with Archive icon and state-based styling
+  - Filters campaign list based on toggle state
+  - Full English/German translation support
+- **Date Range Filter on Campaign Detail Page**:
+  - Added consistent date range filter using same components as agent page
+  - Includes InlineCalendar component with quick date selection (Today, This Week, This Month)
+  - Displays selected date range below "Back to Campaigns" link
+  - Full German translation support for all labels
+  - Maintains consistency across agent and campaign views
+- **Loading State UX Improvement**:
+  - Fixed issue where "No calls found" message would briefly appear before loading state
+  - Ensured clean loading state is enforced when waiting for data to appear
+  - Loading state now initialized to `true` to prevent flash of empty state
+  - Proper loading state management when no agents are selected
+  - Comprehensive error handling prevents infinite loading on API failures
+- **UI Cleanup**:
+  - Removed duplicate date range display from campaign detail page header
+  - Date range now only shown in filter indicators section for cleaner layout
+- **Files Modified**: `web/src/app/dashboard/agent/[agentId]/page.tsx`, `web/src/app/dashboard/campaign/[campaignId]/page.tsx`, `web/src/locales/en.json`, `web/src/locales/de.json`
+
+### QM (Quality Management) Feature (October 29, 2025)
+- **New Feature**: Added comprehensive Quality Management dashboard for monthly target tracking
+- **Backend**: 
+  - Created `server/qm-parser.ts` to parse Excel workbooks with monthly performance data (supports SharePoint URLs and local files)
+  - Added `/api/qm` endpoint with caching (configurable via `QM_EXCEL_PATH` or `QM_EXCEL_URL` environment variables)
+  - Handles numeric values and status codes (K/U/F) with daily breakdowns (days 1-31)
+- **Frontend**:
+  - Created `/dashboard/qm` page with filterable table showing agent/campaign performance vs. targets
+  - Features: month selector, agent/campaign filters, expandable rows for daily breakdown
+  - Color-coded attainment percentages (green ≥100%, yellow ≥80%, red <80%)
+  - Added navigation link in dashboard sidebar with clipboard icon
+- **Types**: Added `QmRow` and `QmDailyCell` types to `shared/schema.ts`
+- **Translations**: Full English and German support for all QM interface elements
+- **Files**: `server/qm-parser.ts`, `server/routes.ts`, `web/src/app/dashboard/qm/page.tsx`, `shared/schema.ts`
+
+### Logo Rendering Fix (October 28, 2025)
 - **Issue**: Manuav logo not rendering on signin page in production deployment (broken image icon)
 - **Solution**: Replaced regular `<img>` tag with Next.js `<Image>` component for reliable production asset loading
 - **Benefits**: Automatic image optimization, better caching, consistent rendering across development and production
 - **File**: `web/src/app/signin/page.tsx`
 
-### Deployment Fixes
+### Deployment Fixes (October 28, 2025)
 - **Port configuration**: Removed extra port definition from `.replit` (Autoscale requires single external port)
 - **Shell script**: Fixed `start-prod.sh` to properly export environment variables before `exec` command
 - **Cache warmer**: Delayed cache warming to 90 seconds in production to prevent startup timeout

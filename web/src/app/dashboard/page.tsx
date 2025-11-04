@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown } from 'lucide-react'
+import { Phone, TrendingUp, CheckCircle, Clock, Users, Layers, Search as SearchIcon, CalendarClock, Calendar, Briefcase, Sparkles, Activity, Archive, Circle, ChevronDown, ClipboardCheck } from 'lucide-react'
 import { StatisticsTable } from '@/components/StatisticsTable'
 import { type Statistics, type Agent as AgentType, type Project as ProjectType } from '@/lib/api'
 import { InlineCalendar } from '@/components/InlineCalendar'
@@ -291,6 +291,13 @@ export default function DashboardPage() {
                   data-testid="link-search"
                 >
                   <CalendarClock className="w-4 h-4" /> {t('nav.timeBasedSearch')}
+                </Link>
+                <Link
+                  href="/dashboard/qm"
+                  className="block w-full text-left px-3 py-2 rounded hover:bg-slate-50 flex items-center gap-2"
+                  data-testid="link-qm"
+                >
+                  <ClipboardCheck className="w-4 h-4" /> QM
                 </Link>
               </nav>
             </div>
@@ -1126,7 +1133,7 @@ function TimeSearchView() {
             </button>
             {showAgentDropdown && (
               <div className="absolute z-10 mt-2 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-80 overflow-hidden flex flex-col">
-                <div className="p-3 border-b border-slate-200">
+                <div className="p-3 border-b border-slate-200 space-y-2">
                   <div className="relative">
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -1137,6 +1144,19 @@ function TimeSearchView() {
                       className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
+                  <button
+                    onClick={() => {
+                      if (selectedAgents.length === filteredAgents.length) {
+                        setSelectedAgents([])
+                      } else {
+                        setSelectedAgents(filteredAgents.map(a => a.id))
+                      }
+                    }}
+                    className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    data-testid="button-select-all-agents"
+                  >
+                    {selectedAgents.length === filteredAgents.length ? t('search.deselectAll') : t('search.selectAll')} ({filteredAgents.length})
+                  </button>
                 </div>
                 <div className="overflow-y-auto max-h-60">
                   {loadingAgents ? (

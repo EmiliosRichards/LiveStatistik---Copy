@@ -88,6 +88,7 @@ export async function getSheetTabRaw(tabName: string): Promise<{ headers: string
 /**
  * Read campaign mapping from Google Sheets tabs.
  * Returns mapping of campaign_id -> human-readable campaign name.
+ * Note: GOOGLE_SHEETS_TAB_NEW is no longer used - only fetches from active and archived tabs.
  */
 export async function getSheetCampaignMapping(): Promise<Record<string, string>> {
   const sheetId = process.env.GOOGLE_SHEETS_ID;
@@ -97,18 +98,16 @@ export async function getSheetCampaignMapping(): Promise<Record<string, string>>
   if (cache && now - cache.ts < CACHE_TTL_MS) return cache.mapping;
 
   const tabActive = process.env.GOOGLE_SHEETS_TAB_ACTIVE || "campaigns_active";
-  const tabNew = process.env.GOOGLE_SHEETS_TAB_NEW || "campaigns_new";
   const tabArchived = process.env.GOOGLE_SHEETS_TAB_ARCHIVED || "campaigns_archived";
 
   try {
-    const [activeRows, newRows, archivedRows] = await Promise.all([
+    const [activeRows, archivedRows] = await Promise.all([
       fetchCsvForTab(sheetId, tabActive),
-      fetchCsvForTab(sheetId, tabNew),
       fetchCsvForTab(sheetId, tabArchived)
     ]);
 
     const mapping: Record<string, string> = {};
-    for (const r of [...activeRows, ...newRows, ...archivedRows]) {
+    for (const r of [...activeRows, ...archivedRows]) {
       if (r.campaign_id && r.campaign) mapping[r.campaign_id] = r.campaign;
     }
     cache = { mapping, ts: now };
@@ -127,25 +126,22 @@ export async function getSheetCampaignsFull(): Promise<CampaignRow[]> {
   if (cacheFull && now - cacheFull.ts < CACHE_TTL_MS) return cacheFull.rows;
 
   const tabActive = process.env.GOOGLE_SHEETS_TAB_ACTIVE || "campaigns_active";
-  const tabNew = process.env.GOOGLE_SHEETS_TAB_NEW || "campaigns_new";
   const tabArchived = process.env.GOOGLE_SHEETS_TAB_ARCHIVED || "campaigns_archived";
 
-  const [activeRows, newRows, archivedRows] = await Promise.all([
+  const [activeRows, archivedRows] = await Promise.all([
     fetchCsvForTab(sheetId, tabActive),
-    fetchCsvForTab(sheetId, tabNew),
     fetchCsvForTab(sheetId, tabArchived)
   ]);
 
-  // Always set status based on tab (treat NEW as "new" even if sheet says "active")
+  // Set status based on tab (no "new" campaigns until logic is defined)
   const mark = (rows: CampaignRow[], status: string) => rows.map(r => ({ ...r, status }));
   const merged = [
     ...mark(activeRows, 'active'),
-    ...mark(newRows, 'new'),
     ...mark(archivedRows, 'archived')
   ];
 
-  // Deduplicate by campaign_id, prefer new > active > archived
-  const priority: Record<string, number> = { new: 3, active: 2, archived: 1 };
+  // Deduplicate by campaign_id, prefer active > archived
+  const priority: Record<string, number> = { active: 2, archived: 1 };
   const byId = new Map<string, CampaignRow>();
   for (const row of merged) {
     if (!row.campaign_id) continue;

@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Download, FileText, StickyNote, Volume2 } from 'lucide-react'
+import { AudioPlayer } from '@/components/AudioPlayer'
 
 export default function CallDetailPage() {
   const { callId } = useParams<{ callId: string }>()
@@ -176,8 +177,8 @@ export default function CallDetailPage() {
         </div>
 
         {showAudio && call.recordingUrl && (
-          <div className="mt-3">
-            <audio controls src={call.recordingUrl} className="h-8" />
+          <div className="mt-4">
+            <AudioPlayer src={call.recordingUrl} />
           </div>
         )}
 

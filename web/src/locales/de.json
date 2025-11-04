@@ -28,7 +28,8 @@
     "dashboard": "Dashboard",
     "agents": "Agenten",
     "campaigns": "Kampagnen",
-    "timeBasedSearch": "Zeitbasierte Suche"
+    "timeBasedSearch": "Zeitbasierte Suche",
+    "qm": "QM"
   },
   "kpi": {
     "totalCalls": "Anrufe (Letzte 7 Tage)",
@@ -129,6 +130,8 @@
     "agentSelected": "Agent ausgewählt",
     "projectsSelected": "Projekte ausgewählt",
     "projectSelected": "Projekt ausgewählt",
+    "selectAll": "Alle auswählen",
+    "deselectAll": "Alle abwählen",
     "filter": "Filter:"
   },
   "campaign": {
@@ -186,7 +189,8 @@
     "active": "Aktiv",
     "archived": "Archiviert",
     "positiveOutcomes": "Positive Ergebnisse",
-    "results": "Ergebnisse"
+    "results": "Ergebnisse",
+    "dateRange": "Datumsbereich"
   },
   "agent": {
     "title": "Agentendetails",
@@ -222,7 +226,8 @@
     "azh": "AZ (h)",
     "new": "Neu",
     "active": "Aktiv",
-    "archived": "Archiviert"
+    "archived": "Archiviert",
+    "showArchived": "Archivierte anzeigen"
   },
   "footer": {
     "database": "Datenbank",
@@ -279,5 +284,27 @@
     "noProjectsForAgents": "Keine Projekte für den angegebenen Zeitraum für folgende Agenten gefunden:",
     "running": "Läuft",
     "inactive": "Inaktiv"
+  },
+  "qm": {
+    "title": "Qualitätsmanagement",
+    "subtitle": "Monatliche Ziele und Leistungsverfolgung für Agenten und Kampagnen",
+    "month": "Monat",
+    "filterAgent": "Nach Agent filtern",
+    "filterAgentPlaceholder": "Agent suchen...",
+    "filterCampaign": "Nach Kampagne filtern",
+    "filterCampaignPlaceholder": "Kampagne suchen...",
+    "refresh": "Aktualisieren",
+    "error": "Fehler",
+    "loading": "QM-Daten werden geladen...",
+    "noData": "Keine QM-Daten für diesen Monat verfügbar",
+    "agent": "Agent",
+    "campaign": "Kampagne",
+    "target": "Ziel (Soll)",
+    "achieved": "Erreicht",
+    "perf": "Leistung",
+    "attainment": "Zielerreichung %",
+    "notes": "Notizen",
+    "dailyBreakdown": "Tägliche Aufschlüsselung",
+    "day": "Tag"
   }
 }
