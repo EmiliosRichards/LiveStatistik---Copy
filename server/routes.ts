@@ -14,7 +14,7 @@ async function fetchCampaignMapping(): Promise<Record<string, string>> {
       return {};
     }
     const tenantId = "9c6d0163";
-    const url = `https://api.dialfire.com/v2/${tenantId}/campaigns`;
+    const url = `https://api.dialfire.com/v2/tenants/${tenantId}/campaigns`;
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` }
     });
