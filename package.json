@@ -21,7 +21,10 @@
     "test:db:calls": "tsx tools/tests/calls-for-agent-campaign.ts",
     "test:stats": "tsx tools/tests/stats-for-agents.ts",
     "test:agent-campaign": "tsx tools/tests/agent-campaign-calls.ts",
-    "qm:fetch": "tsx tools/fetch-qm-excel.ts"
+    "qm:fetch": "tsx tools/fetch-qm-excel.ts",
+    "audit:ingestion": "tsx tools/ingestion-audit.ts",
+    "dialfire:ping": "tsx tools/dialfire-ping.ts",
+    "db:gap-report": "tsx tools/gap-report.ts"
   },
   "dependencies": {
     "xlsx": "^0.18.5",
